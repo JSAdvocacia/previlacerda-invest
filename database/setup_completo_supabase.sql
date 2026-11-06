@@ -1,10 +1,3 @@
--- ==============================================================================
--- SETUP COMPLETO SUPABASE - PREVI-LACERDA
--- Copie e cole todo este script no SQL Editor do Supabase e clique em RUN
--- Base Legal: Resolução CMN nº 5.272/2025 (de 18/12/2025)
--- ==============================================================================
-
--- 1. EXTENSÕES & DOMÍNIOS
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
