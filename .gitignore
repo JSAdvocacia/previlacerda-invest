@@ -6,7 +6,8 @@ build/
 
 # Variáveis de ambiente secretas
 .env
-.env.local
+.env.*
+*.env
 *.log
 
 # IDE
