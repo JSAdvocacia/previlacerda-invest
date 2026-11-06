@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Sidebar } from './components/Sidebar';
 import { Navbar } from './components/Navbar';
-import { RightSidebar } from './components/RightSidebar';
 import { Dashboard } from './components/Dashboard';
 import { ActivePortfolioView } from './components/ActivePortfolioView';
 import { InstituteProfileView } from './components/InstituteProfileView';
@@ -17,11 +17,23 @@ import { DairUploadModal } from './components/DairUploadModal';
 import { User, Asset, AssetMetrics, PortfolioOverview, InstituteProfile, DairExtractedData } from './types';
 import { api, getCurrentUser, setCurrentUser } from './services/api';
 import { PREVI_LACERDA_OFFICIAL_PROFILE } from './services/dairParserService';
+import { OFFICIAL_REGULATION_URL, OFFICIAL_REGULATION_NORM } from './services/mockData';
+import { 
+  ChevronRight, 
+  ExternalLink, 
+  ShieldCheck, 
+  Sparkles, 
+  AlertCircle,
+  FileCheck2,
+  Calendar,
+  CheckCircle2,
+  Clock
+} from 'lucide-react';
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [currentUserState, setCurrentUserState] = useState<User>(getCurrentUser());
-  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [institute, setInstitute] = useState<InstituteProfile>(PREVI_LACERDA_OFFICIAL_PROFILE);
   const [overview, setOverview] = useState<PortfolioOverview | null>(null);
@@ -63,12 +75,10 @@ export function App() {
     }
   };
 
-  const handleLoginSuccess = (user: User, mustChangePassword: boolean) => {
+  const handleLoginSuccess = (user: User) => {
     setCurrentUserState(user);
     setCurrentUser(user);
-    if (mustChangePassword) {
-      setIsChangePasswordModalOpen(true);
-    }
+    setIsChangePasswordModalOpen(false);
   };
 
   const handlePasswordChanged = () => {
@@ -120,23 +130,118 @@ export function App() {
     }
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Bom dia';
+    if (hour < 18) return 'Boa tarde';
+    return 'Boa noite';
+  };
+
+  const getFormattedDate = () => {
+    const now = new Date();
+    const str = new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    }).format(now);
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
+  const getTabLabel = (tab: string) => {
+    switch (tab) {
+      case 'institute': return 'Instituto (Cadastro & Dados Gerais)';
+      case 'active_portfolio': return 'Gestão de Investimentos > Carteira Ativa';
+      case 'comparator': return 'Gestão de Investimentos > Comparador de Fundos';
+      case 'simulator': return 'Gestão de Investimentos > Simulador Atuarial';
+      case 'audit': return 'Gestão de Investimentos > Trilha de Auditoria';
+      default: return 'Gestão de Investimentos > Dashboard';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans">
-      {/* Top Navbar */}
-      <Navbar
+    <div className="min-h-screen bg-[#f1f5f9] dark:bg-[#070e19] text-slate-800 dark:text-slate-100 flex flex-col font-sans">
+      {/* Barra Lateral Padrão Municipal (Identica ao Modelo Enviado) */}
+      <Sidebar
         currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
+        onSelectTab={(tab) => {
+          setCurrentTab(tab);
+          setIsSidebarOpen(false);
+        }}
         currentUser={currentUserState}
-        onOpenCvmModal={() => setIsCvmModalOpen(true)}
-        onOpenNewAssetModal={() => setIsNewAssetModalOpen(true)}
-        onOpenUserManagementModal={() => setIsUserManagementModalOpen(true)}
-        onOpenLoginModal={() => setIsLoginModalOpen(true)}
         onOpenDairUpload={() => setIsDairUploadOpen(true)}
-        onToggleRightSidebar={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+        onOpenAssetRegister={() => setIsNewAssetModalOpen(true)}
+        onOpenUserManagement={() => setIsUserManagementModalOpen(true)}
+        onOpenLoginModal={() => setIsLoginModalOpen(true)}
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
-      {/* Main Content Area with Right Padding for the Right-Side Menu */}
-      <div className="flex-1 flex flex-col lg:pr-72 transition-all duration-300">
+      {/* Conteúdo Principal (Recuado à esquerda para acomodar a Sidebar) */}
+      <div className="flex-1 flex flex-col lg:pl-72 transition-all duration-300">
+        {/* Top Navbar com Breadcrumbs e Botão Mobile */}
+        <Navbar
+          currentTab={currentTab}
+          setCurrentTab={setCurrentTab}
+          currentUser={currentUserState}
+          onOpenCvmModal={() => setIsCvmModalOpen(true)}
+          onOpenNewAssetModal={() => setIsNewAssetModalOpen(true)}
+          onOpenUserManagementModal={() => setIsUserManagementModalOpen(true)}
+          onOpenLoginModal={() => setIsLoginModalOpen(true)}
+          onOpenDairUpload={() => setIsDairUploadOpen(true)}
+          onToggleRightSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        />
+
+        {/* Banner de Boas-Vindas Padrão do Sistema Municipal */}
+        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-8 py-5">
+          <div className="max-w-7xl mx-auto">
+            {/* Breadcrumb de Localização */}
+            <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium mb-1">
+              <span>Localização</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+              <span>Início</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+              <span className="text-blue-600 dark:text-blue-400 font-bold">
+                {getTabLabel(currentTab)}
+              </span>
+            </div>
+
+            {/* Saudação ao Jansen */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                  {getGreeting()}, Jansen
+                </h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {getFormattedDate()}. Gestão fiduciária do Regime Próprio de Previdência Social.
+                </p>
+              </div>
+
+              {/* Badges de Destaque Rápido */}
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <a
+                  href={OFFICIAL_REGULATION_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-900 font-bold hover:bg-blue-100 transition-colors shadow-xs"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Resolução CMN nº 5.272/2025</span>
+                  <ExternalLink className="w-3 h-3 text-blue-400" />
+                </a>
+
+                <button
+                  onClick={() => setIsCvmModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-900 font-bold hover:bg-emerald-100 transition-colors shadow-xs"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Robô CVM: Ativo (D-1)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Área Principal de Conteúdo */}
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {currentTab === 'dashboard' && overview && (
             <Dashboard
@@ -185,13 +290,13 @@ export function App() {
           )}
         </main>
 
-        {/* Footer Fiduciário */}
+        {/* Rodapé Fiduciário */}
         <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs py-6 mt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
               <span className="font-bold text-white">PREVI-LACERDA</span> - Instituto de Previdência dos Servidores Públicos de Pontes e Lacerda - MT
               <div className="text-[11px] text-slate-500 mt-0.5">
-                Módulo: Gestão de Investimentos RPPS • Resolução CMN nº 5.272/2025.
+                Módulo 1: Instituto • Módulo 2: Gestão de Investimentos RPPS • Resolução CMN nº 5.272/2025.
               </div>
             </div>
             <div className="text-right text-[11px] text-slate-500">
@@ -200,21 +305,6 @@ export function App() {
           </div>
         </footer>
       </div>
-
-      {/* Menus na Lateral Direita (Right-hand Sidebar) */}
-      <RightSidebar
-        currentTab={currentTab}
-        onSelectTab={(tab) => {
-          setCurrentTab(tab);
-          setIsRightSidebarOpen(false);
-        }}
-        currentUser={currentUserState}
-        onOpenDairUpload={() => setIsDairUploadOpen(true)}
-        onOpenAssetRegister={() => setIsNewAssetModalOpen(true)}
-        onOpenUserManagement={() => setIsUserManagementModalOpen(true)}
-        isOpen={isRightSidebarOpen}
-        onToggle={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-      />
 
       {/* Modals Operacionais */}
       <DairUploadModal
@@ -244,7 +334,7 @@ export function App() {
         userRole={currentUserState.role}
       />
 
-      {/* Modals de Autenticação, Troca de Senha e Gestão Master */}
+      {/* Modals de Autenticação e Gestão Master */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
