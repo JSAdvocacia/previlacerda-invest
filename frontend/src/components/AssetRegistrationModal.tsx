@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShieldAlert, CheckCircle2, Lock } from 'lucide-react';
+import { X, ShieldAlert, CheckCircle2, Lock, UploadCloud, FileText } from 'lucide-react';
 import { UserRole, AssetClass, RiskLevel } from '../types';
 
 interface AssetRegistrationModalProps {
@@ -7,13 +7,15 @@ interface AssetRegistrationModalProps {
   onClose: () => void;
   userRole: UserRole;
   onSuccess: (newAsset: any) => void;
+  onOpenDairUpload?: () => void;
 }
 
 export const AssetRegistrationModal: React.FC<AssetRegistrationModalProps> = ({
   isOpen,
   onClose,
   userRole,
-  onSuccess
+  onSuccess,
+  onOpenDairUpload
 }) => {
   const [formData, setFormData] = useState({
     cnpj: '',
@@ -83,7 +85,32 @@ export const AssetRegistrationModal: React.FC<AssetRegistrationModalProps> = ({
 
         {/* Alerta de Governança e RBAC */}
         <div className="px-6 pt-4">
-          {isReadOnly ? (
+          {/* Opção Rápida de Importar DAIR */}
+        {onOpenDairUpload && !isReadOnly && (
+          <div className="bg-emerald-50 border-b border-emerald-200 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm">
+                <UploadCloud className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-emerald-900">Importação Automática via DAIR (CADPREV)</p>
+                <p className="text-[11px] text-emerald-700">Importe o PDF oficial para cadastrar todos os fundos e títulos automaticamente.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenDairUpload();
+              }}
+              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors whitespace-nowrap"
+            >
+              Importar DAIR (PDF)
+            </button>
+          </div>
+        )}
+
+        {isReadOnly ? (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2 text-xs text-amber-800 font-medium">
               <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <span>Atenção: O perfil de Auditoria / Conselho Fiscal possui acesso exclusivamente para leitura (Read-Only). O envio de novos cadastros está bloqueado.</span>

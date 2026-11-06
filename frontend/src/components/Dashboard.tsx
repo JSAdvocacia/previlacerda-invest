@@ -60,13 +60,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/15 text-right flex flex-col items-end">
-            <span className="text-xs text-slate-300 font-medium">Patrimônio Líquido Sob Gestão (PL)</span>
+            <span className="text-xs text-slate-300 font-medium">Total Geral da Carteira (DAIR)</span>
             <span className="text-2xl md:text-3xl font-black text-white mt-0.5 tracking-tight">
-              {formatCurrency(overview.totalAum)}
+              {formatCurrency(overview.totalGeralCarteira || 143573608.60)}
             </span>
-            <span className="text-xs text-emerald-400 font-bold mt-1 flex items-center gap-1">
-              <ArrowUpRight className="w-3.5 h-3.5" /> +{overview.returns.year}% acumulado no ano
-            </span>
+            <div className="flex items-center gap-3 mt-1.5 text-xs">
+              <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <ArrowUpRight className="w-3.5 h-3.5" /> +{overview.returns.month}% no mês
+              </span>
+              <span className="text-slate-400">•</span>
+              <span className="text-blue-200">
+                Res. CMN: {formatCurrency(overview.totalAum || 139605063.91)}
+              </span>
+            </div>
           </div>
         </div>
       </div>

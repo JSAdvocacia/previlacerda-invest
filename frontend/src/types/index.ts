@@ -20,7 +20,8 @@ export type AssetClass =
   | 'INVESTIMENTO_EXTERIOR' 
   | 'MULTIMERCADO' 
   | 'IMOVEIS_FII' 
-  | 'TITULO_PUBLICO_DIRETO';
+  | 'TITULO_PUBLICO_DIRETO'
+  | 'EMPRESTIMOS_CONSIGNADOS';
 
 export type RiskLevel = 'MUITO_BAIXO' | 'BAIXO' | 'MEDIO' | 'ALTO' | 'MUITO_ALTO';
 export type AssetStatus = 'PENDENTE_APROVACAO' | 'APROVADO' | 'REJEITADO' | 'INATIVO';
@@ -48,6 +49,55 @@ export interface Asset {
   latest_quota?: number;
   latest_pl?: number;
   latest_quote_date?: string;
+  monthly_return_pct?: number;
+  total_invested?: number;
+  weight_pct?: number;
+}
+
+export interface CommitteeMember {
+  cpf: string;
+  name: string;
+  startDate: string;
+  role?: string;
+}
+
+export interface InstituteProfile {
+  enteName: string;
+  enteCnpj: string;
+  uf: string;
+  competency: string;
+  proGestaoLevel: string;
+  enteRepresentativeName: string;
+  enteRepresentativeCpf: string;
+  gestoraUnitName: string;
+  gestoraRepresentativeName: string;
+  gestoraRepresentativeCpf: string;
+  resourceManagerName: string;
+  resourceManagerCpf: string;
+  resourceManagerCert: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  committeeMembers: CommitteeMember[];
+  deliberativeCouncil: CommitteeMember[];
+  fiscalCouncil: CommitteeMember[];
+  lastDairImportAt?: string;
+}
+
+export interface DairExtractedData {
+  institute: Partial<InstituteProfile>;
+  portfolioSummary: {
+    totalGeneral: number;
+    totalCarteiraCmn: number;
+    saldoContaCorrente: number;
+    rendaFixaTotal: number;
+    rendaVariavelTotal: number;
+    estruturadosTotal: number;
+    consignadosTotal: number;
+    rentabilidadeMesPct: number;
+    competency: string;
+  };
+  assets: Asset[];
 }
 
 export interface AssetMetrics {
@@ -90,6 +140,8 @@ export interface AssetMetrics {
 
 export interface PortfolioOverview {
   totalAum: number;
+  totalGeralCarteira: number;
+  saldoContaCorrente: number;
   allocationsCount: number;
   regulationNorm: string;
   regulationUrl: string;

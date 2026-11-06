@@ -6,10 +6,23 @@ import {
   mockCvmLogs,
   mockUsers
 } from './mockData';
-import { Asset, AssetMetrics, PortfolioOverview, AuditLog, CvmLog, User, UserRole } from '../types';
+import { PREVI_LACERDA_OFFICIAL_PROFILE, PREVI_LACERDA_OFFICIAL_ASSETS } from './dairParserService';
+import { Asset, AssetMetrics, PortfolioOverview, AuditLog, CvmLog, User, UserRole, InstituteProfile, DairExtractedData } from '../types';
 
 let currentUser: User = mockUsers[0]; // Default: prof.jan100@gmail.com (Master Admin)
 let usersListState: User[] = [...mockUsers];
+let currentInstituteState: InstituteProfile = { ...PREVI_LACERDA_OFFICIAL_PROFILE };
+let assetsListState: Asset[] = [...PREVI_LACERDA_OFFICIAL_ASSETS];
+let portfolioOverviewState: PortfolioOverview = {
+  ...mockPortfolioOverview,
+  totalGeralCarteira: 143573608.60,
+  totalAum: 139605063.91,
+  saldoContaCorrente: 3968544.69,
+  returns: {
+    ...mockPortfolioOverview.returns,
+    month: 1.67
+  }
+};
 
 export const setCurrentUser = (user: User) => {
   currentUser = user;
@@ -164,7 +177,7 @@ export const api = {
       const res = await fetch('/api/v1/portfolio/dashboard');
       if (res.ok) return await res.json();
     } catch {}
-    return mockPortfolioOverview;
+    return portfolioOverviewState;
   },
 
   async getAssets(): Promise<Asset[]> {
@@ -172,7 +185,59 @@ export const api = {
       const res = await fetch('/api/v1/assets');
       if (res.ok) return await res.json();
     } catch {}
-    return mockAssets;
+    return assetsListState;
+  },
+
+  async getInstituteProfile(): Promise<InstituteProfile> {
+    try {
+      const res = await fetch('/api/v1/institute/profile');
+      if (res.ok) return await res.json();
+    } catch {}
+    return currentInstituteState;
+  },
+
+  async updateInstituteProfile(updated: InstituteProfile): Promise<InstituteProfile> {
+    try {
+      const res = await fetch('/api/v1/institute/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+      if (res.ok) {
+        currentInstituteState = await res.json();
+        return currentInstituteState;
+      }
+    } catch {}
+    currentInstituteState = { ...updated };
+    return currentInstituteState;
+  },
+
+  async importDairData(data: DairExtractedData): Promise<{ success: boolean; message: string }> {
+    if (data.institute) {
+      currentInstituteState = {
+        ...currentInstituteState,
+        ...data.institute
+      };
+    }
+    if (data.assets && data.assets.length > 0) {
+      assetsListState = [...data.assets];
+    }
+    if (data.portfolioSummary) {
+      portfolioOverviewState = {
+        ...portfolioOverviewState,
+        totalGeralCarteira: data.portfolioSummary.totalGeneral,
+        totalAum: data.portfolioSummary.totalCarteiraCmn,
+        saldoContaCorrente: data.portfolioSummary.saldoContaCorrente,
+        returns: {
+          ...portfolioOverviewState.returns,
+          month: data.portfolioSummary.rentabilidadeMesPct
+        }
+      };
+    }
+    return {
+      success: true,
+      message: 'DAIR importado com sucesso! Dados do Instituto e Carteira atualizados.'
+    };
   },
 
   async getAssetMetrics(id: string): Promise<AssetMetrics | null> {
