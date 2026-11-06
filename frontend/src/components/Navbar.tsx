@@ -57,16 +57,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
       {/* Top Banner Institucional - Base Legal CMN 5.272/2025 & Robô CVM */}
-      <div className="bg-[#0b1626] text-white text-xs py-1.5 px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div className="bg-slate-100 text-slate-700 text-xs py-1.5 px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 border-b border-slate-200">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <span className="font-bold text-emerald-400">PREVI-LACERDA (RPPS)</span>
-          <span className="text-slate-600 hidden sm:inline">|</span>
-          <span className="text-slate-300 text-[11px]">Base Legal Vigente:</span>
+          <span className="font-bold text-emerald-700">PREVI-LACERDA (RPPS)</span>
+          <span className="text-slate-400 hidden sm:inline">|</span>
+          <span className="text-slate-600 text-[11px]">Base Legal Vigente:</span>
           <a
             href={OFFICIAL_REGULATION_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white px-2 py-0.5 rounded text-[11px] font-semibold border border-blue-500/40 transition-colors"
+            className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-0.5 rounded text-[11px] font-semibold border border-blue-200 transition-colors"
             title="Acessar documento oficial da Resolução CMN nº 5.272/2025"
           >
             <span>{OFFICIAL_REGULATION_NORM}</span>
@@ -78,19 +78,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenCvmModal}
-            className="flex items-center gap-1.5 text-[11px] bg-slate-800/90 hover:bg-slate-700 px-2.5 py-1 rounded text-emerald-300 transition-colors"
+            className="flex items-center gap-1.5 text-[11px] bg-white hover:bg-slate-50 border border-slate-200 px-2.5 py-1 rounded text-slate-700 shadow-xs transition-colors"
             title="Ver telemetria do robô diário da CVM"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>CVM Automática: <strong>Ativa (D-1)</strong></span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>CVM Automática: <strong className="text-emerald-700">Ativa (D-1)</strong></span>
           </button>
 
           <button
             onClick={onOpenLoginModal}
-            className="flex items-center gap-1.5 bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-[11px] px-2.5 py-1 rounded transition-colors"
+            className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[11px] px-2.5 py-1 rounded shadow-xs transition-colors"
             title="Sessão autenticada"
           >
-            <LogIn className="w-3 h-3 text-blue-400" />
+            <LogIn className="w-3 h-3 text-blue-600" />
             <span className="truncate max-w-[140px] font-medium">{currentUser.email}</span>
           </button>
         </div>
