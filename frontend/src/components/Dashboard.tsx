@@ -32,18 +32,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Banner de Boas-Vindas e Base Legal Oficial */}
-      <div className="bg-gradient-to-r from-teal-900 via-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Banner de Boas-Vindas e Base Legal Oficial (Layout Clean e Leve) */}
+      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs text-slate-800">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 bg-teal-500/20 text-teal-300 text-xs px-3 py-1 rounded-full mb-2 font-semibold border border-teal-500/30">
+            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full mb-2 font-semibold border border-blue-200">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Base Legal Atualizada:</span>
               <a
                 href={OFFICIAL_REGULATION_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline font-bold text-white hover:text-teal-200 inline-flex items-center gap-1"
+                className="underline font-bold text-blue-800 hover:text-blue-900 inline-flex items-center gap-1"
                 title="Acessar íntegra da Resolução CMN 5.272/2025"
               >
                 <span>{OFFICIAL_REGULATION_NORM}</span>
@@ -51,25 +51,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </a>
             </div>
 
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
               Carteira Geral de Investimentos
             </h1>
-            <p className="text-slate-300 text-sm mt-1 max-w-2xl">
+            <p className="text-slate-500 text-xs mt-1 max-w-2xl">
               Monitoramento fiduciário contínuo do patrimônio previdenciário municipal de Pontes e Lacerda - MT em estrita aderência à nova regulamentação previdenciária.
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/15 text-right flex flex-col items-end">
-            <span className="text-xs text-slate-300 font-medium">Total Geral da Carteira (DAIR)</span>
-            <span className="text-2xl md:text-3xl font-black text-white mt-0.5 tracking-tight">
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-right flex flex-col items-end shrink-0 shadow-xs">
+            <span className="text-[11px] text-slate-500 font-semibold">Total Geral da Carteira (DAIR)</span>
+            <span className="text-2xl font-black text-slate-900 mt-0.5 tracking-tight">
               {formatCurrency(overview.totalGeralCarteira || 143573608.60)}
             </span>
-            <div className="flex items-center gap-3 mt-1.5 text-xs">
-              <span className="text-emerald-400 font-bold flex items-center gap-1">
+            <div className="flex items-center gap-2.5 mt-1 text-xs">
+              <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-bold flex items-center gap-1">
                 <ArrowUpRight className="w-3.5 h-3.5" /> +{overview.returns.month}% no mês
               </span>
               <span className="text-slate-400">•</span>
-              <span className="text-blue-200">
+              <span className="text-slate-600 text-[11px] font-semibold">
                 Res. CMN: {formatCurrency(overview.totalAum || 139605063.91)}
               </span>
             </div>

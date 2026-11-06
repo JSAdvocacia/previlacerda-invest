@@ -75,6 +75,13 @@ export interface Asset {
   weight_pct?: number;
 }
 
+export type ProGestaoLevel = 
+  | 'SEM_PRO_GESTAO' 
+  | 'NIVEL_I' 
+  | 'NIVEL_II' 
+  | 'NIVEL_III' 
+  | 'NIVEL_IV';
+
 export interface CommitteeMember {
   cpf: string;
   name: string;
@@ -87,7 +94,8 @@ export interface InstituteProfile {
   enteCnpj: string;
   uf: string;
   competency: string;
-  proGestaoLevel: string;
+  proGestaoLevel: ProGestaoLevel | string;
+  proGestaoDeadline?: string;
   enteRepresentativeName: string;
   enteRepresentativeCpf: string;
   gestoraUnitName: string;

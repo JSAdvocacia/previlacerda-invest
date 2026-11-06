@@ -115,22 +115,20 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12">
-      {/* Top Banner da Carteira Ativa */}
-      <div className="bg-gradient-to-r from-[#0b1626] via-slate-900 to-[#0b1626] border border-slate-800 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-full bg-blue-600/10 blur-3xl pointer-events-none" />
-
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
+      {/* Top Banner da Carteira Ativa (Layout Clean e Leve) */}
+      <div className="bg-white border border-slate-200 rounded-xl p-5 text-slate-800 shadow-xs">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 bg-blue-900/60 text-blue-300 border border-blue-700/60 px-3 py-1 rounded-full text-xs font-semibold mb-2">
+            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold mb-2">
               <Briefcase className="w-3.5 h-3.5" />
               <span>Menu: Carteira Ativa</span>
               <span className="text-slate-400">•</span>
               <span>PREVI-LACERDA</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+            <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
               Produtos da Carteira Ativa
             </h1>
-            <p className="text-sm text-slate-300 mt-1 max-w-2xl">
+            <p className="text-xs text-slate-500 mt-1 max-w-2xl">
               Detalhamento de todos os fundos de investimentos, títulos e carteiras registradas com seus limites de enquadramento pela Resolução CMN nº 5.272/2025.
             </p>
           </div>
@@ -138,7 +136,7 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={onOpenDairUpload}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-600/20 transition-all"
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-xs transition-colors"
             >
               <UploadCloud className="w-4 h-4" />
               <span>Atualizar via DAIR</span>
@@ -147,22 +145,22 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
         </div>
 
         {/* Resumo Numérico Rápido */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-800/80 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-100 text-xs">
           <div>
             <span className="text-slate-400 block text-[11px]">Total Alocado em Ativos:</span>
-            <span className="text-lg font-black text-white">{formatCurrency(totalBalance)}</span>
+            <span className="text-lg font-black text-slate-900">{formatCurrency(totalBalance)}</span>
           </div>
           <div>
             <span className="text-slate-400 block text-[11px]">Total de Ativos Ativos:</span>
-            <span className="text-lg font-black text-blue-400">{assets.length} Produtos</span>
+            <span className="text-lg font-black text-blue-600">{assets.length} Produtos</span>
           </div>
           <div>
             <span className="text-slate-400 block text-[11px]">Enquadramento CMN:</span>
-            <span className="text-lg font-black text-emerald-400">100% Regular</span>
+            <span className="text-lg font-black text-emerald-600">100% Regular</span>
           </div>
           <div>
             <span className="text-slate-400 block text-[11px]">Competência Vigente:</span>
-            <span className="text-lg font-black text-slate-200">09/2026 (DAIR)</span>
+            <span className="text-lg font-black text-slate-700">09/2026 (DAIR)</span>
           </div>
         </div>
       </div>
@@ -237,17 +235,17 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-[#0b1626] text-white text-[11px] font-bold uppercase tracking-wider border-b border-slate-800">
+            <thead className="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="py-3.5 px-4">Ativo / CNPJ</th>
-                <th className="py-3.5 px-4">Enquadramento CMN</th>
-                <th className="py-3.5 px-4">Gestor / Admin</th>
-                <th className="py-3.5 px-4 text-center">Benchmark</th>
-                <th className="py-3.5 px-4 text-center">Risco</th>
-                <th className="py-3.5 px-4 text-right">Saldo Aplicado</th>
-                <th className="py-3.5 px-4 text-right">% Carteira</th>
-                <th className="py-3.5 px-4 text-right">Rentab. Mês</th>
-                <th className="py-3.5 px-4 text-center">Ações</th>
+                <th className="py-3 px-4">Ativo / CNPJ</th>
+                <th className="py-3 px-4">Enquadramento CMN</th>
+                <th className="py-3 px-4">Gestor / Admin</th>
+                <th className="py-3 px-4 text-center">Benchmark</th>
+                <th className="py-3 px-4 text-center">Risco</th>
+                <th className="py-3 px-4 text-right">Saldo Aplicado</th>
+                <th className="py-3 px-4 text-right">% Carteira</th>
+                <th className="py-3 px-4 text-right">Rentab. Mês</th>
+                <th className="py-3 px-4 text-center">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
