@@ -60,16 +60,17 @@ export const api = {
 
       // Verificação do master
       if (cleanEmail === 'prof.jan100@gmail.com') {
-        if (password !== '123456' && !found.password_changed_at) {
-          throw new Error('Senha incorreta para o usuário Master.');
+        if (password !== 'Capivaraalbin@01') {
+          throw new Error('Senha incorreta para o usuário Master. Utilize a senha cadastrada.');
         }
       }
 
+      found.must_change_password = false;
       currentUser = found;
       return {
         user: found,
         token: `mock_jwt_token_${found.id}`,
-        mustChangePassword: Boolean(found.must_change_password)
+        mustChangePassword: false
       };
     }
   },
@@ -163,13 +164,26 @@ export const api = {
       id: `usr_${Date.now()}`,
       name: data.name || '',
       email: data.email || '',
-      role: data.role || 'COMITE_INVESTIMENTOS',
+      role: data.role || 'Membro do Comitê',
       cpf: data.cpf || '',
       is_email_verified: Boolean(data.is_email_verified),
-      must_change_password: true
+      must_change_password: false
     };
     usersListState.push(newUser);
     return newUser;
+  },
+
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      await fetch(`/api/v1/auth/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer mock_jwt_token_${currentUser.id}`
+        }
+      });
+    } catch {}
+
+    usersListState = usersListState.filter(u => u.id !== userId);
   },
 
   async getPortfolioDashboard(): Promise<PortfolioOverview> {

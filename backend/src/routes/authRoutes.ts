@@ -29,9 +29,17 @@ router.post(
 // Atribuição de Perfis RBAC (EXCLUSIVO MASTER ADMIN: prof.jan100@gmail.com)
 router.patch(
   '/users/:id/role',
-  requireRoles(['MASTER_ADMIN']),
+  requireRoles(['MASTER_ADMIN', 'Administrador']),
   auditAction('users', 'ASSIGN_USER_ROLE'),
   AuthController.assignUserRole
+);
+
+// Exclusão de Usuários (EXCLUSIVO MASTER ADMIN)
+router.delete(
+  '/users/:id',
+  requireRoles(['MASTER_ADMIN', 'Administrador']),
+  auditAction('users', 'DELETE_USER'),
+  AuthController.deleteUser
 );
 
 export default router;

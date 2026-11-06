@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { RightSidebar } from './components/RightSidebar';
 import { Dashboard } from './components/Dashboard';
+import { ActivePortfolioView } from './components/ActivePortfolioView';
 import { InstituteProfileView } from './components/InstituteProfileView';
 import { AssetComparator } from './components/AssetComparator';
 import { InvestmentSimulator } from './components/InvestmentSimulator';
@@ -37,9 +38,7 @@ export function App() {
 
   // Auth Modals state
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(
-    Boolean(currentUserState.must_change_password)
-  );
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isUserManagementModalOpen, setIsUserManagementModalOpen] = useState(false);
 
   useEffect(() => {
@@ -145,6 +144,15 @@ export function App() {
               assets={assets}
               onOpenReport={handleOpenReport}
               onNavigateToComparator={handleNavigateToComparator}
+            />
+          )}
+
+          {currentTab === 'active_portfolio' && (
+            <ActivePortfolioView
+              assets={assets}
+              onOpenReport={handleOpenReport}
+              onNavigateToComparator={handleNavigateToComparator}
+              onOpenDairUpload={() => setIsDairUploadOpen(true)}
             />
           )}
 

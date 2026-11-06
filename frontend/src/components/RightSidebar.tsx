@@ -112,6 +112,23 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           </button>
 
           <button
+            onClick={() => onSelectTab('active_portfolio')}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all ${
+              currentTab === 'active_portfolio'
+                ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-600/30'
+                : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Layers className="w-4 h-4 text-blue-400" />
+              <span className="font-semibold text-white">Carteira Ativa</span>
+            </div>
+            <span className="text-[10px] bg-blue-900/60 text-blue-300 border border-blue-700/60 px-1.5 py-0.5 rounded font-mono">
+              Todos Ativos
+            </span>
+          </button>
+
+          <button
             onClick={() => onSelectTab('institute')}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all ${
               currentTab === 'institute'
@@ -197,7 +214,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             <span>Cadastrar Novo Ativo</span>
           </button>
 
-          {currentUser?.role === 'MASTER_ADMIN' && (
+          {(currentUser?.role === 'Administrador' || currentUser?.role === 'MASTER_ADMIN' || currentUser?.email === 'prof.jan100@gmail.com') && (
             <button
               onClick={onOpenUserManagement}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-amber-300 hover:bg-amber-950/40 hover:text-amber-200 border border-amber-900/40 transition-all"

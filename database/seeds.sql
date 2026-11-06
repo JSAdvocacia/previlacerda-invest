@@ -29,24 +29,18 @@ INSERT INTO market_benchmarks (id, code, name, description) VALUES
 ON CONFLICT (code) DO NOTHING;
 
 -- 3. Usuários do Sistema com Perfis RBAC
--- Senha inicial '123456' hasheada com bcrypt: $2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y
--- O usuário Master prof.jan100@gmail.com possui must_change_password = TRUE
+-- Usuário MASTER: prof.jan100@gmail.com com senha 'Capivaraalbin@01'
+-- Demais usuários removidos conforme instrução fiduciária do RPPS
 INSERT INTO users (
     id, name, email, password_hash, role, cpf, registration_number, 
     is_active, is_email_verified, email_verified_at, must_change_password
 ) VALUES
--- Usuário MASTER: Acesso total e gestão/atribuição de perfis
-('00000000-0000-0000-0000-000000000000', 'Prof. Jansen (Administrador Master)', 'prof.jan100@gmail.com', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'MASTER_ADMIN', '000.111.222-33', 'MST-001', TRUE, TRUE, CURRENT_TIMESTAMP, TRUE),
-
--- Usuários Institucionais do PREVI-LACERDA
-('11111111-1111-1111-1111-111111111111', 'Dr. Carlos Eduardo Guimarães', 'diretoria@previlacerda.mt.gov.br', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'DIRETORIA_EXECUTIVA', '123.456.789-01', 'DIR-001', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE),
-('22222222-2222-2222-2222-222222222222', 'Mariana Alencar Souza', 'comite@previlacerda.mt.gov.br', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'COMITE_INVESTIMENTOS', '234.567.890-12', 'COM-014', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE),
-('33333333-3333-3333-3333-333333333333', 'Roberto Mendonça (Auditor Fiscal)', 'auditoria@previlacerda.mt.gov.br', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'AUDITORIA_CONSELHO_FISCAL', '345.678.901-23', 'AUD-007', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE)
+('00000000-0000-0000-0000-000000000000', 'Prof. Jansen (Administrador Master)', 'prof.jan100@gmail.com', '$2a$10$7aJzZqU17s8m/xX6W5G4uOGhGkYgI92vB/7sW5p1u7a.QzQvR2rKi', 'MASTER_ADMIN', '559.218.411-53', 'MST-001', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE)
 ON CONFLICT (email) DO UPDATE SET
-  password_hash = EXCLUDED.password_hash,
-  role = EXCLUDED.role,
-  must_change_password = EXCLUDED.must_change_password,
-  is_email_verified = EXCLUDED.is_email_verified;
+  password_hash = '$2a$10$7aJzZqU17s8m/xX6W5G4uOGhGkYgI92vB/7sW5p1u7a.QzQvR2rKi',
+  role = 'MASTER_ADMIN',
+  must_change_password = FALSE,
+  is_email_verified = TRUE;
 
 -- 4. Carteira Consolidada do PREVI-LACERDA
 INSERT INTO portfolios (id, code, name, entity_name, actuarial_rate_pct, base_benchmark) VALUES

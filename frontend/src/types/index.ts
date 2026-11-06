@@ -1,8 +1,29 @@
 export type UserRole = 
+  | 'Administrador'
+  | 'Diretor Executivo'
+  | 'Membro do Comitê'
+  | 'Gestor de Recursos'
+  | 'Membro de Conselho'
+  | 'Presidente do Conselho'
+  | 'Membro do Conselho Fiscal'
+  | 'Presidente do Comitê'
+  | 'Presidente do C. Fiscal'
   | 'MASTER_ADMIN' 
   | 'DIRETORIA_EXECUTIVA' 
   | 'COMITE_INVESTIMENTOS' 
   | 'AUDITORIA_CONSELHO_FISCAL';
+
+export const USER_ROLES_LIST: { id: UserRole; label: string; description: string }[] = [
+  { id: 'Administrador', label: 'Administrador', description: 'Acesso total a todas as configurações, usuários e carteira' },
+  { id: 'Diretor Executivo', label: 'Diretor Executivo', description: 'Aprovação de ativos, relatórios executivos e gestão do instituto' },
+  { id: 'Presidente do Comitê', label: 'Presidente do Comitê', description: 'Presidência das deliberações e propostas de alocação de investimentos' },
+  { id: 'Membro do Comitê', label: 'Membro do Comitê', description: 'Análise de fundos, simulações atuariais e cadastro de investimentos' },
+  { id: 'Gestor de Recursos', label: 'Gestor de Recursos', description: 'Gestão técnica de ativos e certificação CP RPPS fiduciária' },
+  { id: 'Presidente do Conselho', label: 'Presidente do Conselho', description: 'Supervisão executiva do Conselho Deliberativo RPPS' },
+  { id: 'Membro de Conselho', label: 'Membro de Conselho', description: 'Acompanhamento do Conselho Deliberativo' },
+  { id: 'Presidente do C. Fiscal', label: 'Presidente do C. Fiscal', description: 'Fiscalização contábil, financeira e auditoria fiduciária' },
+  { id: 'Membro do Conselho Fiscal', label: 'Membro do Conselho Fiscal', description: 'Fiscalização e visualização irrestrita da trilha de auditoria' }
+];
 
 export interface User {
   id: string;

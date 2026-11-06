@@ -8,37 +8,10 @@ export const mockUsers: User[] = [
     id: '00000000-0000-0000-0000-000000000000',
     name: 'Prof. Jansen (Administrador Master)',
     email: 'prof.jan100@gmail.com',
-    role: 'MASTER_ADMIN',
-    cpf: '000.111.222-33',
+    role: 'Administrador',
+    cpf: '559.218.411-53',
     is_email_verified: true,
-    must_change_password: true // Exigência expressa: troca no primeiro acesso
-  },
-  {
-    id: '11111111-1111-1111-1111-111111111111',
-    name: 'Dr. Carlos E. Guimarães',
-    email: 'diretoria@previlacerda.mt.gov.br',
-    role: 'DIRETORIA_EXECUTIVA',
-    cpf: '123.456.789-01',
-    is_email_verified: true,
-    must_change_password: false
-  },
-  {
-    id: '22222222-2222-2222-2222-222222222222',
-    name: 'Mariana Alencar Souza',
-    email: 'comite@previlacerda.mt.gov.br',
-    role: 'COMITE_INVESTIMENTOS',
-    cpf: '234.567.890-12',
-    is_email_verified: true,
-    must_change_password: false
-  },
-  {
-    id: '33333333-3333-3333-3333-333333333333',
-    name: 'Roberto Mendonça (Auditor Fiscal)',
-    email: 'auditoria@previlacerda.mt.gov.br',
-    role: 'AUDITORIA_CONSELHO_FISCAL',
-    cpf: '345.678.901-23',
-    is_email_verified: true,
-    must_change_password: false
+    must_change_password: false // Cancelada a exigência de troca de senha inicial
   }
 ];
 

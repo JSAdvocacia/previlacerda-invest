@@ -15,7 +15,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   onLoginSuccess
 }) => {
   const [email, setEmail] = useState('prof.jan100@gmail.com');
-  const [password, setPassword] = useState('123456');
+  const [password, setPassword] = useState('Capivaraalbin@01');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -114,48 +114,27 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             {loading ? 'Autenticando...' : 'Entrar no Sistema'}
           </button>
 
-          {/* Atalhos Rápidos para Demonstração */}
+          {/* Credencial Master Autorizada */}
           <div className="pt-4 border-t border-slate-100">
             <span className="text-[10px] font-bold uppercase text-slate-400 block mb-2">
-              Acesso Rápido para Avaliação:
+              Usuário Master Habilitado:
             </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('prof.jan100@gmail.com', '123456')}
-                className="text-left bg-teal-50 hover:bg-teal-100 text-teal-900 border border-teal-200 p-2 rounded-lg text-[11px] font-bold"
-              >
-                <div>👑 Usuário Master</div>
-                <div className="text-[9px] font-normal text-teal-700">prof.jan100@gmail.com</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('diretoria@previlacerda.mt.gov.br', 'PreviLacerda@2026')}
-                className="text-left bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 p-2 rounded-lg text-[11px] font-bold"
-              >
-                <div>Diretoria Executiva</div>
-                <div className="text-[9px] font-normal text-slate-500">diretoria@previlacerda...</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('comite@previlacerda.mt.gov.br', 'PreviLacerda@2026')}
-                className="text-left bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 p-2 rounded-lg text-[11px] font-bold"
-              >
-                <div>Comitê de Investimentos</div>
-                <div className="text-[9px] font-normal text-slate-500">comite@previlacerda...</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('auditoria@previlacerda.mt.gov.br', 'PreviLacerda@2026')}
-                className="text-left bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 p-2 rounded-lg text-[11px] font-bold"
-              >
-                <div>Conselho Fiscal</div>
-                <div className="text-[9px] font-normal text-slate-500">auditoria@previlacerda...</div>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('prof.jan100@gmail.com', 'Capivaraalbin@01')}
+              className="w-full text-left bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 p-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-between"
+            >
+              <div>
+                <div className="flex items-center gap-1.5 text-blue-800">
+                  <span>👑 Administrador Master</span>
+                  <span className="text-[10px] bg-blue-200/60 px-1.5 py-0.5 rounded text-blue-900">Acesso Total</span>
+                </div>
+                <div className="text-[11px] font-normal text-blue-700 mt-0.5">prof.jan100@gmail.com</div>
+              </div>
+              <div className="text-[11px] font-mono text-blue-600 bg-white/80 px-2 py-1 rounded border border-blue-200">
+                Capivaraalbin@01
+              </div>
+            </button>
           </div>
         </form>
       </div>

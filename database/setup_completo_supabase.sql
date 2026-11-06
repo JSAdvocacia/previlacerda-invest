@@ -219,16 +219,17 @@ INSERT INTO cmn_regulations (id, regulation_norm, regulation_url, article_code, 
 (7, 'Resolução CMN nº 5.272/2025', 'https://www.gov.br/previdencia/pt-br/assuntos/rpps/legislacao-dos-rpps/arquivos/2025/ResoluoBCCMNn5.272de18dez2025.pdf', 'Art. 10, I', 'Fundos Multimercado (FIM)', 10.00, 'MULTIMERCADO')
 ON CONFLICT (article_code) DO NOTHING;
 
--- Usuário MASTER: prof.jan100@gmail.com (Senha inicial: 123456, troca forçada no 1º acesso)
+-- Usuário MASTER: prof.jan100@gmail.com (Senha autorizada: Capivaraalbin@01, acesso regular liberado)
+-- Os demais usuários foram excluídos conforme determinação fiduciária do RPPS
 INSERT INTO users (
     id, name, email, password_hash, role, cpf, registration_number, 
     is_active, is_email_verified, email_verified_at, must_change_password
 ) VALUES
-('00000000-0000-0000-0000-000000000000', 'Prof. Jansen (Administrador Master)', 'prof.jan100@gmail.com', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'MASTER_ADMIN', '000.111.222-33', 'MST-001', TRUE, TRUE, CURRENT_TIMESTAMP, TRUE),
-('11111111-1111-1111-1111-111111111111', 'Dr. Carlos Eduardo Guimarães', 'diretoria@previlacerda.mt.gov.br', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'DIRETORIA_EXECUTIVA', '123.456.789-01', 'DIR-001', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE),
-('22222222-2222-2222-2222-222222222222', 'Mariana Alencar Souza', 'comite@previlacerda.mt.gov.br', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'COMITE_INVESTIMENTOS', '234.567.890-12', 'COM-014', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE),
-('33333333-3333-3333-3333-333333333333', 'Roberto Mendonça (Auditor Fiscal)', 'auditoria@previlacerda.mt.gov.br', '$2a$10$wT3WlG5J1o001.XU93c0yej0p8j84RnmWJ6yK7f7W87gK94NgeH2y', 'AUDITORIA_CONSELHO_FISCAL', '345.678.901-23', 'AUD-007', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE)
-ON CONFLICT (email) DO NOTHING;
+('00000000-0000-0000-0000-000000000000', 'Prof. Jansen (Administrador Master)', 'prof.jan100@gmail.com', '$2a$10$7aJzZqU17s8m/xX6W5G4uOGhGkYgI92vB/7sW5p1u7a.QzQvR2rKi', 'MASTER_ADMIN', '559.218.411-53', 'MST-001', TRUE, TRUE, CURRENT_TIMESTAMP, FALSE)
+ON CONFLICT (email) DO UPDATE SET 
+    role = 'MASTER_ADMIN', 
+    password_hash = '$2a$10$7aJzZqU17s8m/xX6W5G4uOGhGkYgI92vB/7sW5p1u7a.QzQvR2rKi',
+    must_change_password = FALSE;
 
 -- Carteira PREVI-LACERDA
 INSERT INTO portfolios (id, code, name, entity_name, actuarial_rate_pct, base_benchmark) VALUES

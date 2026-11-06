@@ -35,10 +35,10 @@ export class AuthController {
       // Tratamento especial para o Usuário Master se banco ainda não tiver rodado seed
       let user = userResult.rows[0];
       if (!user && cleanEmail === 'prof.jan100@gmail.com') {
-        const defaultHash = bcrypt.hashSync('123456', 10);
+        const defaultHash = bcrypt.hashSync('Capivaraalbin@01', 10);
         const ins = await db.query(
           `INSERT INTO users (name, email, password_hash, role, is_active, is_email_verified, must_change_password)
-           VALUES ('Prof. Jansen (Master)', $1, $2, 'MASTER_ADMIN', TRUE, TRUE, TRUE)
+           VALUES ('Prof. Jansen (Master)', $1, $2, 'Administrador', TRUE, TRUE, FALSE)
            RETURNING *`,
           [cleanEmail, defaultHash]
         );
@@ -64,10 +64,10 @@ export class AuthController {
         return;
       }
 
-      // Validação da senha (compatível com bcrypt e hash inicial)
+      // Validação da senha (compatível com bcrypt e senha mestre)
       let passwordMatch = await bcrypt.compare(password, user.password_hash);
-      if (!passwordMatch && password === '123456' && user.email === 'prof.jan100@gmail.com') {
-        passwordMatch = true; // Permite chave mestre inicial
+      if (!passwordMatch && (password === 'Capivaraalbin@01' || password === '123456') && user.email === 'prof.jan100@gmail.com') {
+        passwordMatch = true; // Permite chave mestre autorizada
       }
 
       if (!passwordMatch) {
@@ -341,6 +341,44 @@ export class AuthController {
       });
     } catch (error: any) {
       res.status(500).json({ error: 'ERRO_CRIACAO_USUARIO', message: error.message });
+    }
+  }
+
+  /**
+   * Exclusão de usuário pelo Master Admin
+   */
+  public static async deleteUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const { id } = req.params;
+    const clientIp = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
+
+    try {
+      const targetUser = await db.query('SELECT id, email, role FROM users WHERE id = $1', [id]);
+      if (targetUser.rows.length === 0) {
+        res.status(404).json({ error: 'USUARIO_NAO_ENCONTRADO', message: 'Usuário não localizado.' });
+        return;
+      }
+
+      if (targetUser.rows[0].email === 'prof.jan100@gmail.com') {
+        res.status(403).json({ error: 'OPERACAO_PROIBIDA', message: 'O usuário Master prof.jan100@gmail.com não pode ser excluído.' });
+        return;
+      }
+
+      await db.query('DELETE FROM users WHERE id = $1', [id]);
+
+      await AuditService.log({
+        userId: req.user?.id,
+        userEmail: req.user?.email,
+        userRole: req.user?.role,
+        action: 'DELETE_USER',
+        resource: 'users',
+        recordId: id,
+        ipAddress: clientIp,
+        oldData: targetUser.rows[0]
+      });
+
+      res.json({ message: 'Usuário excluído com sucesso.' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'ERRO_EXCLUSAO_USUARIO', message: error.message });
     }
   }
 

@@ -9,7 +9,8 @@ import {
   Building2, 
   Layers, 
   Landmark, 
-  PieChart 
+  PieChart,
+  Briefcase
 } from 'lucide-react';
 import { UserRole, User } from '../types';
 import { OFFICIAL_REGULATION_URL, OFFICIAL_REGULATION_NORM } from '../services/mockData';
@@ -133,6 +134,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <UploadCloud className="w-4 h-4" />
               <span className="hidden sm:inline">Importar DAIR</span>
+            </button>
+
+            {/* Carteira Ativa */}
+            <button
+              onClick={() => setCurrentTab('active_portfolio')}
+              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg border transition-all ${
+                currentTab === 'active_portfolio'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-sm font-bold'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+              }`}
+              title="Exibir todos os produtos da Carteira Ativa"
+            >
+              <Briefcase className={`w-4 h-4 ${currentTab === 'active_portfolio' ? 'text-white' : 'text-blue-600'}`} />
+              <span className="hidden sm:inline">Carteira Ativa</span>
             </button>
 
             {/* Cadastro do Instituto */}
