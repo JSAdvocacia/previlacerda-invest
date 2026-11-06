@@ -1,0 +1,39 @@
+name: "PREVI-LACERDA - Robô Noturno CVM"
+
+on:
+  schedule:
+    # Executa de Segunda a Sexta às 21:00 BRT (00:00 UTC)
+    - cron: '0 0 * * 2-6'
+  workflow_dispatch: # Permite disparo manual via interface do GitHub
+
+jobs:
+  cvm-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repositório
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/package.json
+
+      - name: Instalar Dependências do Backend
+        run: |
+          cd backend
+          npm ci
+
+      - name: Executar Ingestão Diária CVM
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: production
+        run: |
+          cd backend
+          node -e "
+            const { CvmIngestionService } = require('./dist/services/cvmIngestionService');
+            CvmIngestionService.executeDailySync()
+              .then(res => console.log('Sincronização CVM finalizada com sucesso:', res))
+              .catch(err => { console.error('Erro na sincronização:', err); process.exit(1); });
+          "

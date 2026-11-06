@@ -1,0 +1,16 @@
+# Logs e Dependências
+node_modules/
+dist/
+build/
+.cache/
+
+# Variáveis de ambiente secretas
+.env
+.env.local
+*.log
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
