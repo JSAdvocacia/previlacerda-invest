@@ -18,13 +18,15 @@ interface DashboardProps {
   assets: Asset[];
   onOpenReport: (assetId: string) => void;
   onNavigateToComparator: (assetIds?: string[]) => void;
+  onSelectAsset?: (asset: Asset) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
   overview,
   assets,
   onOpenReport,
-  onNavigateToComparator
+  onNavigateToComparator,
+  onSelectAsset
 }) => {
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
@@ -235,37 +237,46 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
 
-            {/* Gráfico Visual em Barras e Linhas Customizadas */}
-            <div className="h-64 flex items-end gap-2 pt-6 pb-2 px-2">
-              {overview.evolutionHistory.map((item, idx) => {
-                const maxVal = 70000000;
-                const minVal = 60000000;
-                const heightPct = ((item.portfolioValue - minVal) / (maxVal - minVal)) * 100;
-                const cdiHeightPct = ((item.benchmarkCdi - minVal) / (maxVal - minVal)) * 100;
+            {/* Gráfico Visual em Barras e Linhas Customizadas (Auto-Escala Dinâmica Confinada) */}
+            {(() => {
+              const allVals = overview.evolutionHistory.flatMap(h => [h.portfolioValue, h.benchmarkCdi, h.actuarialTarget || 0].filter(v => v > 0));
+              const rawMin = allVals.length > 0 ? Math.min(...allVals) : 125000000;
+              const rawMax = allVals.length > 0 ? Math.max(...allVals) : 142000000;
+              const span = (rawMax - rawMin) || 10000000;
+              const chartMin = Math.max(0, rawMin - span * 0.25);
+              const chartMax = rawMax + span * 0.15;
 
-                return (
-                  <div key={idx} className="flex-1 flex flex-col items-center h-full justify-end group relative">
-                    <div className="absolute -top-12 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 whitespace-nowrap shadow-lg">
-                      <div className="font-bold">{item.month}</div>
-                      <div>Carteira: {formatCurrency(item.portfolioValue)}</div>
-                      <div className="text-sky-300">CDI: {formatCurrency(item.benchmarkCdi)}</div>
-                    </div>
+              return (
+                <div className="h-64 flex items-end gap-2 pt-6 pb-2 px-2 overflow-hidden relative border-b border-slate-100">
+                  {overview.evolutionHistory.map((item, idx) => {
+                    const heightPct = Math.min(95, Math.max(12, ((item.portfolioValue - chartMin) / (chartMax - chartMin)) * 100));
+                    const cdiHeightPct = Math.min(95, Math.max(10, ((item.benchmarkCdi - chartMin) / (chartMax - chartMin)) * 100));
 
-                    <div className="w-full flex items-end justify-center gap-1 h-full">
-                      <div
-                        className="w-1/2 bg-teal-600 rounded-t-sm transition-all group-hover:bg-teal-500"
-                        style={{ height: `${Math.max(heightPct, 15)}%` }}
-                      ></div>
-                      <div
-                        className="w-1/2 bg-sky-200 rounded-t-sm transition-all group-hover:bg-sky-300"
-                        style={{ height: `${Math.max(cdiHeightPct, 12)}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-[10px] text-slate-400 mt-2 font-medium">{item.month.split('/')[0]}</span>
-                  </div>
-                );
-              })}
-            </div>
+                    return (
+                      <div key={idx} className="flex-1 flex flex-col items-center h-full justify-end group relative z-10">
+                        <div className="absolute -top-12 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30 whitespace-nowrap shadow-lg">
+                          <div className="font-bold">{item.month}</div>
+                          <div>Carteira: {formatCurrency(item.portfolioValue)}</div>
+                          <div className="text-sky-300">CDI: {formatCurrency(item.benchmarkCdi)}</div>
+                        </div>
+
+                        <div className="w-full flex items-end justify-center gap-1 h-full">
+                          <div
+                            className="w-1/2 bg-teal-600 rounded-t-sm transition-all group-hover:bg-teal-500 shadow-2xs"
+                            style={{ height: `${heightPct}%` }}
+                          ></div>
+                          <div
+                            className="w-1/2 bg-sky-300 rounded-t-sm transition-all group-hover:bg-sky-400 shadow-2xs"
+                            style={{ height: `${cdiHeightPct}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-[10px] text-slate-400 mt-2 font-medium">{item.month.split('/')[0]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
@@ -285,7 +296,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h2 className="text-base font-bold text-slate-900">Ativos em Carteira (PREVI-LACERDA)</h2>
-            <p className="text-xs text-slate-500">Posição consolidada, valor investido e documentos para o comitê de investimentos.</p>
+            <p className="text-xs text-slate-500">Clique em qualquer produto para abrir a análise completa no padrão Investidor10.</p>
           </div>
 
           <button
@@ -311,53 +322,71 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
-              {overview.allocations.map((item, idx) => (
-                <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-3 px-4">
-                    <div className="font-bold text-slate-900 text-sm">{item.trading_name}</div>
-                    <div className="text-[11px] text-slate-400">CNPJ: {item.cnpj}</div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="text-xs font-semibold text-slate-700">{item.asset_class.replace('_', ' ')}</span>
-                    <div className="text-[11px] text-teal-700 font-medium">{item.article_code}</div>
-                  </td>
-                  <td className="py-3 px-4 text-right font-extrabold text-slate-900">
-                    {formatCurrency(item.total_invested)}
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    <span className="inline-block bg-slate-100 text-slate-800 text-xs font-bold px-2 py-0.5 rounded">
-                      {item.weight_pct}%
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold uppercase ${
-                      item.risk_level === 'MUITO_BAIXO' || item.risk_level === 'BAIXO'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : item.risk_level === 'MEDIO'
-                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                        : 'bg-rose-50 text-rose-700 border border-rose-200'
-                    }`}>
-                      {item.risk_level.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">
-                      Aprovado
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <button
-                      type="button"
-                      onClick={() => onOpenReport(item.id || item.cnpj || assets[idx]?.id || 'pl-01')}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100/80 border border-teal-200 px-2.5 py-1 rounded-md transition-colors shadow-2xs"
-                      title="Gerar One-Page Report oficial para o Comitê de Investimentos"
-                    >
-                      <FileText className="w-3.5 h-3.5 text-teal-700" />
-                      <span>One-Page Report</span>
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {overview.allocations.map((item, idx) => {
+                const matchedAsset = assets.find(a => a.id === item.id || a.cnpj === item.cnpj) || assets[idx];
+                return (
+                  <tr
+                    key={idx}
+                    onClick={() => matchedAsset && onSelectAsset && onSelectAsset(matchedAsset)}
+                    className="hover:bg-teal-50/50 transition-colors cursor-pointer group"
+                    title="Clique para abrir detalhes estilo Investidor10"
+                  >
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <div>
+                          <div className="font-bold text-slate-900 text-sm group-hover:text-teal-700 transition-colors flex items-center gap-1.5">
+                            <span>{item.trading_name}</span>
+                            <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-teal-600 transition-opacity" />
+                          </div>
+                          <div className="text-[11px] text-slate-400">CNPJ: {item.cnpj}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="text-xs font-semibold text-slate-700">{item.asset_class.replace('_', ' ')}</span>
+                      <div className="text-[11px] text-teal-700 font-medium">{item.article_code}</div>
+                    </td>
+                    <td className="py-3 px-4 text-right font-extrabold text-slate-900">
+                      {formatCurrency(item.total_invested)}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <span className="inline-block bg-slate-100 text-slate-800 text-xs font-bold px-2 py-0.5 rounded">
+                        {item.weight_pct}%
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                        item.risk_level === 'MUITO_BAIXO' || item.risk_level === 'BAIXO'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : item.risk_level === 'MEDIO'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : 'bg-rose-50 text-rose-700 border border-rose-200'
+                      }`}>
+                        {item.risk_level.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">
+                        Aprovado
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenReport(item.id || item.cnpj || assets[idx]?.id || 'pl-01');
+                        }}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100/80 border border-teal-200 px-2.5 py-1 rounded-md transition-colors shadow-2xs"
+                        title="Gerar One-Page Report oficial para o Comitê de Investimentos"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-teal-700" />
+                        <span>One-Page Report</span>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -25,13 +25,15 @@ interface ActivePortfolioViewProps {
   onOpenReport: (assetId: string) => void;
   onNavigateToComparator: (assetIds?: string[]) => void;
   onOpenDairUpload: () => void;
+  onSelectAsset?: (asset: Asset) => void;
 }
 
 export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
   assets,
   onOpenReport,
   onNavigateToComparator,
-  onOpenDairUpload
+  onOpenDairUpload,
+  onSelectAsset
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState<string>('ALL');
@@ -254,21 +256,30 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
                 const riskBadge = getRiskBadge(asset.risk_level);
 
                 return (
-                  <tr key={asset.id} className="hover:bg-blue-50/40 transition-colors group">
+                  <tr 
+                    key={asset.id} 
+                    onClick={() => onSelectAsset && onSelectAsset(asset)}
+                    className="hover:bg-blue-50/60 transition-colors group cursor-pointer"
+                    title="Clique para abrir detalhes no padrão Investidor10"
+                  >
                     {/* Ativo / CNPJ */}
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {asset.trading_name}
+                      <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors flex items-center gap-1.5">
+                        <span>{asset.trading_name}</span>
+                        <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-100 text-blue-500 transition-opacity" />
                       </div>
                       <div className="text-[11px] text-slate-400 font-normal truncate max-w-xs mt-0.5" title={asset.name}>
                         {asset.name}
                       </div>
-                      <div className="flex items-center gap-1.5 mt-1">
+                      <div className="flex items-center gap-1.5 mt-1" onClick={e => e.stopPropagation()}>
                         <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
                           {asset.cnpj}
                         </span>
                         <button
-                          onClick={() => handleCopy(asset.cnpj)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopy(asset.cnpj);
+                          }}
                           className="text-slate-400 hover:text-slate-600"
                           title="Copiar CNPJ"
                         >
@@ -348,17 +359,33 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
                     </td>
 
                     {/* Ações */}
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center" onClick={e => e.stopPropagation()}>
                       <div className="flex items-center justify-center gap-1.5">
                         <button
-                          onClick={() => onOpenReport(asset.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectAsset && onSelectAsset(asset);
+                          }}
+                          className="p-1.5 bg-amber-50 hover:bg-amber-600 text-amber-800 hover:text-white rounded-lg transition-colors border border-amber-200"
+                          title="Abrir Análise Estilo Investidor10 / CVM"
+                        >
+                          <TrendingUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenReport(asset.id);
+                          }}
                           className="p-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white rounded-lg transition-colors border border-blue-200"
                           title="Gerar Relatório One-Page deste Ativo"
                         >
                           <FileText className="w-3.5 h-3.5" />
                         </button>
                         <button
-                          onClick={() => onNavigateToComparator([asset.id])}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onNavigateToComparator([asset.id]);
+                          }}
                           className="p-1.5 bg-slate-50 hover:bg-slate-800 text-slate-600 hover:text-white rounded-lg transition-colors border border-slate-200"
                           title="Comparar este Ativo no Comparador de Fundos"
                         >

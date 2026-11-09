@@ -9,6 +9,7 @@ import { InvestmentSimulator } from './components/InvestmentSimulator';
 import { AuditTrailView } from './components/AuditTrailView';
 import { AssetRegistrationModal } from './components/AssetRegistrationModal';
 import { OnePageReportModal } from './components/OnePageReportModal';
+import { Investidor10Modal } from './components/Investidor10Modal';
 import { CvmStatusModal } from './components/CvmStatusModal';
 import { LoginModal } from './components/LoginModal';
 import { LoginScreen } from './components/LoginScreen';
@@ -17,7 +18,7 @@ import { UserManagementModal } from './components/UserManagementModal';
 import { DairUploadModal } from './components/DairUploadModal';
 import { User, Asset, AssetMetrics, PortfolioOverview, InstituteProfile, DairExtractedData } from './types';
 import { api, getCurrentUser, setCurrentUser } from './services/api';
-import { PREVI_LACERDA_OFFICIAL_PROFILE } from './services/dairParserService';
+import { PREVI_LACERDA_OFFICIAL_PROFILE, PREVI_LACERDA_OFFICIAL_ASSETS } from './services/dairParserService';
 import { OFFICIAL_REGULATION_URL, OFFICIAL_REGULATION_NORM } from './services/mockData';
 import { 
   ChevronRight, 
@@ -48,6 +49,7 @@ export function App() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportAsset, setReportAsset] = useState<Asset | null>(null);
   const [reportMetrics, setReportMetrics] = useState<AssetMetrics | null>(null);
+  const [selectedInvestidor10Asset, setSelectedInvestidor10Asset] = useState<Asset | null>(null);
 
   // Auth Modals state
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -278,6 +280,7 @@ export function App() {
               assets={assets}
               onOpenReport={handleOpenReport}
               onNavigateToComparator={handleNavigateToComparator}
+              onSelectAsset={(asset) => setSelectedInvestidor10Asset(asset)}
             />
           )}
 
@@ -287,6 +290,7 @@ export function App() {
               onOpenReport={handleOpenReport}
               onNavigateToComparator={handleNavigateToComparator}
               onOpenDairUpload={() => setIsDairUploadOpen(true)}
+              onSelectAsset={(asset) => setSelectedInvestidor10Asset(asset)}
             />
           )}
 
@@ -355,6 +359,12 @@ export function App() {
         onClose={() => setIsReportModalOpen(false)}
         asset={reportAsset}
         metrics={reportMetrics}
+      />
+
+      <Investidor10Modal
+        isOpen={!!selectedInvestidor10Asset}
+        onClose={() => setSelectedInvestidor10Asset(null)}
+        asset={selectedInvestidor10Asset}
       />
 
       <CvmStatusModal
