@@ -38,21 +38,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs text-slate-800">
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
           <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full mb-2 font-semibold border border-blue-200">
-              <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-              <span>Base Legal Atualizada:</span>
-              <a
-                href={OFFICIAL_REGULATION_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline font-bold text-blue-800 hover:text-blue-900 inline-flex items-center gap-1"
-                title="Acessar íntegra da Resolução CMN 5.272/2025"
-              >
-                <span>{OFFICIAL_REGULATION_NORM}</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               Carteira Geral de Investimentos
             </h1>

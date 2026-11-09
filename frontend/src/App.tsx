@@ -249,17 +249,6 @@ export function App() {
 
               {/* Badges de Destaque Rápido */}
               <div className="flex flex-wrap items-center gap-2 text-xs">
-                <a
-                  href={OFFICIAL_REGULATION_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-xl border border-blue-200 font-bold hover:bg-blue-100 transition-colors shadow-xs"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span>Resolução CMN nº 5.272/2025</span>
-                  <ExternalLink className="w-3 h-3 text-blue-400" />
-                </a>
-
                 <button
                   onClick={() => setIsCvmModalOpen(true)}
                   className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-200 font-bold hover:bg-emerald-100 transition-colors shadow-xs"

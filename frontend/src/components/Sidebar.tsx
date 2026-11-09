@@ -82,10 +82,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-4 pb-3 border-b border-slate-200 bg-white">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
+              {/* Logo com pequeno ressalto ao passar o mouse */}
               <img 
                 src="/argosprevi-logo.png" 
                 alt="ArgosPrevi" 
-                className="w-10 h-10 object-contain drop-shadow-sm rounded-xl shrink-0" 
+                className="w-10 h-10 object-contain drop-shadow-sm rounded-xl shrink-0 transition-all duration-300 ease-out hover:scale-115 hover:-translate-y-1 hover:drop-shadow-lg cursor-pointer" 
               />
               <div>
                 <h1 className="text-sm font-black text-slate-900 leading-tight flex items-center gap-1">
@@ -122,45 +123,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </span>
               <span className="text-[10px] text-slate-400 font-medium">Pontes e Lacerda - MT</span>
             </div>
-          </div>
-        </div>
-
-        {/* User Card (Padrão da Imagem do Cliente) */}
-        <div className="p-3 bg-slate-50/50">
-          <div className="bg-slate-100 border border-slate-200 rounded-xl p-2.5 flex items-center justify-between shadow-2xs">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-800 font-black flex items-center justify-center text-xs shrink-0 border border-slate-300">
-                {currentUser ? (currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U') : '?'}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-slate-900 truncate">
-                  {currentUser ? (currentUser.name || currentUser.email) : 'Sessão Encerrada'}
-                </p>
-                {currentUser ? (
-                  <button
-                    type="button"
-                    onClick={onLogout}
-                    className="text-[11px] text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-1 transition-colors"
-                    title="Encerrar sessão e sair totalmente"
-                  >
-                    <LogOut className="w-3 h-3 text-rose-500" />
-                    <span>Sair</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={onOpenLoginModal}
-                    className="text-[11px] text-teal-700 hover:text-teal-800 font-bold flex items-center gap-1 transition-colors"
-                  >
-                    <span>Fazer Login</span>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 shrink-0">
-              {currentUser ? (currentUser.role === 'Administrador' || currentUser.role === 'MASTER_ADMIN' ? 'Master' : 'Gestor') : 'Bloqueado'}
-            </span>
           </div>
         </div>
 
@@ -351,22 +313,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </nav>
 
-        {/* Rodapé da Barra Lateral: Base Legal & Slogan ArgosPrevi */}
-        <div className="p-3 border-t border-slate-200 bg-slate-50 text-[11px] space-y-1">
-          <div className="text-[10px] font-bold text-teal-800 text-center">
+        {/* Rodapé da Barra Lateral: Slogan Oficial ArgosPrevi */}
+        <div className="p-3 border-t border-slate-200 bg-slate-50 text-[11px] text-center">
+          <div className="text-[10px] font-bold text-teal-800">
             ArgosPrevi - olhar atento, gestão transparente
-          </div>
-          <div className="pt-1 border-t border-slate-200/80 flex items-center justify-between">
-            <a
-              href={OFFICIAL_REGULATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-700 hover:underline font-bold"
-            >
-              <span>Res. CMN 5.272/2025</span>
-              <ExternalLink className="w-3 h-3 text-blue-600" />
-            </a>
-            <span className="text-[10px] text-slate-400">RPPS</span>
           </div>
         </div>
       </aside>
