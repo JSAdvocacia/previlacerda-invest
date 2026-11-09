@@ -32,6 +32,11 @@ export interface User {
   role: UserRole;
   cpf?: string;
   is_email_verified: boolean;
+  is_approved: boolean;
+  status?: 'PENDENTE_CONFIRMACAO_EMAIL' | 'PENDENTE_APROVACAO' | 'APROVADO' | 'REJEITADO' | 'BLOQUEADO';
+  email_verification_code?: string;
+  created_at?: string;
+  approved_by?: string;
   must_change_password: boolean;
 }
 

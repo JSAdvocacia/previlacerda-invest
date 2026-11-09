@@ -12,6 +12,8 @@ export const mockUsers: User[] = [
     role: 'Administrador',
     cpf: '559.218.411-53',
     is_email_verified: true,
+    is_approved: true,
+    status: 'APROVADO',
     must_change_password: false // Cancelada a exigência de troca de senha inicial
   }
 ];

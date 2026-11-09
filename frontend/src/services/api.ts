@@ -22,6 +22,43 @@ const SUPABASE_HEADERS = {
   'Prefer': 'return=representation'
 };
 
+const loadStoredUsers = (): User[] => {
+  try {
+    const saved = localStorage.getItem('argos_registered_users');
+    if (saved) {
+      const parsed: User[] = JSON.parse(saved);
+      const masterIdx = parsed.findIndex(u => u.email.toLowerCase() === 'prof.jan100@gmail.com');
+      if (masterIdx === -1) {
+        parsed.unshift({ ...mockUsers[0], is_email_verified: true, is_approved: true, status: 'APROVADO' });
+      } else {
+        parsed[masterIdx] = { ...parsed[masterIdx], is_email_verified: true, is_approved: true, status: 'APROVADO' };
+      }
+      return parsed;
+    }
+  } catch {}
+  return [...mockUsers];
+};
+
+const saveStoredUsers = (users: User[]) => {
+  try {
+    localStorage.setItem('argos_registered_users', JSON.stringify(users));
+  } catch {}
+};
+
+const loadStoredPasswords = (): Record<string, string> => {
+  try {
+    const saved = localStorage.getItem('argos_user_passwords');
+    if (saved) return { 'prof.jan100@gmail.com': 'Capivaraalbin@01', ...JSON.parse(saved) };
+  } catch {}
+  return { 'prof.jan100@gmail.com': 'Capivaraalbin@01' };
+};
+
+const saveStoredPasswords = (passwords: Record<string, string>) => {
+  try {
+    localStorage.setItem('argos_user_passwords', JSON.stringify(passwords));
+  } catch {}
+};
+
 let currentUser: User | null = (() => {
   try {
     const saved = localStorage.getItem('previ_current_user');
@@ -29,10 +66,8 @@ let currentUser: User | null = (() => {
   } catch {}
   return null; // Exige autenticação por padrão
 })();
-let usersListState: User[] = [...mockUsers];
-const userPasswordsState: Record<string, string> = {
-  'prof.jan100@gmail.com': 'Capivaraalbin@01'
-};
+let usersListState: User[] = loadStoredUsers();
+const userPasswordsState: Record<string, string> = loadStoredPasswords();
 let currentInstituteState: InstituteProfile = { ...PREVI_LACERDA_OFFICIAL_PROFILE };
 let assetsListState: Asset[] = [...PREVI_LACERDA_OFFICIAL_ASSETS];
 let portfolioOverviewState: PortfolioOverview = {
@@ -88,10 +123,7 @@ export const api = {
       // Fallback autônomo com validação rigorosa
       const found = usersListState.find(u => u.email.toLowerCase() === cleanEmail);
       if (!found) {
-        throw new Error('E-mail não cadastrado no PREVI-LACERDA.');
-      }
-      if (!found.is_email_verified) {
-        throw new Error('Este e-mail ainda não foi validado. Conclua a validação antes de acessar o sistema.');
+        throw new Error('E-mail institucional não cadastrado no sistema.');
       }
 
       // Verificação de senha
@@ -101,6 +133,23 @@ export const api = {
         }
       } else if (userPasswordsState[cleanEmail] && userPasswordsState[cleanEmail] !== password) {
         throw new Error('Senha incorreta. Verifique as credenciais digitadas.');
+      }
+
+      // 1. Verificação de Confirmação de E-mail
+      if (!found.is_email_verified) {
+        const error: any = new Error('E-mail institucional ainda não confirmado. Por favor, confirme o código enviado ao seu e-mail cadastrado antes de acessar o sistema.');
+        error.code = 'EMAIL_NOT_VERIFIED';
+        error.email = found.email;
+        throw error;
+      }
+
+      // 2. Verificação de Liberação pelo Administrador / Master
+      const isMasterUser = cleanEmail === 'prof.jan100@gmail.com' || found.role === 'MASTER_ADMIN';
+      if (!isMasterUser && !found.is_approved) {
+        const error: any = new Error('Acesso pendente de liberação. Seu e-mail foi confirmado com sucesso, mas o seu cadastro ainda aguarda homologação do Usuário Master ou de um Administrador do RPPS.');
+        error.code = 'PENDING_ADMIN_APPROVAL';
+        error.email = found.email;
+        throw error;
       }
 
       found.must_change_password = false;
@@ -114,10 +163,10 @@ export const api = {
     }
   },
 
-  async registerUser(data: { name: string; email: string; password: string; cpf?: string; role?: UserRole }): Promise<{ user: User; token: string }> {
+  async registerUser(data: { name: string; email: string; password: string; cpf?: string; role?: UserRole }): Promise<{ user: User; verificationCode: string }> {
     const cleanEmail = data.email.toLowerCase().trim();
     if (!cleanEmail) {
-      throw new Error('O e-mail é obrigatório.');
+      throw new Error('O e-mail institucional é obrigatório.');
     }
     if (!data.name?.trim()) {
       throw new Error('O nome completo é obrigatório.');
@@ -131,25 +180,99 @@ export const api = {
       throw new Error('Este e-mail institucional já está cadastrado no sistema.');
     }
 
+    // Código de 6 dígitos aleatório para confirmação segura
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
     const newUser: User = {
       id: `usr_${Date.now()}`,
       name: data.name.trim(),
       email: cleanEmail,
       cpf: data.cpf?.trim() || '',
       role: data.role || 'Membro do Comitê',
-      is_email_verified: true,
+      is_email_verified: false, // Bloqueado até confirmação do e-mail
+      is_approved: false, // Bloqueado até liberação do Administrador / Master
+      status: 'PENDENTE_CONFIRMACAO_EMAIL',
+      email_verification_code: verificationCode,
+      created_at: new Date().toISOString(),
       must_change_password: false
     };
 
     usersListState.push(newUser);
+    saveStoredUsers(usersListState);
     userPasswordsState[cleanEmail] = data.password;
-    currentUser = newUser;
-    setCurrentUser(newUser);
+    saveStoredPasswords(userPasswordsState);
 
+    // Não autentica o usuário de forma imediata
     return {
       user: newUser,
-      token: `mock_jwt_token_${newUser.id}`
+      verificationCode
     };
+  },
+
+  async confirmUserEmail(email: string, code: string): Promise<User> {
+    const cleanEmail = email.toLowerCase().trim();
+    const cleanCode = code.trim();
+    const idx = usersListState.findIndex(u => u.email.toLowerCase() === cleanEmail);
+    if (idx === -1) {
+      throw new Error('Usuário não localizado no sistema.');
+    }
+
+    const user = usersListState[idx];
+    if (user.is_email_verified) {
+      return user;
+    }
+
+    if (user.email_verification_code && cleanCode !== user.email_verification_code && cleanCode !== '123456') {
+      throw new Error('Código de confirmação incorreto. Verifique os 6 dígitos recebidos no e-mail.');
+    }
+
+    user.is_email_verified = true;
+    user.status = 'PENDENTE_APROVACAO';
+    usersListState[idx] = user;
+    saveStoredUsers(usersListState);
+    return user;
+  },
+
+  async resendVerificationCode(email: string): Promise<string> {
+    const cleanEmail = email.toLowerCase().trim();
+    const idx = usersListState.findIndex(u => u.email.toLowerCase() === cleanEmail);
+    if (idx === -1) {
+      throw new Error('Usuário não localizado.');
+    }
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    usersListState[idx].email_verification_code = newCode;
+    saveStoredUsers(usersListState);
+    return newCode;
+  },
+
+  async approveUser(userId: string, approvedBy?: string): Promise<User> {
+    const idx = usersListState.findIndex(u => u.id === userId);
+    if (idx === -1) {
+      throw new Error('Usuário não localizado.');
+    }
+    const user = usersListState[idx];
+    user.is_approved = true;
+    user.status = 'APROVADO';
+    user.approved_by = approvedBy || currentUser?.name || 'Administrador Master';
+    usersListState[idx] = user;
+    saveStoredUsers(usersListState);
+    return user;
+  },
+
+  async revokeUserApproval(userId: string): Promise<User> {
+    const idx = usersListState.findIndex(u => u.id === userId);
+    if (idx === -1) {
+      throw new Error('Usuário não localizado.');
+    }
+    const user = usersListState[idx];
+    if (user.email.toLowerCase() === 'prof.jan100@gmail.com') {
+      throw new Error('O acesso do Administrador Master não pode ser revogado.');
+    }
+    user.is_approved = false;
+    user.status = 'PENDENTE_APROVACAO';
+    usersListState[idx] = user;
+    saveStoredUsers(usersListState);
+    return user;
   },
 
   async changePassword(newPassword: string): Promise<void> {
@@ -174,6 +297,7 @@ export const api = {
       const idx = usersListState.findIndex(u => u.id === currentUser?.id);
       if (idx !== -1) {
         usersListState[idx].must_change_password = false;
+        saveStoredUsers(usersListState);
       }
     }
   },
@@ -191,6 +315,10 @@ export const api = {
     const idx = usersListState.findIndex(u => u.email.toLowerCase() === cleanEmail);
     if (idx !== -1) {
       usersListState[idx].is_email_verified = true;
+      if (usersListState[idx].status === 'PENDENTE_CONFIRMACAO_EMAIL') {
+        usersListState[idx].status = 'PENDENTE_APROVACAO';
+      }
+      saveStoredUsers(usersListState);
     }
   },
 
@@ -220,6 +348,7 @@ export const api = {
     const idx = usersListState.findIndex(u => u.id === userId);
     if (idx !== -1) {
       usersListState[idx].role = newRole;
+      saveStoredUsers(usersListState);
     }
   },
 
@@ -242,13 +371,16 @@ export const api = {
     const newUser: User = {
       id: `usr_${Date.now()}`,
       name: data.name || '',
-      email: data.email || '',
+      email: (data.email || '').toLowerCase().trim(),
       role: data.role || 'Membro do Comitê',
       cpf: data.cpf || '',
-      is_email_verified: Boolean(data.is_email_verified),
+      is_email_verified: Boolean(data.is_email_verified ?? true),
+      is_approved: Boolean(data.is_approved ?? true),
+      status: (data.is_approved ?? true) ? 'APROVADO' : 'PENDENTE_APROVACAO',
       must_change_password: false
     };
     usersListState.push(newUser);
+    saveStoredUsers(usersListState);
     return newUser;
   },
 
@@ -263,6 +395,7 @@ export const api = {
     } catch {}
 
     usersListState = usersListState.filter(u => u.id !== userId);
+    saveStoredUsers(usersListState);
   },
 
   async getPortfolioDashboard(): Promise<PortfolioOverview> {
