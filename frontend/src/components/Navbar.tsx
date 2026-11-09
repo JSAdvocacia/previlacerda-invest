@@ -132,18 +132,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Menu className="w-5 h-5 text-slate-800" />
             </button>
 
-            <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setCurrentTab('dashboard')}>
-              <div className="w-9 h-9 rounded-xl bg-[#0066ff] flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
-                <Shield className="w-5 h-5" />
-              </div>
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => setCurrentTab('dashboard')}>
+              <img 
+                src="/argosprevi-logo.png" 
+                alt="ArgosPrevi" 
+                className="w-10 h-10 object-contain drop-shadow-sm rounded-xl shrink-0" 
+              />
               <div>
                 <div className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-1.5">
-                  <span>PREVI</span><span className="text-blue-600">LACERDA</span>
-                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                    RPPS
+                  <span>Argos</span><span className="text-teal-700">Previ</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
+                    PREVI-LACERDA
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-500 font-medium hidden sm:block">Previdência de Pontes e Lacerda</div>
+                <div className="text-[10px] text-slate-500 font-medium hidden sm:block">
+                  Sistema de Gestão Previdenciária
+                </div>
               </div>
             </div>
           </div>

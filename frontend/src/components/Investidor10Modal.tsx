@@ -22,13 +22,13 @@ import { Asset } from '../types';
 import { fundDataService, FundDetails } from '../services/fundDataService';
 import { OFFICIAL_REGULATION_NORM, OFFICIAL_REGULATION_URL } from '../services/mockData';
 
-interface Investidor10ModalProps {
+interface FundDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   asset: Asset | null;
 }
 
-export const Investidor10Modal: React.FC<Investidor10ModalProps> = ({
+export const FundDetailsModal: React.FC<FundDetailsModalProps> = ({
   isOpen,
   onClose,
   asset
@@ -85,12 +85,16 @@ export const Investidor10Modal: React.FC<Investidor10ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-2 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
       <div className="bg-[#f8fafc] rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-300 overflow-hidden my-4 max-h-[96vh] flex flex-col">
         
-        {/* CABEÇALHO OFICIAL ESTILO INVESTIDOR10 (Conforme imagem enviada pelo usuário) */}
+        {/* CABEÇALHO OFICIAL DO ATIVO (ArgosPrevi - Ficha Técnica do Produto) */}
         <div className="bg-[#1a2332] text-white px-4 sm:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/80 shrink-0">
           <div className="flex items-center gap-3">
-            {/* Ícone Carteira / Produto com borda arredondada */}
-            <div className="w-12 h-12 rounded-xl bg-white text-slate-800 flex items-center justify-center shadow-md shrink-0">
-              <Wallet className="w-6 h-6 text-slate-800" />
+            {/* Logotipo Oficial ArgosPrevi */}
+            <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 p-1 flex items-center justify-center shadow-md shrink-0">
+              <img 
+                src="/argosprevi-logo.png" 
+                alt="ArgosPrevi" 
+                className="w-full h-full object-contain" 
+              />
             </div>
 
             <div className="min-w-0">
@@ -112,7 +116,7 @@ export const Investidor10Modal: React.FC<Investidor10ModalProps> = ({
             </div>
           </div>
 
-          {/* Abas Superiores estilo Investidor10 */}
+          {/* Abas Superiores de Análise */}
           <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-1 md:pb-0">
             <button
               onClick={() => setActiveTab('rentabilidade')}
@@ -178,7 +182,7 @@ export const Investidor10Modal: React.FC<Investidor10ModalProps> = ({
           {loading ? (
             <div className="py-20 text-center">
               <div className="w-8 h-8 border-3 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-              <p className="text-xs font-bold text-slate-600">Consultando bases oficiais da CVM e Investidor10...</p>
+              <p className="text-xs font-bold text-slate-600">Consultando bases oficiais da CVM e ArgosPrevi...</p>
             </div>
           ) : (
             <>
@@ -676,11 +680,12 @@ export const Investidor10Modal: React.FC<Investidor10ModalProps> = ({
           )}
         </div>
 
-        {/* RODAPÉ DO MODAL */}
+        {/* RODAPÉ DO MODAL COM SLOGAN ARGOSPREVI */}
         <div className="bg-slate-100 border-t border-slate-200 px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shrink-0">
-          <div className="text-slate-500 flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Dados sincronizados com o Portal CVM e Investidor10 • Gestão PREVI-LACERDA</span>
+          <div className="text-slate-600 flex items-center gap-2.5">
+            <img src="/argosprevi-logo.png" alt="ArgosPrevi" className="w-5 h-5 object-contain" />
+            <span className="font-bold text-teal-800">ArgosPrevi - olhar atento, gestão transparente</span>
+            <span className="text-slate-400 hidden md:inline">• Sincronização CVM e Banco Fiduciário PREVI-LACERDA</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -697,3 +702,5 @@ export const Investidor10Modal: React.FC<Investidor10ModalProps> = ({
     </div>
   );
 };
+
+export const Investidor10Modal = FundDetailsModal;

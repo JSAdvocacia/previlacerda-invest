@@ -260,7 +260,7 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
                     key={asset.id} 
                     onClick={() => onSelectAsset && onSelectAsset(asset)}
                     className="hover:bg-blue-50/60 transition-colors group cursor-pointer"
-                    title="Clique para abrir detalhes no padrão Investidor10"
+                    title="Clique para abrir a ficha completa do ativo (ArgosPrevi)"
                   >
                     {/* Ativo / CNPJ */}
                     <td className="py-3.5 px-4">
@@ -367,7 +367,7 @@ export const ActivePortfolioView: React.FC<ActivePortfolioViewProps> = ({
                             onSelectAsset && onSelectAsset(asset);
                           }}
                           className="p-1.5 bg-amber-50 hover:bg-amber-600 text-amber-800 hover:text-white rounded-lg transition-colors border border-amber-200"
-                          title="Abrir Análise Estilo Investidor10 / CVM"
+                          title="Abrir Ficha Técnica Completa do Ativo"
                         >
                           <TrendingUp className="w-3.5 h-3.5" />
                         </button>

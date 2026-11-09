@@ -254,14 +254,14 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
         </div>
       </div>
 
-      {/* Tabela de Indicadores Fundamentalistas Comparativa (Investidor10 Style) */}
+      {/* Tabela de Indicadores Fundamentalistas Comparativa */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-5 bg-slate-900 text-white flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5 text-teal-400" />
             <h2 className="text-base font-bold">Matriz de Indicadores Fundamentalistas</h2>
           </div>
-          <span className="text-xs text-slate-400 font-medium">Investidor10 Benchmarking Engine</span>
+          <span className="text-xs text-slate-400 font-medium">ArgosPrevi Benchmarking Engine</span>
         </div>
 
         <div className="overflow-x-auto">

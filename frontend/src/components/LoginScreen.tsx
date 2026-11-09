@@ -68,8 +68,26 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         </div>
       </header>
 
-      {/* Área Central: Card de Login Fiduciário */}
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
+      {/* Área Central: Card de Login Fiduciário com Logo ArgosPrevi */}
+      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 my-6">
+        {/* Logotipo Oficial ArgosPrevi */}
+        <div className="flex flex-col items-center mb-6 text-center">
+          <img 
+            src="/argosprevi-logo.png" 
+            alt="ArgosPrevi - Olhar atento, gestão transparente" 
+            className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-md mb-2 rounded-2xl"
+          />
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-1.5">
+            <span>Argos</span><span className="text-teal-700">Previ</span>
+          </h1>
+          <p className="text-xs font-semibold text-teal-800 tracking-wide uppercase mt-0.5">
+            Sistema de Gestão Previdenciária
+          </p>
+          <p className="text-[11px] text-slate-500 italic mt-0.5">
+            ArgosPrevi - olhar atento, gestão transparente
+          </p>
+        </div>
+
         <div className="bg-white rounded-2xl max-w-md w-full shadow-xl border border-slate-200 overflow-hidden">
           {/* Cabeçalho do Card */}
           <div className="bg-slate-50 border-b border-slate-200 p-6 sm:p-8">
@@ -79,14 +97,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               </div>
               <div>
                 <span className="text-[10px] font-bold text-teal-800 uppercase tracking-wider block">Acesso Seguro RPPS</span>
-                <span className="text-xs font-semibold text-slate-500">Gestão Fiduciária da Carteira</span>
+                <span className="text-xs font-semibold text-slate-600">ArgosPrevi - Sistema de Gestão Previdenciária</span>
               </div>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
               Login no PREVI-LACERDA
             </h2>
             <p className="text-xs text-slate-500 mt-1">
-              Informe suas credenciais institucionais para acesso ao painel de investimentos.
+              Informe suas credenciais institucionais para acesso à gestão previdenciária.
             </p>
           </div>
 
@@ -155,10 +173,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         </div>
       </main>
 
-      {/* Rodapé Fiduciário */}
+      {/* Rodapé Fiduciário com Slogan ArgosPrevi */}
       <footer className="bg-white border-t border-slate-200 text-slate-500 text-xs py-4 px-4 text-center">
-        <p className="font-semibold text-slate-700">PREVI-LACERDA — Fundo Municipal de Previdência Social dos Servidores de Pontes e Lacerda - MT</p>
-        <p className="text-[11px] text-slate-400 mt-0.5">CNPJ: 15.023.989/0001-26 • Carteira Fiduciária Regulamentada pela {OFFICIAL_REGULATION_NORM}</p>
+        <p className="font-bold text-teal-800 text-xs">
+          ArgosPrevi - olhar atento, gestão transparente
+        </p>
+        <p className="font-semibold text-slate-700 mt-1">
+          PREVI-LACERDA — Fundo Municipal de Previdência Social dos Servidores de Pontes e Lacerda - MT
+        </p>
+        <p className="text-[11px] text-slate-400 mt-0.5">
+          CNPJ: 15.023.989/0001-26 • Carteira Fiduciária Regulamentada pela {OFFICIAL_REGULATION_NORM}
+        </p>
       </footer>
     </div>
   );

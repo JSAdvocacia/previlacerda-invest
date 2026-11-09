@@ -79,11 +79,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }`}
       >
         {/* Top Header: Brasão / Bandeira e Nome do Instituto */}
-        <div className="p-4 pb-3 border-b border-slate-200 flex items-center justify-between bg-white">
-          <div className="flex items-center gap-3">
+        <div className="p-4 pb-3 border-b border-slate-200 bg-white">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5">
+              <img 
+                src="/argosprevi-logo.png" 
+                alt="ArgosPrevi" 
+                className="w-10 h-10 object-contain drop-shadow-sm rounded-xl shrink-0" 
+              />
+              <div>
+                <h1 className="text-sm font-black text-slate-900 leading-tight flex items-center gap-1">
+                  <span>Argos</span><span className="text-teal-700">Previ</span>
+                </h1>
+                <p className="text-[10px] font-semibold text-slate-500 leading-tight">
+                  Sistema de Gestão Previdenciária
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={onToggle}
+              className="lg:hidden text-slate-400 hover:text-slate-600 p-1"
+            >
+              <PanelLeftClose className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
             {/* Bandeira Oficial de Pontes e Lacerda - MT */}
-            <div className="w-12 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
-              <svg viewBox="0 0 40 28" className="w-10 h-7 rounded shadow-xs overflow-hidden">
+            <div className="w-8 h-6 rounded bg-white border border-slate-200 p-0.5 flex items-center justify-center shadow-xs shrink-0">
+              <svg viewBox="0 0 40 28" className="w-full h-full rounded-xs shadow-xs overflow-hidden">
                 <rect width="40" height="14" fill="#009b3a" />
                 <rect y="14" width="40" height="14" fill="#ffdf00" />
                 <polygon points="0,0 20,14 0,28" fill="#002776" />
@@ -92,22 +117,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <div>
-              <h1 className="text-xs font-black text-slate-900 leading-tight">
-                Prefeitura de Pontes e Lacerda
-              </h1>
-              <p className="text-[11px] font-bold text-blue-700 leading-tight">
+              <span className="text-[11px] font-bold text-blue-700 leading-tight block">
                 PREVI-LACERDA (RPPS)
-              </p>
-              <span className="text-[10px] text-slate-500 font-medium">Adm 2025-2028</span>
+              </span>
+              <span className="text-[10px] text-slate-400 font-medium">Pontes e Lacerda - MT</span>
             </div>
           </div>
-
-          <button
-            onClick={onToggle}
-            className="lg:hidden text-slate-400 hover:text-slate-600 p-1"
-          >
-            <PanelLeftClose className="w-5 h-5" />
-          </button>
         </div>
 
         {/* User Card (Padrão da Imagem do Cliente) */}
@@ -336,18 +351,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </nav>
 
-        {/* Rodapé da Barra Lateral: Base Legal */}
-        <div className="p-3 border-t border-slate-200 bg-slate-50 text-[11px]">
-          <a
-            href={OFFICIAL_REGULATION_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between text-blue-700 hover:underline font-bold"
-          >
-            <span>Res. CMN 5.272/2025</span>
-            <ExternalLink className="w-3 h-3 text-blue-600" />
-          </a>
-          <p className="text-[10px] text-slate-500 mt-0.5">Regulamentação Previdenciária RPPS</p>
+        {/* Rodapé da Barra Lateral: Base Legal & Slogan ArgosPrevi */}
+        <div className="p-3 border-t border-slate-200 bg-slate-50 text-[11px] space-y-1">
+          <div className="text-[10px] font-bold text-teal-800 text-center">
+            ArgosPrevi - olhar atento, gestão transparente
+          </div>
+          <div className="pt-1 border-t border-slate-200/80 flex items-center justify-between">
+            <a
+              href={OFFICIAL_REGULATION_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-blue-700 hover:underline font-bold"
+            >
+              <span>Res. CMN 5.272/2025</span>
+              <ExternalLink className="w-3 h-3 text-blue-600" />
+            </a>
+            <span className="text-[10px] text-slate-400">RPPS</span>
+          </div>
         </div>
       </aside>
     </>

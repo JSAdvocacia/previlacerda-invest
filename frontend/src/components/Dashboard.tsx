@@ -296,7 +296,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h2 className="text-base font-bold text-slate-900">Ativos em Carteira (PREVI-LACERDA)</h2>
-            <p className="text-xs text-slate-500">Clique em qualquer produto para abrir a análise completa no padrão Investidor10.</p>
+            <p className="text-xs text-slate-500">Clique em qualquer produto para abrir a ficha técnica e análise de rentabilidade (ArgosPrevi).</p>
           </div>
 
           <button
@@ -329,7 +329,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     key={idx}
                     onClick={() => matchedAsset && onSelectAsset && onSelectAsset(matchedAsset)}
                     className="hover:bg-teal-50/50 transition-colors cursor-pointer group"
-                    title="Clique para abrir detalhes estilo Investidor10"
+                    title="Clique para abrir ficha técnica do produto"
                   >
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">

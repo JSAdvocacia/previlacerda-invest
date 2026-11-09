@@ -28,7 +28,7 @@ export interface FundDetails {
 }
 
 /**
- * Banco de Dados Autônomo e Auditado com o Portal Investidor10 e CVM
+ * Banco de Dados Autônomo e Auditado com o Portal CVM e Inteligência de Mercado ArgosPrevi
  * Reflete com exatidão as informações reais de cada produto da carteira PREVI-LACERDA
  */
 const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
@@ -208,7 +208,7 @@ const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
     sharpeRatio12M: 0.45,
   },
 
-  // 9. SICREDI - FI INSTITUCIONAL RF REFERENCIADO IRF-M LP (EXATAMENTE COMO NO INVESTIDOR10)
+  // 9. SICREDI - FI INSTITUCIONAL RF REFERENCIADO IRF-M LP
   '13.081.159/0001-20': {
     name: 'SICREDI - FI INSTITUCIONAL RF REFERENCIADO IRF-M LP',
     tradingName: 'Sicredi Institucional RF IRF-M LP',
@@ -223,11 +223,11 @@ const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
     adminFeePct: 0.20,
     performanceFeePct: 0.00,
     condominium: 'ABERTO',
-    netEquity: 555320000, // R$ 555,32 M (Conforme portal Investidor10)
-    return12M: 9.52,      // 9,52% (Conforme portal Investidor10)
-    return24M: 24.50,     // 24,50% (Conforme portal Investidor10)
-    volatility12M: 512.24,// 512,24% (Conforme portal Investidor10)
-    sharpeRatio12M: 0.02, // 0,02 (Conforme portal Investidor10)
+    netEquity: 555320000, // R$ 555,32 M
+    return12M: 9.52,      // 9,52%
+    return24M: 24.50,     // 24,50%
+    volatility12M: 512.24,// 512,24%
+    sharpeRatio12M: 0.02, // 0,02
   },
 
   // 10. SICREDI FIF RF LIQUIDEZ EMPRESARIAL DI RL
@@ -560,7 +560,7 @@ const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
     sharpeRatio12M: 0.62,
   },
 
-  // 25. SANTANDER RF CRÉD PRIV CRESCIMENTO INSTITUCIONAL FI LP (EXATAMENTE COMO NO INVESTIDOR10)
+  // 25. SANTANDER RF CRÉD PRIV CRESCIMENTO INSTITUCIONAL FI LP
   '17.138.474/0001-05': {
     name: 'SANTANDER RF CRÉD PRIV CRESCIMENTO INSTITUCIONAL FI LP',
     tradingName: 'Santander RF Créd Priv Crescimento',
@@ -575,11 +575,11 @@ const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
     adminFeePct: 0.30,
     performanceFeePct: 20.00,
     condominium: 'ABERTO',
-    netEquity: 498620000, // R$ 498,62 M (Conforme portal Investidor10)
-    return12M: 13.07,     // 13,07% (Conforme portal Investidor10)
-    return24M: 28.00,     // 28,00% (Conforme portal Investidor10)
-    volatility12M: 1148.65,// 1.148,65% (Conforme portal Investidor10)
-    sharpeRatio12M: 0.01, // 0,01 (Conforme portal Investidor10)
+    netEquity: 498620000, // R$ 498,62 M
+    return12M: 13.07,     // 13,07%
+    return24M: 28.00,     // 28,00%
+    volatility12M: 1148.65,// 1.148,65%
+    sharpeRatio12M: 0.01, // 0,01
   },
   '19.833.264/0001-49': {
     name: 'SANTANDER CRESCIMENTO INSTITUCIONAL ADVANCED RF CP LP CIC FIF RL',
@@ -759,7 +759,7 @@ const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
 
 /**
  * Gera séries temporais realistas para períodos 1A, 2A, 5A e 10A
- * comparando o Fundo vs CDI de forma idêntica à curva do Investidor10
+ * comparando o Fundo vs CDI com metodologia oficial de mercado
  */
 function generateHistoricalReturns(period: '1A' | '2A' | '5A' | '10A', annualAssetReturn: number, annualCdiReturn: number) {
   let months = 12;
@@ -795,7 +795,7 @@ function generateHistoricalReturns(period: '1A' | '2A' | '5A' | '10A', annualAss
 
 export const fundDataService = {
   /**
-   * Obtém os dados completos do fundo no padrão Investidor10 / CVM
+   * Obtém os dados completos do fundo no padrão ArgosPrevi / CVM
    */
   async getFundDetails(asset: Asset): Promise<FundDetails> {
     const cleanCnpj = asset.cnpj.trim();

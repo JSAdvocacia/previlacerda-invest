@@ -65,13 +65,18 @@ export const OnePageReportModal: React.FC<OnePageReportModalProps> = ({
       <div className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-6 max-h-[92vh] flex flex-col">
         {/* Barra Superior com Botão de Impressão (Clean Light Layout) */}
         <div className="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-800">
-              <Shield className="w-4 h-4" />
-            </div>
+          <div className="flex items-center gap-3">
+            <img 
+              src="/argosprevi-logo.png" 
+              alt="ArgosPrevi" 
+              className="w-10 h-10 object-contain drop-shadow-sm rounded-xl shrink-0" 
+            />
             <div>
-              <span className="font-extrabold text-sm text-slate-900 block leading-tight">
-                One-Page Report Executivo
+              <span className="font-extrabold text-sm text-slate-900 block leading-tight flex items-center gap-1.5">
+                <span>One-Page Report Executivo</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-teal-50 text-teal-800 border border-teal-200">
+                  ArgosPrevi
+                </span>
               </span>
               <span className="text-[11px] text-slate-500 font-medium">
                 Comitê de Investimentos PREVI-LACERDA • {asset.trading_name || asset.name}
@@ -100,15 +105,28 @@ export const OnePageReportModal: React.FC<OnePageReportModalProps> = ({
 
         {/* Conteúdo Imprimível do One-Page Report */}
         <div ref={printRef} className="p-8 overflow-y-auto space-y-6 text-slate-800 bg-white">
-          {/* Header Oficial */}
+          {/* Header Oficial do Relatório com Logotipo ArgosPrevi */}
           <div className="border-b-2 border-teal-800 pb-4 flex justify-between items-start">
-            <div>
-              <div className="text-2xl font-black text-teal-900 tracking-tight">PREVI-LACERDA</div>
-              <div className="text-xs text-slate-500 font-semibold">
-                Instituto de Previdência dos Servidores Públicos do Município de Pontes e Lacerda - MT
-              </div>
-              <div className="text-[11px] text-slate-400 mt-0.5">
-                Relatório Executivo de Avaliação Fiduciária | Reunião Ordinária do Comitê de Investimentos
+            <div className="flex items-center gap-4">
+              <img 
+                src="/argosprevi-logo.png" 
+                alt="ArgosPrevi Logo" 
+                className="w-14 h-14 object-contain drop-shadow-xs shrink-0 rounded-xl" 
+              />
+              <div>
+                <div className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-1.5">
+                  <span>Argos</span><span className="text-teal-700">Previ</span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">• PREVI-LACERDA</span>
+                </div>
+                <div className="text-xs text-slate-600 font-semibold">
+                  Instituto de Previdência dos Servidores Públicos do Município de Pontes e Lacerda - MT
+                </div>
+                <div className="text-[11px] font-bold text-teal-800 mt-0.5">
+                  ArgosPrevi - olhar atento, gestão transparente
+                </div>
+                <div className="text-[11px] text-slate-400 mt-0.5">
+                  Relatório Executivo de Avaliação Fiduciária | Reunião Ordinária do Comitê de Investimentos
+                </div>
               </div>
             </div>
 
@@ -248,6 +266,17 @@ export const OnePageReportModal: React.FC<OnePageReportModalProps> = ({
               <div className="border-t border-slate-400 pt-2 font-bold text-slate-800">
                 Conselho Fiscal
                 <div className="text-[10px] text-slate-400 font-normal">Fiscalização Social</div>
+              </div>
+            </div>
+
+            {/* Slogan Oficial no Rodapé do Relatório */}
+            <div className="mt-8 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+              <div className="flex items-center gap-2">
+                <img src="/argosprevi-logo.png" alt="ArgosPrevi" className="w-5 h-5 object-contain" />
+                <span className="font-bold text-teal-800">ArgosPrevi - olhar atento, gestão transparente</span>
+              </div>
+              <div className="text-[10px] text-slate-400">
+                Relatório Fiduciário Emitido em {new Date().toLocaleDateString('pt-BR')}
               </div>
             </div>
           </div>

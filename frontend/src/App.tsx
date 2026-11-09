@@ -9,7 +9,7 @@ import { InvestmentSimulator } from './components/InvestmentSimulator';
 import { AuditTrailView } from './components/AuditTrailView';
 import { AssetRegistrationModal } from './components/AssetRegistrationModal';
 import { OnePageReportModal } from './components/OnePageReportModal';
-import { Investidor10Modal } from './components/Investidor10Modal';
+import { FundDetailsModal } from './components/Investidor10Modal';
 import { CvmStatusModal } from './components/CvmStatusModal';
 import { LoginModal } from './components/LoginModal';
 import { LoginScreen } from './components/LoginScreen';
@@ -49,7 +49,7 @@ export function App() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportAsset, setReportAsset] = useState<Asset | null>(null);
   const [reportMetrics, setReportMetrics] = useState<AssetMetrics | null>(null);
-  const [selectedInvestidor10Asset, setSelectedInvestidor10Asset] = useState<Asset | null>(null);
+  const [selectedAssetDetails, setSelectedAssetDetails] = useState<Asset | null>(null);
 
   // Auth Modals state
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -239,11 +239,11 @@ export function App() {
             {/* Saudação ao Jansen */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
               <div className="min-w-0">
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  {getGreeting()}, Jansen
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <span>{getGreeting()}, Jansen</span>
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  {getFormattedDate()}. Gestão fiduciária do Regime Próprio de Previdência Social.
+                  {getFormattedDate()} • <strong className="text-teal-800">ArgosPrevi</strong> - Sistema de Gestão Previdenciária.
                 </p>
               </div>
 
@@ -280,7 +280,7 @@ export function App() {
               assets={assets}
               onOpenReport={handleOpenReport}
               onNavigateToComparator={handleNavigateToComparator}
-              onSelectAsset={(asset) => setSelectedInvestidor10Asset(asset)}
+              onSelectAsset={(asset) => setSelectedAssetDetails(asset)}
             />
           )}
 
@@ -290,7 +290,7 @@ export function App() {
               onOpenReport={handleOpenReport}
               onNavigateToComparator={handleNavigateToComparator}
               onOpenDairUpload={() => setIsDairUploadOpen(true)}
-              onSelectAsset={(asset) => setSelectedInvestidor10Asset(asset)}
+              onSelectAsset={(asset) => setSelectedAssetDetails(asset)}
             />
           )}
 
@@ -323,13 +323,22 @@ export function App() {
           )}
         </main>
 
-        {/* Rodapé Fiduciário */}
+        {/* Rodapé Fiduciário com Slogan ArgosPrevi */}
         <footer className="bg-white border-t border-slate-200 text-slate-600 text-xs py-6 mt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-              <span className="font-bold text-slate-900">PREVI-LACERDA</span> - Instituto de Previdência dos Servidores Públicos de Pontes e Lacerda - MT
-              <div className="text-[11px] text-slate-500 mt-0.5">
-                Módulo 1: Instituto • Módulo 2: Gestão de Investimentos RPPS • Resolução CMN nº 5.272/2025.
+            <div className="flex items-center gap-3">
+              <img 
+                src="/argosprevi-logo.png" 
+                alt="ArgosPrevi" 
+                className="w-10 h-10 object-contain drop-shadow-sm rounded-xl shrink-0" 
+              />
+              <div>
+                <div className="font-extrabold text-sm text-teal-800 tracking-tight">
+                  ArgosPrevi - olhar atento, gestão transparente
+                </div>
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  <strong className="text-slate-800">PREVI-LACERDA</strong> • Instituto de Previdência dos Servidores de Pontes e Lacerda - MT • Res. CMN nº 5.272/2025
+                </div>
               </div>
             </div>
             <div className="text-right text-[11px] text-slate-500">
@@ -361,10 +370,10 @@ export function App() {
         metrics={reportMetrics}
       />
 
-      <Investidor10Modal
-        isOpen={!!selectedInvestidor10Asset}
-        onClose={() => setSelectedInvestidor10Asset(null)}
-        asset={selectedInvestidor10Asset}
+      <FundDetailsModal
+        isOpen={!!selectedAssetDetails}
+        onClose={() => setSelectedAssetDetails(null)}
+        asset={selectedAssetDetails}
       />
 
       <CvmStatusModal
