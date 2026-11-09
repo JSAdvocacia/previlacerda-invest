@@ -31,7 +31,7 @@ export interface FundDetails {
  * Banco de Dados Autônomo e Auditado com o Portal CVM e Inteligência de Mercado ArgosPrevi
  * Reflete com exatidão as informações reais de cada produto da carteira PREVI-LACERDA
  */
-const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
+export const FUND_DATABASE: Record<string, Partial<FundDetails>> = {
   // 1. CAIXA FI BRASIL IMA-B TIT PUBL RF
   '10.740.658/0001-93': {
     name: 'CAIXA FI BRASIL IMA-B TÍTULOS PÚBLICOS RF LP',

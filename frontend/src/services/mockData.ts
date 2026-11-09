@@ -1,5 +1,6 @@
 import { Asset, AssetMetrics, PortfolioOverview, AuditLog, CvmLog, User } from '../types';
 import { PREVI_LACERDA_OFFICIAL_ASSETS } from './dairParserService';
+import { FUND_DATABASE } from './fundDataService';
 
 export const OFFICIAL_REGULATION_URL = 'https://www.gov.br/previdencia/pt-br/assuntos/rpps/legislacao-dos-rpps/arquivos/2025/ResoluoBCCMNn5.272de18dez2025.pdf';
 export const OFFICIAL_REGULATION_NORM = 'Resolução CMN nº 5.272/2025 (de 18/12/2025)';
@@ -20,35 +21,61 @@ export const mockUsers: User[] = [
 
 export const mockAssets: Asset[] = PREVI_LACERDA_OFFICIAL_ASSETS;
 
-export const mockMetrics: Record<string, AssetMetrics> = PREVI_LACERDA_OFFICIAL_ASSETS.reduce((acc, asset) => {
-  acc[asset.id] = {
+export const buildAssetMetrics = (asset: Asset): AssetMetrics => {
+  const cleanCnpj = asset.cnpj?.trim() || '';
+  const fund = FUND_DATABASE[cleanCnpj] || 
+               Object.values(FUND_DATABASE).find(f => f.cnpj === cleanCnpj || f.name?.toLowerCase() === asset.name?.toLowerCase());
+
+  const return12M = fund?.return12M ?? (asset.asset_class === 'RENDA_VARIAVEL' ? 14.2 : 11.85);
+  const return24M = fund?.return24M ?? parseFloat((return12M * 2.12).toFixed(2));
+  const volatility = fund?.volatility12M ?? (asset.asset_class === 'RENDA_VARIAVEL' ? 14.5 : 1.8);
+  const sharpe = fund?.sharpeRatio12M ?? (return12M > 12 ? 0.45 : 0.15);
+  const netEquity = fund?.netEquity ?? asset.latest_pl ?? 500000000;
+  const adminFeePct = fund?.adminFeePct ?? asset.admin_fee_pct ?? 0.20;
+  const performanceFeePct = fund?.performanceFeePct ?? asset.performance_fee_pct ?? 0.00;
+  const benchmark = fund?.benchmark ?? asset.benchmark ?? 'CDI';
+
+  // Estimativa de cotistas com base no patrimônio líquido
+  const shareholdersCount = Math.max(120, Math.min(85000, Math.round(netEquity / 1800000)));
+
+  // Proporções realistas de retornos históricos baseados no 12M e 24M reais do fundo
+  const oneMonth = parseFloat((return12M / 12 * 0.96).toFixed(2));
+  const sixMonths = parseFloat((return12M * 0.48).toFixed(2));
+  const yearToDate = parseFloat((return12M * 0.79).toFixed(2));
+  const allTime = parseFloat((return24M * 2.35).toFixed(2));
+
+  const cdiReturn12M = 10.75;
+  const pctOfCdi = parseFloat(((return12M / cdiReturn12M) * 100).toFixed(1));
+  const maxDrawdown = asset.asset_class === 'RENDA_VARIAVEL' ? 14.8 : (volatility > 200 ? 5.2 : 0.3);
+
+  return {
     assetId: asset.id,
-    name: asset.name,
-    tradingName: asset.trading_name || asset.name,
+    name: fund?.name || asset.name,
+    tradingName: fund?.tradingName || asset.trading_name || asset.name,
     cnpj: asset.cnpj,
     assetClass: asset.asset_class,
     riskLevel: asset.risk_level,
-    benchmark: asset.benchmark || 'CDI',
-    adminFeePct: asset.admin_fee_pct || 0.20,
-    performanceFeePct: asset.performance_fee_pct || 0.00,
+    benchmark,
+    adminFeePct,
+    performanceFeePct,
     currentQuota: asset.latest_quota || 1.0,
-    currentNetEquity: asset.latest_pl || 1000000000,
-    shareholdersCount: 5000,
+    currentNetEquity: netEquity,
+    shareholdersCount,
     returns: {
-      oneMonth: 1.51,
-      sixMonths: 5.80,
-      twelveMonths: 12.85,
-      twentyFourMonths: 24.50,
-      yearToDate: 9.83,
-      allTime: 65.40
+      oneMonth,
+      sixMonths,
+      twelveMonths: return12M,
+      twentyFourMonths: return24M,
+      yearToDate,
+      allTime
     },
-    volatilityTwelveMonths: asset.asset_class === 'RENDA_VARIAVEL' ? 14.5 : 1.8,
-    sharpeRatioTwelveMonths: 0.45,
-    maxDrawdownTwelveMonths: asset.asset_class === 'RENDA_VARIAVEL' ? 8.2 : 0.3,
+    volatilityTwelveMonths: volatility,
+    sharpeRatioTwelveMonths: sharpe,
+    maxDrawdownTwelveMonths: maxDrawdown,
     benchmarkComparisonTwelveMonths: {
-      assetReturn: 12.85,
-      cdiReturn: 10.75,
-      pctOfCdi: 119.5
+      assetReturn: return12M,
+      cdiReturn: cdiReturn12M,
+      pctOfCdi
     },
     cmnRegulation: {
       articleCode: asset.article_code || 'Art. 7º, I, "b"',
@@ -58,6 +85,10 @@ export const mockMetrics: Record<string, AssetMetrics> = PREVI_LACERDA_OFFICIAL_
       regulationUrl: OFFICIAL_REGULATION_URL
     }
   };
+};
+
+export const mockMetrics: Record<string, AssetMetrics> = PREVI_LACERDA_OFFICIAL_ASSETS.reduce((acc, asset) => {
+  acc[asset.id] = buildAssetMetrics(asset);
   return acc;
 }, {} as Record<string, AssetMetrics>);
 
