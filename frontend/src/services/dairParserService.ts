@@ -198,7 +198,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 6. CAIXA FIC AÇÕES IBOVESPA
   {
     id: 'pl-06',
-    cnpj: '13.058.816/0001-18',
+    cnpj: '01.525.057/0001-77',
     cvm_code: '180120',
     name: 'CAIXA FIC AÇÕES IBOVESPA',
     trading_name: 'Caixa FIC Ações Ibovespa',
@@ -223,7 +223,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 7. CAIXA FI BRASIL IRF-M1+ TP RF LP
   {
     id: 'pl-07',
-    cnpj: '10.577.503/0001-88',
+    cnpj: '10.577.519/0001-90',
     cvm_code: '142847',
     name: 'CAIXA FI BRASIL IRF-M1+ TP RF LP',
     trading_name: 'Caixa FI Brasil IRF-M1+ TP RF LP',
@@ -270,19 +270,19 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     total_invested: 3352245.11,
     weight_pct: 2.42
   },
-  // 9. FI INSTITUCIONAL RF IRF-M LP
+  // 9. SICREDI - FI INSTITUCIONAL RF REFERENCIADO IRF-M LP (Portfólio: FI INSTITUCIONAL RF IRF-M LP)
   {
     id: 'pl-09',
-    cnpj: '13.397.466/0001-14',
+    cnpj: '13.081.159/0001-20',
     cvm_code: '180293',
-    name: 'FI INSTITUCIONAL RF IRF-M LP',
-    trading_name: 'FI Institucional RF IRF-M LP',
+    name: 'SICREDI - FI INSTITUCIONAL RF REFERENCIADO IRF-M LP',
+    trading_name: 'Sicredi Institucional RF IRF-M LP',
     asset_class: 'RENDA_FIXA',
     article_code: 'Art. 7º, I, "b"',
     max_portfolio_limit_pct: 100,
-    administrator: 'BB GESTÃO DE RECURSOS DTVM S.A.',
-    manager: 'BB GESTÃO DE RECURSOS DTVM S.A.',
-    custodian: 'BANCO DO BRASIL S.A.',
+    administrator: 'BANCO COOPERATIVO SICREDI S.A.',
+    manager: 'SICREDI ASSET MANAGEMENT',
+    custodian: 'BANCO COOPERATIVO SICREDI S.A.',
     benchmark: 'IRF-M',
     risk_level: 'MEDIO',
     liquidity_days: 1,
@@ -290,18 +290,18 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     performance_fee_pct: 0.00,
     status: 'APROVADO',
     latest_quota: 4.80108230,
-    latest_pl: 557435218.70,
+    latest_pl: 555320000,
     latest_quote_date: '2026-09-30',
     total_invested: 7815845.82,
     weight_pct: 5.63
   },
-  // 10. SICREDI FI RENDA FIXA LIQUIDEZ EMPRESARIAL
+  // 10. SICREDI FIF RF LIQUIDEZ EMPRESARIAL DI RL
   {
     id: 'pl-10',
-    cnpj: '13.081.159/0001-20',
+    cnpj: '24.634.187/0001-43',
     cvm_code: '180320',
-    name: 'SICREDI FI RENDA FIXA LIQUIDEZ EMPRESARIAL',
-    trading_name: 'Sicredi FI RF Liquidez Empresarial',
+    name: 'SICREDI FIF RF LIQUIDEZ EMPRESARIAL DI RL',
+    trading_name: 'Sicredi FIF RF Liquidez Empresarial DI',
     asset_class: 'RENDA_FIXA',
     article_code: 'Art. 7º, I, "b"',
     max_portfolio_limit_pct: 100,
@@ -320,19 +320,19 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     total_invested: 8807514.93,
     weight_pct: 6.35
   },
-  // 11. FI INSTITUCIONAL RF IRF-M1
+  // 11. SICREDI - FI INSTITUCIONAL RENDA FIXA IRF-M 1 (Portfólio: FI INSTITUCIONAL RF IRF-M1)
   {
     id: 'pl-11',
-    cnpj: '14.386.926/0001-71',
+    cnpj: '19.196.599/0001-09',
     cvm_code: '190342',
-    name: 'FI INSTITUCIONAL RF IRF-M1',
-    trading_name: 'FI Institucional RF IRF-M1',
+    name: 'SICREDI - FI INSTITUCIONAL RENDA FIXA IRF-M 1',
+    trading_name: 'Sicredi Institucional RF IRF-M 1',
     asset_class: 'RENDA_FIXA',
     article_code: 'Art. 7º, I, "b"',
     max_portfolio_limit_pct: 100,
-    administrator: 'CAIXA ECONÔMICA FEDERAL',
-    manager: 'CAIXA DTVM S.A.',
-    custodian: 'CAIXA ECONÔMICA FEDERAL',
+    administrator: 'BANCO COOPERATIVO SICREDI S.A.',
+    manager: 'SICREDI ASSET MANAGEMENT',
+    custodian: 'BANCO COOPERATIVO SICREDI S.A.',
     benchmark: 'IRF-M 1',
     risk_level: 'BAIXO',
     liquidity_days: 0,
@@ -345,12 +345,12 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     total_invested: 3580219.11,
     weight_pct: 2.58
   },
-  // 12. BB PREVID RF IDKA 2
+  // 12. BB PREVIDENCIÁRIO RENDA FIXA IDKA 2 TÍTULOS PÚBLICOS
   {
     id: 'pl-12',
-    cnpj: '13.322.202/0001-92',
+    cnpj: '13.322.205/0001-35',
     cvm_code: '180210',
-    name: 'BB PREVID RF IDKA 2',
+    name: 'BB PREVIDENCIÁRIO RENDA FIXA IDKA 2 TÍTULOS PÚBLICOS',
     trading_name: 'BB Previdenciário RF IDKA 2 TP',
     asset_class: 'RENDA_FIXA',
     article_code: 'Art. 7º, I, "b"',
@@ -370,20 +370,20 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     total_invested: 757126.00,
     weight_pct: 0.55
   },
-  // 13. AÇÕES ESG GLOBAIS IS
+  // 13. BB AÇÕES ESG GLOBAIS IS FIC FIA BDR NÍVEL I
   {
     id: 'pl-13',
-    cnpj: '42.318.981/0001-75',
+    cnpj: '22.632.237/0001-28',
     cvm_code: '450219',
-    name: 'AÇÕES ESG GLOBAIS IS',
-    trading_name: 'Ações ESG Globais IS FIA',
+    name: 'BB AÇÕES ESG GLOBAIS IS FIC FIA BDR NÍVEL I',
+    trading_name: 'BB Ações ESG Globais IS FIC FIA',
     asset_class: 'RENDA_VARIAVEL',
     article_code: 'Art. 8º, I',
     max_portfolio_limit_pct: 30,
-    administrator: 'CAIXA ECONÔMICA FEDERAL',
-    manager: 'CAIXA DTVM S.A.',
-    custodian: 'CAIXA ECONÔMICA FEDERAL',
-    benchmark: 'MSCI ESG',
+    administrator: 'BB GESTÃO DE RECURSOS DTVM S.A.',
+    manager: 'BB GESTÃO DE RECURSOS DTVM S.A.',
+    custodian: 'BANCO DO BRASIL S.A.',
+    benchmark: 'MSCI World ESG Leaders',
     risk_level: 'ALTO',
     liquidity_days: 4,
     admin_fee_pct: 0.90,
@@ -395,13 +395,13 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     total_invested: 935426.56,
     weight_pct: 0.67
   },
-  // 14. BB PREVID RF IRF-M TP
+  // 14. BB PREVIDENCIÁRIO RF IRF-M TÍTULOS PÚBLICOS FIF
   {
     id: 'pl-14',
-    cnpj: '11.328.882/0001-35',
+    cnpj: '07.111.384/0001-69',
     cvm_code: '150428',
-    name: 'BB PREVID RF IRF-M TP',
-    trading_name: 'BB Previdenciário RF IRF-M TP FI',
+    name: 'BB PREVIDENCIÁRIO RF IRF-M TÍTULOS PÚBLICOS FIF',
+    trading_name: 'BB Previdenciário RF IRF-M TP FIF',
     asset_class: 'RENDA_FIXA',
     article_code: 'Art. 7º, I, "b"',
     max_portfolio_limit_pct: 100,
@@ -420,13 +420,13 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     total_invested: 866470.98,
     weight_pct: 0.62
   },
-  // 15. BB AÇÕES DIVIDENDOS MIDCAPS
+  // 15. BB AÇÕES DIVIDENDOS MIDCAPS FIC FIA
   {
     id: 'pl-15',
-    cnpj: '14.218.835/0001-27',
+    cnpj: '14.213.331/0001-14',
     cvm_code: '190124',
-    name: 'BB AÇÕES DIVIDENDOS MIDCAPS',
-    trading_name: 'BB Ações Dividendos Midcaps FIA',
+    name: 'BB AÇÕES DIVIDENDOS MIDCAPS FIC FIA',
+    trading_name: 'BB Ações Dividendos Midcaps FIC FIA',
     asset_class: 'RENDA_VARIAVEL',
     article_code: 'Art. 8º, I',
     max_portfolio_limit_pct: 30,
@@ -448,7 +448,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 16. BB PREVIDENCIÁRIO RF IRF-M 1+ FI
   {
     id: 'pl-16',
-    cnpj: '10.742.584/0001-59',
+    cnpj: '32.161.826/0001-29',
     cvm_code: '142980',
     name: 'BB PREVIDENCIÁRIO RF IRF-M 1+ FI',
     trading_name: 'BB Previdenciário RF IRF-M 1+ TP',
@@ -473,7 +473,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 17. ITAÚ INSTITUCIONAL ALOCAÇÃO DINÂMICA RF FIF CIC RL
   {
     id: 'pl-17',
-    cnpj: '21.838.144/0001-08',
+    cnpj: '21.838.150/0001-49',
     cvm_code: '260450',
     name: 'ITAÚ INSTITUCIONAL ALOCAÇÃO DINÂMICA RF FIF CIC RL',
     trading_name: 'Itaú Institucional Alocação Dinâmica RF',
@@ -548,7 +548,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 20. TARPON GT INSTITUCIONAL FUNDO DE INVESTIMENTO EM COTAS
   {
     id: 'pl-20',
-    cnpj: '28.323.714/0001-87',
+    cnpj: '39.346.123/0001-14',
     cvm_code: '330150',
     name: 'TARPON GT INSTITUCIONAL FUNDO DE INVESTIMENTO EM COTAS',
     trading_name: 'Tarpon GT Institucional FIC FIA',
@@ -573,7 +573,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 21. CAIXA ALIANÇA TÍTULOS PÚBLICOS FUNDO DE INVESTIMENTO FINANCEIRO
   {
     id: 'pl-21',
-    cnpj: '14.508.605/0001-00',
+    cnpj: '05.164.358/0001-73',
     cvm_code: '190412',
     name: 'CAIXA ALIANÇA TÍTULOS PÚBLICOS FUNDO DE INVESTIMENTO FINANCEIRO',
     trading_name: 'Caixa Aliança Títulos Públicos FIF',
@@ -598,7 +598,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 22. CAIXA BRASIL IPCA XVI FUNDO DE INVESTIMENTO FINANCEIRO RF CRÉDITO PRIVADO
   {
     id: 'pl-22',
-    cnpj: '21.986.074/0001-19',
+    cnpj: '21.918.896/0001-62',
     cvm_code: '270120',
     name: 'CAIXA BRASIL IPCA XVI FUNDO DE INVESTIMENTO FINANCEIRO RF CRÉDITO PRIVADO',
     trading_name: 'Caixa Brasil IPCA XVI FIF RF CP',
@@ -623,7 +623,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 23. CAIXA INDEXA BOLSA AMERICANA MM LP RL
   {
     id: 'pl-23',
-    cnpj: '30.075.696/0001-89',
+    cnpj: '30.036.235/0001-02',
     cvm_code: '340812',
     name: 'CAIXA INDEXA BOLSA AMERICANA MM LP RL',
     trading_name: 'Caixa Indexa Bolsa Americana MM LP',
@@ -648,7 +648,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 24. SICREDI FUNDO DE INVESTIMENTO FINANCEIRO OURO MULTIMERCADO RL
   {
     id: 'pl-24',
-    cnpj: '35.651.712/0001-80',
+    cnpj: '61.542.326/0001-35',
     cvm_code: '380450',
     name: 'SICREDI FUNDO DE INVESTIMENTO FINANCEIRO OURO MULTIMERCADO RL',
     trading_name: 'Sicredi FIF Ouro Multimercado RL',
@@ -690,7 +690,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
     performance_fee_pct: 0.00,
     status: 'APROVADO',
     latest_quota: 13.38470270,
-    latest_pl: 149533608.60,
+    latest_pl: 498620000,
     latest_quote_date: '2026-09-30',
     total_invested: 1715036.06,
     weight_pct: 1.24
@@ -698,7 +698,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 26. SANTANDER TÍTULOS PÚBLICOS PREMIUM RENDA FIXA REFERENCIADO DI - CIC FIF RL
   {
     id: 'pl-26',
-    cnpj: '08.246.333/0001-70',
+    cnpj: '09.577.447/0001-00',
     cvm_code: '124982',
     name: 'SANTANDER TÍTULOS PÚBLICOS PREMIUM RENDA FIXA REFERENCIADO DI - CIC FIF RL',
     trading_name: 'Santander TP Premium RF Ref DI',
@@ -723,7 +723,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 27. ITAÚ AÇÕES S&P500® BRL FUNDO DE INVESTIMENTO FINANCEIRO DA CIC RL
   {
     id: 'pl-27',
-    cnpj: '42.318.949/0001-90',
+    cnpj: '26.269.692/0001-61',
     cvm_code: '450120',
     name: 'ITAÚ AÇÕES S&P500® BRL FUNDO DE INVESTIMENTO FINANCEIRO DA CIC RL',
     trading_name: 'Itaú Ações S&P 500 BRL FIF',
@@ -748,7 +748,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 28. ITAÚ KINEA INSTITUCIONAL FIF DA CIC RENDA FIXA CRÉDITO PRIVADO LONGO PRAZO
   {
     id: 'pl-28',
-    cnpj: '14.188.162/0001-00',
+    cnpj: '57.454.364/0001-69',
     cvm_code: '190820',
     name: 'ITAÚ KINEA INSTITUCIONAL FIF DA CIC RENDA FIXA CRÉDITO PRIVADO LONGO PRAZO',
     trading_name: 'Itaú Kinea Inst FIF RF CP LP',
@@ -773,7 +773,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 29. CAIXA FI BRASIL MATRIZ RENDA FIXA
   {
     id: 'pl-29',
-    cnpj: '23.215.097/0001-50',
+    cnpj: '23.215.008/0001-70',
     cvm_code: '280918',
     name: 'CAIXA FI BRASIL MATRIZ RENDA FIXA',
     trading_name: 'Caixa FI Brasil Matriz RF',
@@ -798,7 +798,7 @@ export const PREVI_LACERDA_OFFICIAL_ASSETS: Asset[] = [
   // 30. BB PREV V ESP 2028 (BB PREVIDENCIÁRIO TP V ESPECIAL 2028)
   {
     id: 'pl-30',
-    cnpj: '35.805.898/0001-60',
+    cnpj: '50.099.960/0001-29',
     cvm_code: '380910',
     name: 'BB PREV V ESP 2028',
     trading_name: 'BB Previdenciário TP V Especial 2028 FI',
