@@ -11,6 +11,7 @@ import { AssetRegistrationModal } from './components/AssetRegistrationModal';
 import { OnePageReportModal } from './components/OnePageReportModal';
 import { CvmStatusModal } from './components/CvmStatusModal';
 import { LoginModal } from './components/LoginModal';
+import { LoginScreen } from './components/LoginScreen';
 import { ChangePasswordModal } from './components/ChangePasswordModal';
 import { UserManagementModal } from './components/UserManagementModal';
 import { DairUploadModal } from './components/DairUploadModal';
@@ -171,8 +172,21 @@ export function App() {
     }
   };
 
+  // Se o usuário não estiver autenticado, exibe a Tela de Acesso Seguro (Login)
+  if (!currentUserState) {
+    return (
+      <LoginScreen
+        onLoginSuccess={(user) => {
+          setCurrentUserState(user);
+          setCurrentUser(user);
+        }}
+        defaultEmail="prof.jan100@gmail.com"
+      />
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#f1f5f9] dark:bg-[#070e19] text-slate-800 dark:text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f1f5f9] text-slate-800 flex flex-col font-sans">
       {/* Barra Lateral Padrão Municipal (Identica ao Modelo Enviado) */}
       <Sidebar
         currentTab={currentTab}
