@@ -15,12 +15,14 @@ let currentInstituteState: InstituteProfile = { ...PREVI_LACERDA_OFFICIAL_PROFIL
 let assetsListState: Asset[] = [...PREVI_LACERDA_OFFICIAL_ASSETS];
 let portfolioOverviewState: PortfolioOverview = {
   ...mockPortfolioOverview,
-  totalGeralCarteira: 143573608.60,
-  totalAum: 139605063.91,
-  saldoContaCorrente: 3968544.69,
+  totalGeralCarteira: 138781858.93,
+  totalAum: 138781858.93,
+  saldoContaCorrente: 0.00,
   returns: {
     ...mockPortfolioOverview.returns,
-    month: 1.67
+    month: 1.51,
+    yearToDate: 9.83,
+    benchmarkSpread: 1.63
   }
 };
 

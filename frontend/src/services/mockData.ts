@@ -1,4 +1,5 @@
 import { Asset, AssetMetrics, PortfolioOverview, AuditLog, CvmLog, User } from '../types';
+import { PREVI_LACERDA_OFFICIAL_ASSETS } from './dairParserService';
 
 export const OFFICIAL_REGULATION_URL = 'https://www.gov.br/previdencia/pt-br/assuntos/rpps/legislacao-dos-rpps/arquivos/2025/ResoluoBCCMNn5.272de18dez2025.pdf';
 export const OFFICIAL_REGULATION_NORM = 'Resolução CMN nº 5.272/2025 (de 18/12/2025)';
@@ -15,359 +16,124 @@ export const mockUsers: User[] = [
   }
 ];
 
-export const mockAssets: Asset[] = [
-  {
-    id: 'b1111111-1111-1111-1111-111111111111',
-    cnpj: '13.397.466/0001-14',
-    cvm_code: '180293',
-    name: 'BB PREVIDENCIÁRIO RENDA FIXA ALOCAÇÃO ATIVA FIC FI',
-    trading_name: 'BB Previdência RF Alocação Ativa',
-    asset_class: 'RENDA_FIXA',
-    article_code: 'Art. 7º, I, "b"',
-    max_portfolio_limit_pct: 100,
-    administrator: 'BB GESTÃO DE RECURSOS DTVM S.A.',
-    manager: 'BB GESTÃO DE RECURSOS DTVM S.A.',
-    custodian: 'BANCO DO BRASIL S.A.',
-    benchmark: 'IMA-B / CDI',
-    risk_level: 'BAIXO',
-    anbima_category: 'Renda Fixa Duração Livre Soberano',
-    liquidity_days: 1,
-    admin_fee_pct: 0.20,
-    performance_fee_pct: 0.00,
-    status: 'APROVADO',
-    latest_quota: 4.195021,
-    latest_pl: 1845200000,
-    latest_quote_date: '2026-11-05'
-  },
-  {
-    id: 'b2222222-2222-2222-2222-222222222222',
-    cnpj: '11.060.940/0001-65',
-    cvm_code: '142839',
-    name: 'CAIXA BRASIL IMA-B 5+ TÍTULOS PÚBLICOS FI RENDA FIXA LP',
-    trading_name: 'Caixa Brasil IMA-B 5+ TP RF LP',
-    asset_class: 'RENDA_FIXA',
-    article_code: 'Art. 7º, I, "b"',
-    max_portfolio_limit_pct: 100,
-    administrator: 'CAIXA ECONÔMICA FEDERAL',
-    manager: 'CAIXA DTVM S.A.',
-    custodian: 'CAIXA ECONÔMICA FEDERAL',
-    benchmark: 'IMA-B 5+',
-    risk_level: 'MEDIO',
-    anbima_category: 'Renda Fixa Indexados',
-    liquidity_days: 0,
-    admin_fee_pct: 0.20,
-    performance_fee_pct: 0.00,
-    status: 'APROVADO',
-    latest_quota: 5.694650,
-    latest_pl: 2150000000,
-    latest_quote_date: '2026-11-05'
-  },
-  {
-    id: 'b3333333-3333-3333-3333-333333333333',
-    cnpj: '10.742.584/0001-59',
-    cvm_code: '124982',
-    name: 'SANTANDER INSTITUCIONAL TITULOS PUBLICOS FI RENDA FIXA',
-    trading_name: 'Santander Institucional TP RF',
-    asset_class: 'RENDA_FIXA',
-    article_code: 'Art. 7º, I, "b"',
-    max_portfolio_limit_pct: 100,
-    administrator: 'BANCO SANTANDER (BRASIL) S.A.',
-    manager: 'SANTANDER ASSET MANAGEMENT DTVM',
-    custodian: 'BANCO SANTANDER S.A.',
-    benchmark: 'CDI',
-    risk_level: 'MUITO_BAIXO',
-    anbima_category: 'Renda Fixa Soberano',
-    liquidity_days: 0,
-    admin_fee_pct: 0.15,
-    performance_fee_pct: 0.00,
-    status: 'APROVADO',
-    latest_quota: 3.210450,
-    latest_pl: 3450000000,
-    latest_quote_date: '2026-11-05'
-  },
-  {
-    id: 'b4444444-4444-4444-4444-444444444444',
-    cnpj: '03.922.311/0001-98',
-    cvm_code: '089201',
-    name: 'ITAÚ IBOVESPA ATIVO INSTITUCIONAL FIA',
-    trading_name: 'Itaú Institucional FIA Ações',
-    asset_class: 'RENDA_VARIAVEL',
-    article_code: 'Art. 8º, I',
-    max_portfolio_limit_pct: 30,
-    administrator: 'BANCO ITAÚ CARTEIRAS S.A.',
-    manager: 'ITAÚ ASSET MANAGEMENT LTDA',
-    custodian: 'BANCO ITAÚ UNIBANCO S.A.',
-    benchmark: 'IBOVESPA',
-    risk_level: 'ALTO',
-    anbima_category: 'Ações Indexadas',
-    liquidity_days: 3,
-    admin_fee_pct: 1.00,
-    performance_fee_pct: 0.00,
-    status: 'APROVADO',
-    latest_quota: 4.315200,
-    latest_pl: 890000000,
-    latest_quote_date: '2026-11-05'
-  },
-  {
-    id: 'b5555555-5555-5555-5555-555555555555',
-    cnpj: '35.651.712/0001-80',
-    cvm_code: '321940',
-    name: 'WESTERN ASSET GLOBAL BOND BDR NÍVEL I FI RENDA FIXA EXTERIOR',
-    trading_name: 'Western Asset Global Bond Exterior',
-    asset_class: 'INVESTIMENTO_EXTERIOR',
-    article_code: 'Art. 9º, II',
-    max_portfolio_limit_pct: 10,
-    administrator: 'BEM DTVM LTDA',
-    manager: 'WESTERN ASSET MANAGEMENT DTVM',
-    custodian: 'BANCO BRADESCO S.A.',
-    benchmark: 'Global Aggregate USD',
-    risk_level: 'MEDIO',
-    anbima_category: 'Renda Fixa Exterior',
-    liquidity_days: 5,
-    admin_fee_pct: 0.60,
-    performance_fee_pct: 0.00,
-    status: 'APROVADO',
-    latest_quota: 3.877500,
-    latest_pl: 450000000,
-    latest_quote_date: '2026-11-05'
-  },
-  {
-    id: 'b6666666-6666-6666-6666-666666666666',
-    cnpj: '00.000.000/0001-00',
-    name: 'NOTA DO TESOURO NACIONAL - SÉRIE B (NTN-B 2035)',
-    trading_name: 'NTN-B 2035 (Tesouro IPCA+)',
-    asset_class: 'TITULO_PUBLICO_DIRETO',
-    article_code: 'Art. 7º, I, "a"',
-    max_portfolio_limit_pct: 100,
-    administrator: 'SECRETARIA DO TESOURO NACIONAL',
-    manager: 'TESOURO DIRETO / SELIC',
-    custodian: 'BANCO CENTRAL DO BRASIL',
-    benchmark: 'IPCA + 5,85% a.a.',
-    risk_level: 'MUITO_BAIXO',
-    anbima_category: 'Título Público Federal',
-    liquidity_days: 0,
-    admin_fee_pct: 0.00,
-    performance_fee_pct: 0.00,
-    maturity_date: '2035-05-15',
-    status: 'APROVADO',
-    latest_quota: 4225.35,
-    latest_pl: 6000000,
-    latest_quote_date: '2026-11-05'
-  }
-];
+export const mockAssets: Asset[] = PREVI_LACERDA_OFFICIAL_ASSETS;
 
-export const mockMetrics: Record<string, AssetMetrics> = {
-  'b1111111-1111-1111-1111-111111111111': {
-    assetId: 'b1111111-1111-1111-1111-111111111111',
-    name: 'BB PREVIDENCIÁRIO RENDA FIXA ALOCAÇÃO ATIVA FIC FI',
-    tradingName: 'BB Previdência RF Alocação Ativa',
-    cnpj: '13.397.466/0001-14',
-    assetClass: 'RENDA_FIXA',
-    riskLevel: 'BAIXO',
-    benchmark: 'IMA-B / CDI',
-    adminFeePct: 0.20,
-    performanceFeePct: 0.00,
-    currentQuota: 4.195021,
-    currentNetEquity: 1845200000,
-    shareholdersCount: 14200,
+export const mockMetrics: Record<string, AssetMetrics> = PREVI_LACERDA_OFFICIAL_ASSETS.reduce((acc, asset) => {
+  acc[asset.id] = {
+    assetId: asset.id,
+    name: asset.name,
+    tradingName: asset.trading_name || asset.name,
+    cnpj: asset.cnpj,
+    assetClass: asset.asset_class,
+    riskLevel: asset.risk_level,
+    benchmark: asset.benchmark || 'CDI',
+    adminFeePct: asset.admin_fee_pct || 0.20,
+    performanceFeePct: asset.performance_fee_pct || 0.00,
+    currentQuota: asset.latest_quota || 1.0,
+    currentNetEquity: asset.latest_pl || 1000000000,
+    shareholdersCount: 5000,
     returns: {
-      oneMonth: 0.98,
-      sixMonths: 5.64,
-      twelveMonths: 11.85,
-      twentyFourMonths: 24.30,
-      yearToDate: 9.80,
-      allTime: 84.50
+      oneMonth: 1.51,
+      sixMonths: 5.80,
+      twelveMonths: 12.85,
+      twentyFourMonths: 24.50,
+      yearToDate: 9.83,
+      allTime: 65.40
     },
-    volatilityTwelveMonths: 2.15,
-    sharpeRatioTwelveMonths: 0.51,
-    maxDrawdownTwelveMonths: 0.45,
+    volatilityTwelveMonths: asset.asset_class === 'RENDA_VARIAVEL' ? 14.5 : 1.8,
+    sharpeRatioTwelveMonths: 0.45,
+    maxDrawdownTwelveMonths: asset.asset_class === 'RENDA_VARIAVEL' ? 8.2 : 0.3,
     benchmarkComparisonTwelveMonths: {
-      assetReturn: 11.85,
+      assetReturn: 12.85,
       cdiReturn: 10.75,
-      pctOfCdi: 110.2
+      pctOfCdi: 119.5
     },
     cmnRegulation: {
-      articleCode: 'Art. 7º, I, "b"',
-      description: 'Fundos de Índice Referenciados em Títulos Públicos (100% TP)',
-      maxLimitPct: 100,
+      articleCode: asset.article_code || 'Art. 7º, I, "b"',
+      description: asset.article_code || 'Enquadramento Resolução CMN nº 5.272/2025',
+      maxLimitPct: asset.max_portfolio_limit_pct || 100,
       regulationNorm: OFFICIAL_REGULATION_NORM,
       regulationUrl: OFFICIAL_REGULATION_URL
     }
-  },
-  'b2222222-2222-2222-2222-222222222222': {
-    assetId: 'b2222222-2222-2222-2222-222222222222',
-    name: 'CAIXA BRASIL IMA-B 5+ TÍTULOS PÚBLICOS FI RENDA FIXA LP',
-    tradingName: 'Caixa Brasil IMA-B 5+ TP RF LP',
-    cnpj: '11.060.940/0001-65',
-    assetClass: 'RENDA_FIXA',
-    riskLevel: 'MEDIO',
-    benchmark: 'IMA-B 5+',
-    adminFeePct: 0.20,
-    performanceFeePct: 0.00,
-    currentQuota: 5.694650,
-    currentNetEquity: 2150000000,
-    shareholdersCount: 18900,
-    returns: {
-      oneMonth: 1.12,
-      sixMonths: 6.80,
-      twelveMonths: 13.45,
-      twentyFourMonths: 27.80,
-      yearToDate: 11.20,
-      allTime: 96.20
-    },
-    volatilityTwelveMonths: 6.85,
-    sharpeRatioTwelveMonths: 0.39,
-    maxDrawdownTwelveMonths: 3.20,
-    benchmarkComparisonTwelveMonths: {
-      assetReturn: 13.45,
-      cdiReturn: 10.75,
-      pctOfCdi: 125.1
-    },
-    cmnRegulation: {
-      articleCode: 'Art. 7º, I, "b"',
-      description: 'Fundos de Índice Referenciados em Títulos Públicos (100% TP)',
-      maxLimitPct: 100,
-      regulationNorm: OFFICIAL_REGULATION_NORM,
-      regulationUrl: OFFICIAL_REGULATION_URL
-    }
-  },
-  'b3333333-3333-3333-3333-333333333333': {
-    assetId: 'b3333333-3333-3333-3333-333333333333',
-    name: 'SANTANDER INSTITUCIONAL TITULOS PUBLICOS FI RENDA FIXA',
-    tradingName: 'Santander Institucional TP RF',
-    cnpj: '10.742.584/0001-59',
-    assetClass: 'RENDA_FIXA',
-    riskLevel: 'MUITO_BAIXO',
-    benchmark: 'CDI',
-    adminFeePct: 0.15,
-    performanceFeePct: 0.00,
-    currentQuota: 3.210450,
-    currentNetEquity: 3450000000,
-    shareholdersCount: 25400,
-    returns: {
-      oneMonth: 0.88,
-      sixMonths: 5.25,
-      twelveMonths: 10.82,
-      twentyFourMonths: 22.90,
-      yearToDate: 9.15,
-      allTime: 62.40
-    },
-    volatilityTwelveMonths: 0.18,
-    sharpeRatioTwelveMonths: 0.38,
-    maxDrawdownTwelveMonths: 0.05,
-    benchmarkComparisonTwelveMonths: {
-      assetReturn: 10.82,
-      cdiReturn: 10.75,
-      pctOfCdi: 100.6
-    },
-    cmnRegulation: {
-      articleCode: 'Art. 7º, I, "b"',
-      description: 'Fundos de Índice Referenciados em Títulos Públicos (100% TP)',
-      maxLimitPct: 100,
-      regulationNorm: OFFICIAL_REGULATION_NORM,
-      regulationUrl: OFFICIAL_REGULATION_URL
-    }
-  },
-  'b4444444-4444-4444-4444-444444444444': {
-    assetId: 'b4444444-4444-4444-4444-444444444444',
-    name: 'ITAÚ IBOVESPA ATIVO INSTITUCIONAL FIA',
-    tradingName: 'Itaú Institucional FIA Ações',
-    cnpj: '03.922.311/0001-98',
-    assetClass: 'RENDA_VARIAVEL',
-    riskLevel: 'ALTO',
-    benchmark: 'IBOVESPA',
-    adminFeePct: 1.00,
-    performanceFeePct: 0.00,
-    currentQuota: 4.315200,
-    currentNetEquity: 890000000,
-    shareholdersCount: 8200,
-    returns: {
-      oneMonth: -0.65,
-      sixMonths: 4.20,
-      twelveMonths: 8.90,
-      twentyFourMonths: 19.50,
-      yearToDate: 6.40,
-      allTime: 112.00
-    },
-    volatilityTwelveMonths: 16.40,
-    sharpeRatioTwelveMonths: -0.11,
-    maxDrawdownTwelveMonths: 11.50,
-    benchmarkComparisonTwelveMonths: {
-      assetReturn: 8.90,
-      cdiReturn: 10.75,
-      pctOfCdi: 82.8
-    },
-    cmnRegulation: {
-      articleCode: 'Art. 8º, I',
-      description: 'Fundos de Investimento em Ações (FIA)',
-      maxLimitPct: 30,
-      regulationNorm: OFFICIAL_REGULATION_NORM,
-      regulationUrl: OFFICIAL_REGULATION_URL
-    }
-  }
-};
+  };
+  return acc;
+}, {} as Record<string, AssetMetrics>);
 
 export const mockPortfolioOverview: PortfolioOverview = {
-  totalAum: 68500000,
-  allocationsCount: 6,
+  totalAum: 138781858.93,
+  allocationsCount: 32,
   regulationNorm: OFFICIAL_REGULATION_NORM,
   regulationUrl: OFFICIAL_REGULATION_URL,
   returns: {
-    month: 0.94,
-    year: 10.42,
-    twelveMonths: 12.18,
-    actuarialTarget12M: 10.25,
+    month: 1.51,
+    year: 9.83,
+    twelveMonths: 12.85,
+    actuarialTarget12M: 8.20,
     cdi12M: 10.75,
-    pctOfActuarialTarget: 118.8,
-    pctOfCdi: 113.3
+    pctOfActuarialTarget: 119.8,
+    pctOfCdi: 111.4
   },
   classAllocation: [
-    { assetClass: 'RENDA_FIXA', amount: 53500000, percentage: 78.11 },
-    { assetClass: 'TITULO_PUBLICO_DIRETO', amount: 6000000, percentage: 8.75 },
-    { assetClass: 'RENDA_VARIAVEL', amount: 5200000, percentage: 7.59 },
-    { assetClass: 'INVESTIMENTO_EXTERIOR', amount: 3800000, percentage: 5.55 }
+    { assetClass: 'RENDA_FIXA', amount: 127452086.47, percentage: 91.84 },
+    { assetClass: 'RENDA_VARIAVEL', amount: 8204605.06, percentage: 5.91 },
+    { assetClass: 'MULTIMERCADO', amount: 3125167.41, percentage: 2.25 }
   ],
   cmnCompliance: [
     {
-      articleCode: 'Art. 7º, I, "a" (Títulos Tesouro Selic)',
+      articleCode: 'Art. 7º, I, "b" (Fundos RF 100% Títulos Públicos)',
       maxLimitPct: 100,
-      currentAllocatedPct: 8.75,
+      currentAllocatedPct: 63.21,
       isCompliant: true,
-      marginPct: 91.25
+      marginPct: 36.79
     },
     {
-      articleCode: 'Art. 7º, I, "b" (Fundos RF Títulos Públicos)',
-      maxLimitPct: 100,
-      currentAllocatedPct: 78.11,
+      articleCode: 'Art. 7º, III, "a" (Fundos Renda Fixa CVM)',
+      maxLimitPct: 60,
+      currentAllocatedPct: 22.77,
       isCompliant: true,
-      marginPct: 21.89
+      marginPct: 37.23
     },
     {
-      articleCode: 'Art. 8º, I (Ações / FIA)',
+      articleCode: 'Art. 8º, I (Fundos de Ações / FIA)',
       maxLimitPct: 30,
-      currentAllocatedPct: 7.59,
+      currentAllocatedPct: 5.91,
       isCompliant: true,
-      marginPct: 22.41
+      marginPct: 24.09
     },
     {
-      articleCode: 'Art. 9º, II (Exterior)',
-      maxLimitPct: 10,
-      currentAllocatedPct: 5.55,
+      articleCode: 'Art. 7º, V, "b" (RF Crédito Privado)',
+      maxLimitPct: 20,
+      currentAllocatedPct: 2.29,
       isCompliant: true,
-      marginPct: 4.45
+      marginPct: 17.71
+    },
+    {
+      articleCode: 'Art. 10, I (Fundos Multimercado)',
+      maxLimitPct: 10,
+      currentAllocatedPct: 2.25,
+      isCompliant: true,
+      marginPct: 7.75
+    },
+    {
+      articleCode: 'Art. 7º, IV (Letras Financeiras Bancárias)',
+      maxLimitPct: 20,
+      currentAllocatedPct: 3.56,
+      isCompliant: true,
+      marginPct: 16.44
     }
   ],
   evolutionHistory: [
-    { month: 'Dez/25', portfolioValue: 61650000, benchmarkCdi: 61500000, actuarialTarget: 61400000 },
-    { month: 'Jan/26', portfolioValue: 62300000, benchmarkCdi: 62050000, actuarialTarget: 61950000 },
-    { month: 'Fev/26', portfolioValue: 62950000, benchmarkCdi: 62600000, actuarialTarget: 62500000 },
-    { month: 'Mar/26', portfolioValue: 63650000, benchmarkCdi: 63150000, actuarialTarget: 63050000 },
-    { month: 'Abr/26', portfolioValue: 64300000, benchmarkCdi: 63700000, actuarialTarget: 63600000 },
-    { month: 'Mai/26', portfolioValue: 65000000, benchmarkCdi: 64280000, actuarialTarget: 64150000 },
-    { month: 'Jun/26', portfolioValue: 65700000, benchmarkCdi: 64850000, actuarialTarget: 64700000 },
-    { month: 'Jul/26', portfolioValue: 66350000, benchmarkCdi: 65420000, actuarialTarget: 65280000 },
-    { month: 'Ago/26', portfolioValue: 67100000, benchmarkCdi: 66000000, actuarialTarget: 65850000 },
-    { month: 'Set/26', portfolioValue: 67750000, benchmarkCdi: 66580000, actuarialTarget: 66420000 },
+    { month: 'Jan/26', portfolioValue: 130790202.26, benchmarkCdi: 129000000, actuarialTarget: 128922000 },
+    { month: 'Fev/26', portfolioValue: 131863656.72, benchmarkCdi: 130100000, actuarialTarget: 130393000 },
+    { month: 'Mar/26', portfolioValue: 131684695.55, benchmarkCdi: 131200000, actuarialTarget: 132133000 },
+    { month: 'Abr/26', portfolioValue: 132562993.96, benchmarkCdi: 132300000, actuarialTarget: 133615000 },
+    { month: 'Mai/26', portfolioValue: 133336163.24, benchmarkCdi: 133400000, actuarialTarget: 134983000 },
+    { month: 'Jun/26', portfolioValue: 133788243.05, benchmarkCdi: 134500000, actuarialTarget: 135802000 },
+    { month: 'Jul/26', portfolioValue: 134893677.35, benchmarkCdi: 135600000, actuarialTarget: 136506000 },
+    { month: 'Ago/26', portfolioValue: 135288278.08, benchmarkCdi: 136700000, actuarialTarget: 136673000 },
+    { month: 'Set/26', portfolioValue: 138781858.93, benchmarkCdi: 137800000, actuarialTarget: 138409000 }
+  ]
+};
     { month: 'Out/26', portfolioValue: 68150000, benchmarkCdi: 67180000, actuarialTarget: 67000000 },
     { month: 'Nov/26', portfolioValue: 68500000, benchmarkCdi: 67770000, actuarialTarget: 67580000 }
   ],
