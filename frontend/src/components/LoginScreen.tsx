@@ -85,29 +85,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     <div className="min-h-screen bg-[#f1f5f9] text-slate-800 flex flex-col justify-between font-sans">
       {/* Área Central: Card de Login / Cadastro Fiduciário com Logo ArgosPrevi */}
       <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 my-6">
-        {/* Logotipo Oficial ArgosPrevi */}
-        <div className="flex flex-col items-center mb-6 text-center">
-          <img 
-            src="/argosprevi-logo.png" 
-            alt="ArgosPrevi - Olhar atento, gestão transparente" 
-            className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-md mb-2 rounded-2xl"
-          />
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-1.5">
-            <span>Argos</span><span className="text-teal-700">Previ</span>
-          </h1>
-          <p className="text-xs font-semibold text-teal-800 tracking-wide uppercase mt-0.5">
-            Sistema de Gestão Previdenciária
-          </p>
-          <p className="text-[11px] text-slate-500 italic mt-0.5">
-            ArgosPrevi - olhar atento, gestão transparente
-          </p>
-        </div>
-
         <div className="bg-white rounded-2xl max-w-md w-full shadow-xl border border-slate-200 overflow-hidden">
-          {/* Cabeçalho do Card */}
+          {/* Cabeçalho do Card - Logo ArgosPrevi no lugar/substituindo "Login no PREVI-LACERDA" */}
           <div className="bg-slate-50 border-b border-slate-200 p-6 sm:p-8">
-            <div className="flex items-center gap-2.5 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-800 shadow-2xs">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-800 shadow-2xs shrink-0">
                 {isRegisterMode ? <UserCheck className="w-4 h-4" /> : <KeyRound className="w-4 h-4" />}
               </div>
               <div>
@@ -117,10 +99,34 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <span className="text-xs font-semibold text-slate-600">ArgosPrevi - Sistema de Gestão Previdenciária</span>
               </div>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
-              {isRegisterMode ? 'Novo Usuário • Cadastro' : 'Login no PREVI-LACERDA'}
-            </h2>
-            <p className="text-xs text-slate-500 mt-1">
+
+            {/* Logotipo Oficial ArgosPrevi em substituição direta a "Login no PREVI-LACERDA" */}
+            <div className="flex items-center gap-4 my-2.5 p-2 bg-white rounded-xl border border-slate-100 shadow-2xs">
+              <img 
+                src="/argosprevi-logo.png" 
+                alt="ArgosPrevi" 
+                className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-sm rounded-xl shrink-0"
+              />
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none flex items-center gap-1">
+                  {isRegisterMode ? (
+                    'Novo Usuário'
+                  ) : (
+                    <>
+                      <span>Argos</span><span className="text-teal-700">Previ</span>
+                    </>
+                  )}
+                </h2>
+                <p className="text-[11px] font-bold text-teal-800 uppercase tracking-wide mt-1">
+                  {isRegisterMode ? 'Cadastro no Sistema' : 'Sistema de Gestão Previdenciária'}
+                </p>
+                <p className="text-[10px] text-slate-500 italic mt-0.5">
+                  olhar atento, gestão transparente
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-500 mt-2">
               {isRegisterMode
                 ? 'Preencha seus dados para credenciamento no sistema previdenciário.'
                 : 'Informe suas credenciais institucionais para acesso à gestão previdenciária.'}

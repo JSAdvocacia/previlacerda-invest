@@ -112,14 +112,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       }}
     >
       <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-8">
-        {/* Cabeçalho - Layout Claro com Logo ArgosPrevi */}
+        {/* Cabeçalho - Layout Claro com Logo ArgosPrevi substituindo "Login no PREVI-LACERDA" */}
         <div className="bg-slate-50 border-b border-slate-200 p-6 relative">
-          <div className="flex items-center gap-3 mb-2">
-            <img 
-              src="/argosprevi-logo.png" 
-              alt="ArgosPrevi Logo" 
-              className="w-10 h-10 object-contain drop-shadow-sm rounded-xl shrink-0" 
-            />
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-7 h-7 rounded-lg bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-800 shadow-2xs">
+              {isRegisterMode ? <UserCheck className="w-3.5 h-3.5" /> : <KeyRound className="w-3.5 h-3.5" />}
+            </div>
             <div>
               <span className="text-[10px] font-bold text-teal-800 uppercase tracking-wider block">
                 {isRegisterMode ? 'Credenciamento RPPS' : 'Acesso Seguro RPPS'}
@@ -127,13 +125,36 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               <span className="text-xs font-semibold text-slate-600">ArgosPrevi - Sistema de Gestão Previdenciária</span>
             </div>
           </div>
-          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight mt-1">
-            {isRegisterMode ? 'Novo Usuário • Cadastro' : 'Login no PREVI-LACERDA'}
-          </h2>
+
+          <div className="flex items-center gap-3.5 my-2.5 p-2 bg-white rounded-xl border border-slate-100 shadow-2xs">
+            <img 
+              src="/argosprevi-logo.png" 
+              alt="ArgosPrevi Logo" 
+              className="w-14 h-14 object-contain drop-shadow-sm rounded-xl shrink-0" 
+            />
+            <div>
+              <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none flex items-center gap-1">
+                {isRegisterMode ? (
+                  'Novo Usuário'
+                ) : (
+                  <>
+                    <span>Argos</span><span className="text-teal-700">Previ</span>
+                  </>
+                )}
+              </h2>
+              <p className="text-[11px] font-bold text-teal-800 uppercase tracking-wide mt-1">
+                {isRegisterMode ? 'Cadastro no Sistema' : 'Sistema de Gestão Previdenciária'}
+              </p>
+              <p className="text-[10px] text-slate-500 italic mt-0.5">
+                olhar atento, gestão transparente
+              </p>
+            </div>
+          </div>
+
           <p className="text-xs text-slate-500 mt-1">
             {isRegisterMode
               ? 'Informe seus dados funcionais para solicitar credenciamento fiduciário.'
-              : 'Informe suas credenciais institucionais para acesso à carteira fiduciária.'}
+              : 'Informe suas credenciais institucionais para acesso à gestão previdenciária.'}
           </p>
 
           {isDismissible && (
