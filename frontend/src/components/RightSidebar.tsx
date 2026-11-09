@@ -250,11 +250,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
         </nav>
 
         {/* Footer / User Session */}
-        <div className="p-3 bg-[#070e19] border-t border-slate-800/80 text-xs text-slate-400">
+        <div className="p-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-600">
           <div className="flex items-center justify-between">
-            <span className="truncate">{currentUser?.email || 'prof.jan100@gmail.com'}</span>
-            <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">
-              {currentUser?.role === 'MASTER_ADMIN' ? 'MASTER' : 'GESTOR'}
+            <span className="truncate font-medium">{currentUser ? currentUser.email : 'Sessão Encerrada'}</span>
+            <span className="text-[10px] bg-slate-200 text-slate-700 font-bold px-1.5 py-0.5 rounded">
+              {currentUser ? (currentUser.role === 'MASTER_ADMIN' || currentUser.role === 'Administrador' ? 'MASTER' : 'GESTOR') : 'DESCONECTADO'}
             </span>
           </div>
         </div>

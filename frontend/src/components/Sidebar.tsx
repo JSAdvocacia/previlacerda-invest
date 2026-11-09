@@ -32,6 +32,7 @@ interface SidebarProps {
   onOpenAssetRegister: () => void;
   onOpenUserManagement: () => void;
   onOpenLoginModal: () => void;
+  onLogout: () => void;
   isOpen: boolean;
   onToggle: () => void;
 }
@@ -44,6 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenAssetRegister,
   onOpenUserManagement,
   onOpenLoginModal,
+  onLogout,
   isOpen,
   onToggle
 }) => {
@@ -113,24 +115,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="bg-slate-100 border border-slate-200 rounded-xl p-2.5 flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-800 font-black flex items-center justify-center text-xs shrink-0 border border-slate-300">
-                {userInitial}
+                {currentUser ? (currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U') : '?'}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-slate-900 truncate">
-                  {userName}
+                  {currentUser ? (currentUser.name || currentUser.email) : 'Sessão Encerrada'}
                 </p>
-                <button
-                  onClick={onOpenLoginModal}
-                  className="text-[11px] text-slate-500 hover:text-blue-700 flex items-center gap-1 transition-colors"
-                >
-                  <LogOut className="w-3 h-3" />
-                  <span>Sair</span>
-                </button>
+                {currentUser ? (
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    className="text-[11px] text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-1 transition-colors"
+                    title="Encerrar sessão e sair totalmente"
+                  >
+                    <LogOut className="w-3 h-3 text-rose-500" />
+                    <span>Sair</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onOpenLoginModal}
+                    className="text-[11px] text-teal-700 hover:text-teal-800 font-bold flex items-center gap-1 transition-colors"
+                  >
+                    <span>Fazer Login</span>
+                  </button>
+                )}
               </div>
             </div>
 
             <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 shrink-0">
-              {currentUser?.role === 'Administrador' ? 'Master' : 'Gestor'}
+              {currentUser ? (currentUser.role === 'Administrador' || currentUser.role === 'MASTER_ADMIN' ? 'Master' : 'Gestor') : 'Bloqueado'}
             </span>
           </div>
         </div>

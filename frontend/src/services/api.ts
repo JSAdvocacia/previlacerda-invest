@@ -9,7 +9,13 @@ import {
 import { PREVI_LACERDA_OFFICIAL_PROFILE, PREVI_LACERDA_OFFICIAL_ASSETS } from './dairParserService';
 import { Asset, AssetMetrics, PortfolioOverview, AuditLog, CvmLog, User, UserRole, InstituteProfile, DairExtractedData } from '../types';
 
-let currentUser: User = mockUsers[0]; // Default: prof.jan100@gmail.com (Master Admin)
+let currentUser: User | null = (() => {
+  try {
+    const saved = localStorage.getItem('previ_current_user');
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return mockUsers[0];
+})();
 let usersListState: User[] = [...mockUsers];
 let currentInstituteState: InstituteProfile = { ...PREVI_LACERDA_OFFICIAL_PROFILE };
 let assetsListState: Asset[] = [...PREVI_LACERDA_OFFICIAL_ASSETS];
@@ -26,13 +32,25 @@ let portfolioOverviewState: PortfolioOverview = {
   }
 };
 
-export const setCurrentUser = (user: User) => {
+export const setCurrentUser = (user: User | null) => {
   currentUser = user;
+  if (user) {
+    localStorage.setItem('previ_current_user', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('previ_current_user');
+    localStorage.removeItem('previ_auth_token');
+  }
 };
 
-export const getCurrentUser = (): User => currentUser;
+export const getCurrentUser = (): User | null => currentUser;
 
 export const api = {
+  logout(): void {
+    currentUser = null;
+    localStorage.removeItem('previ_current_user');
+    localStorage.removeItem('previ_auth_token');
+  },
+
   async login(email: string, password: string): Promise<{ user: User; token: string; mustChangePassword: boolean }> {
     const cleanEmail = email.toLowerCase().trim();
 
@@ -83,21 +101,23 @@ export const api = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer mock_jwt_token_${currentUser.id}`
+          'Authorization': `Bearer mock_jwt_token_${currentUser?.id || 'anon'}`
         },
         body: JSON.stringify({ newPassword })
       });
       if (res.ok) {
-        currentUser.must_change_password = false;
+        if (currentUser) currentUser.must_change_password = false;
         return;
       }
     } catch {}
 
     // Fallback local
-    currentUser.must_change_password = false;
-    const idx = usersListState.findIndex(u => u.id === currentUser.id);
-    if (idx !== -1) {
-      usersListState[idx].must_change_password = false;
+    if (currentUser) {
+      currentUser.must_change_password = false;
+      const idx = usersListState.findIndex(u => u.id === currentUser?.id);
+      if (idx !== -1) {
+        usersListState[idx].must_change_password = false;
+      }
     }
   },
 
@@ -120,7 +140,7 @@ export const api = {
   async listUsers(): Promise<User[]> {
     try {
       const res = await fetch('/api/v1/auth/users', {
-        headers: { 'Authorization': `Bearer mock_jwt_token_${currentUser.id}` }
+        headers: { 'Authorization': `Bearer mock_jwt_token_${currentUser?.id || 'anon'}` }
       });
       if (res.ok) return await res.json();
     } catch {}
@@ -133,7 +153,7 @@ export const api = {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer mock_jwt_token_${currentUser.id}`
+          'Authorization': `Bearer mock_jwt_token_${currentUser?.id || 'anon'}`
         },
         body: JSON.stringify({ role: newRole })
       });
@@ -152,7 +172,7 @@ export const api = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer mock_jwt_token_${currentUser.id}`
+          'Authorization': `Bearer mock_jwt_token_${currentUser?.id || 'anon'}`
         },
         body: JSON.stringify(data)
       });
@@ -180,7 +200,7 @@ export const api = {
       await fetch(`/api/v1/auth/users/${userId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer mock_jwt_token_${currentUser.id}`
+          'Authorization': `Bearer mock_jwt_token_${currentUser?.id || 'anon'}`
         }
       });
     } catch {}

@@ -32,7 +32,7 @@ import {
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
-  const [currentUserState, setCurrentUserState] = useState<User>(getCurrentUser());
+  const [currentUserState, setCurrentUserState] = useState<User | null>(getCurrentUser());
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [institute, setInstitute] = useState<InstituteProfile>(PREVI_LACERDA_OFFICIAL_PROFILE);
@@ -78,12 +78,20 @@ export function App() {
   const handleLoginSuccess = (user: User) => {
     setCurrentUserState(user);
     setCurrentUser(user);
+    setIsLoginModalOpen(false);
     setIsChangePasswordModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    api.logout();
+    setCurrentUserState(null);
+    setCurrentUser(null);
+    setIsLoginModalOpen(true);
   };
 
   const handlePasswordChanged = () => {
     setIsChangePasswordModalOpen(false);
-    setCurrentUserState(prev => ({ ...prev, must_change_password: false }));
+    setCurrentUserState(prev => (prev ? { ...prev, must_change_password: false } : null));
   };
 
   const handleOpenReport = async (assetId: string) => {
@@ -172,6 +180,7 @@ export function App() {
         onOpenAssetRegister={() => setIsNewAssetModalOpen(true)}
         onOpenUserManagement={() => setIsUserManagementModalOpen(true)}
         onOpenLoginModal={() => setIsLoginModalOpen(true)}
+        onLogout={handleLogout}
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
@@ -187,6 +196,7 @@ export function App() {
           onOpenNewAssetModal={() => setIsNewAssetModalOpen(true)}
           onOpenUserManagementModal={() => setIsUserManagementModalOpen(true)}
           onOpenLoginModal={() => setIsLoginModalOpen(true)}
+          onLogout={handleLogout}
           onOpenDairUpload={() => setIsDairUploadOpen(true)}
           onToggleRightSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         />
@@ -291,16 +301,16 @@ export function App() {
         </main>
 
         {/* Rodapé Fiduciário */}
-        <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs py-6 mt-12">
+        <footer className="bg-white border-t border-slate-200 text-slate-600 text-xs py-6 mt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-              <span className="font-bold text-white">PREVI-LACERDA</span> - Instituto de Previdência dos Servidores Públicos de Pontes e Lacerda - MT
+              <span className="font-bold text-slate-900">PREVI-LACERDA</span> - Instituto de Previdência dos Servidores Públicos de Pontes e Lacerda - MT
               <div className="text-[11px] text-slate-500 mt-0.5">
                 Módulo 1: Instituto • Módulo 2: Gestão de Investimentos RPPS • Resolução CMN nº 5.272/2025.
               </div>
             </div>
             <div className="text-right text-[11px] text-slate-500">
-              Usuário: <strong className="text-slate-300">{currentUserState.email}</strong> ({currentUserState.role})
+              Usuário: <strong className="text-slate-800">{currentUserState?.email || 'Desconectado'}</strong> {currentUserState ? `(${currentUserState.role})` : ''}
             </div>
           </div>
         </footer>
@@ -316,7 +326,7 @@ export function App() {
       <AssetRegistrationModal
         isOpen={isNewAssetModalOpen}
         onClose={() => setIsNewAssetModalOpen(false)}
-        userRole={currentUserState.role}
+        userRole={currentUserState?.role || 'Membro do Comitê'}
         onSuccess={handleAssetCreated}
         onOpenDairUpload={() => setIsDairUploadOpen(true)}
       />
@@ -331,26 +341,32 @@ export function App() {
       <CvmStatusModal
         isOpen={isCvmModalOpen}
         onClose={() => setIsCvmModalOpen(false)}
-        userRole={currentUserState.role}
+        userRole={currentUserState?.role || 'Membro do Comitê'}
       />
 
       {/* Modals de Autenticação e Gestão Master */}
       <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
+        isOpen={isLoginModalOpen || currentUserState === null}
+        onClose={() => {
+          if (currentUserState !== null) {
+            setIsLoginModalOpen(false);
+          }
+        }}
         onLoginSuccess={handleLoginSuccess}
+        initialEmail={currentUserState?.email || 'prof.jan100@gmail.com'}
+        isDismissible={currentUserState !== null}
       />
 
       <ChangePasswordModal
         isOpen={isChangePasswordModalOpen}
-        userEmail={currentUserState.email}
+        userEmail={currentUserState?.email || ''}
         onPasswordChanged={handlePasswordChanged}
       />
 
       <UserManagementModal
-        isOpen={isUserManagementModalOpen}
+        isOpen={isUserManagementModalOpen && currentUserState !== null}
         onClose={() => setIsUserManagementModalOpen(false)}
-        currentUser={currentUserState}
+        currentUser={currentUserState || (mockUsers[0] as User)}
       />
     </div>
   );

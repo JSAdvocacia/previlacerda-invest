@@ -132,79 +132,18 @@ export const mockPortfolioOverview: PortfolioOverview = {
     { month: 'Jul/26', portfolioValue: 134893677.35, benchmarkCdi: 135600000, actuarialTarget: 136506000 },
     { month: 'Ago/26', portfolioValue: 135288278.08, benchmarkCdi: 136700000, actuarialTarget: 136673000 },
     { month: 'Set/26', portfolioValue: 138781858.93, benchmarkCdi: 137800000, actuarialTarget: 138409000 }
-  ]
-};
-    { month: 'Out/26', portfolioValue: 68150000, benchmarkCdi: 67180000, actuarialTarget: 67000000 },
-    { month: 'Nov/26', portfolioValue: 68500000, benchmarkCdi: 67770000, actuarialTarget: 67580000 }
   ],
-  allocations: [
-    {
-      id: 'a1',
-      trading_name: 'BB Previdência RF Alocação Ativa',
-      cnpj: '13.397.466/0001-14',
-      asset_class: 'RENDA_FIXA',
-      article_code: 'Art. 7º, I, "b"',
-      risk_level: 'BAIXO',
-      total_invested: 24500000,
-      weight_pct: 35.77,
-      current_quota: 4.195021
-    },
-    {
-      id: 'a2',
-      trading_name: 'Caixa Brasil IMA-B 5+ TP RF LP',
-      cnpj: '11.060.940/0001-65',
-      asset_class: 'RENDA_FIXA',
-      article_code: 'Art. 7º, I, "b"',
-      risk_level: 'MEDIO',
-      total_invested: 16800000,
-      weight_pct: 24.53,
-      current_quota: 5.694650
-    },
-    {
-      id: 'a3',
-      trading_name: 'Santander Institucional TP RF',
-      cnpj: '10.742.584/0001-59',
-      asset_class: 'RENDA_FIXA',
-      article_code: 'Art. 7º, I, "b"',
-      risk_level: 'MUITO_BAIXO',
-      total_invested: 12200000,
-      weight_pct: 17.81,
-      current_quota: 3.210450
-    },
-    {
-      id: 'a6',
-      trading_name: 'NTN-B 2035 (Tesouro IPCA+)',
-      cnpj: '00.000.000/0001-00',
-      asset_class: 'TITULO_PUBLICO_DIRETO',
-      article_code: 'Art. 7º, I, "a"',
-      risk_level: 'MUITO_BAIXO',
-      total_invested: 6000000,
-      weight_pct: 8.75,
-      current_quota: 4225.35
-    },
-    {
-      id: 'a4',
-      trading_name: 'Itaú Institucional FIA Ações',
-      cnpj: '03.922.311/0001-98',
-      asset_class: 'RENDA_VARIAVEL',
-      article_code: 'Art. 8º, I',
-      risk_level: 'ALTO',
-      total_invested: 5200000,
-      weight_pct: 7.59,
-      current_quota: 4.315200
-    },
-    {
-      id: 'a5',
-      trading_name: 'Western Asset Global Bond Exterior',
-      cnpj: '35.651.712/0001-80',
-      asset_class: 'INVESTIMENTO_EXTERIOR',
-      article_code: 'Art. 9º, II',
-      risk_level: 'MEDIO',
-      total_invested: 3800000,
-      weight_pct: 5.55,
-      current_quota: 3.877500
-    }
-  ]
+  allocations: PREVI_LACERDA_OFFICIAL_ASSETS.map((a) => ({
+    id: a.id,
+    trading_name: a.trading_name,
+    cnpj: a.cnpj,
+    asset_class: a.asset_class,
+    article_code: a.article_code,
+    risk_level: a.risk_level,
+    total_invested: a.total_invested || 0,
+    weight_pct: a.weight_pct || 0,
+    current_quota: a.current_quota || 1
+  }))
 };
 
 export const mockAuditLogs: AuditLog[] = [
