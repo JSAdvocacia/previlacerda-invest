@@ -8,6 +8,7 @@ import { AssetComparator } from './components/AssetComparator';
 import { InvestmentSimulator } from './components/InvestmentSimulator';
 import { AuditTrailView } from './components/AuditTrailView';
 import { ProGestaoFlowView } from './components/ProGestaoFlowView';
+import { InvestmentPolicyView } from './components/InvestmentPolicyView';
 import { AssetRegistrationModal } from './components/AssetRegistrationModal';
 import { OnePageReportModal } from './components/OnePageReportModal';
 import { FundDetailsModal } from './components/Investidor10Modal';
@@ -181,6 +182,7 @@ export function App() {
       case 'progestao_pre_auditoria': return 'Pró-Gestão Flow • Simulador de Pré-Auditoria';
       case 'progestao_dossie': return 'Pró-Gestão Flow • Dossiê da Certificação';
       case 'active_portfolio': return 'Gestão de Investimentos > Carteira Ativa';
+      case 'investment_policy': return 'Gestão de Investimentos > Política Anual de Investimentos (PAI)';
       case 'comparator': return 'Gestão de Investimentos > Comparador de Fundos';
       case 'simulator': return 'Gestão de Investimentos > Simulador Atuarial';
       case 'audit': return 'Gestão de Investimentos > Trilha de Auditoria';
@@ -299,6 +301,13 @@ export function App() {
               onNavigateToComparator={handleNavigateToComparator}
               onOpenDairUpload={() => setIsDairUploadOpen(true)}
               onSelectAsset={(asset) => setSelectedAssetDetails(asset)}
+            />
+          )}
+
+          {currentTab === 'investment_policy' && (
+            <InvestmentPolicyView
+              currentUser={currentUserState}
+              onOpenAuditTrail={() => setCurrentTab('audit')}
             />
           )}
 

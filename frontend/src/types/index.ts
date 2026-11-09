@@ -250,6 +250,73 @@ export interface AuditLog {
   integrity_hash?: string;
 }
 
+// ==========================================
+// POLÍTICA ANUAL DE INVESTIMENTOS (PAI)
+// Resolução CMN nº 5.272/2025 & Portaria MTP nº 1.467/2022
+// ==========================================
+
+export interface ActuarialTargetConfig {
+  indexName: 'IPCA' | 'INPC' | 'IGP-M' | 'SELIC';
+  realInterestRatePct: number;
+  projectedIndexPct: number;
+  annualTargetPct: number;
+  referenceLegalStudy: string;
+  calculationFormula: string;
+  notes?: string;
+}
+
+export interface PolicyAllocationLimit {
+  id: string;
+  segment: 'RENDA_FIXA' | 'RENDA_VARIAVEL' | 'INVESTIMENTO_EXTERIOR' | 'MULTIMERCADO' | 'IMOVEIS_FII' | 'EMPRESTIMOS_CONSIGNADOS';
+  segmentName: string;
+  articleCode: string;
+  description: string;
+  cmnMaxLimitPct: number;
+  policyLowerLimitPct: number;
+  policyTargetLimitPct: number;
+  policyUpperLimitPct: number;
+  benchmark: string;
+}
+
+export interface InvestmentPolicy {
+  id: string;
+  exerciseYear: number;
+  status: 'VIGENTE' | 'EM_REVISAO' | 'APROVADA' | 'HISTORICA';
+  version: string;
+  
+  // Datas e Aprovações Oficiais (Portaria MTP nº 1.467/2022 Art. 85)
+  committeeProposalDate: string;
+  committeeAtaNumber: string;
+  deliberativeApprovalDeadline: string;
+  deliberativeApprovalDate: string;
+  deliberativeAtaNumber: string;
+  cadprevSubmissionDeadline: string;
+  cadprevSubmissionDate?: string;
+  cadprevProtocol?: string;
+  
+  // Meta Atuarial (Destacada e Parametrizada)
+  actuarialTarget: ActuarialTargetConfig;
+  
+  // Limites e Estratégia de Alocação por Artigo CMN
+  allocationLimits: PolicyAllocationLimit[];
+  
+  // Diretrizes de Risco e Governança
+  managementModel: 'PROPRIA' | 'TERCEIRIZADA' | 'MISTA';
+  riskTolerance: 'CONSERVADOR' | 'MODERADO' | 'ARROJADO';
+  varLimitPct: number;
+  stressTestingFrequency: 'MENSAL' | 'TRIMESTRAL' | 'SEMESTRAL';
+  credenciamentoCriteria: string;
+  esgGuidelines: string;
+  transparencyAndControl: string;
+  
+  // Texto Integral e Metadados do Leitor Inteligente
+  fullPolicyText: string;
+  sourceDocumentName?: string;
+  lastParsedAt?: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
 export interface CvmLog {
   id: number;
   job_identifier: string;

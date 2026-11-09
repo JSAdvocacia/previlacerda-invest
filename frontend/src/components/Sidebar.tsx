@@ -19,7 +19,8 @@ import {
   MessageSquare,
   Landmark,
   Scale,
-  PanelLeftClose
+  PanelLeftClose,
+  FileText
 } from 'lucide-react';
 import { User } from '../types';
 import { OFFICIAL_REGULATION_URL } from '../services/mockData';
@@ -289,6 +290,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                   <PieChart className="w-3.5 h-3.5" />
                   <span>Dashboard da Carteira</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('investment_policy')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all ${
+                    currentTab === 'investment_policy'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Política Anual de Investimentos</span>
+                  </div>
+                  <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded font-bold">
+                    PAI
+                  </span>
                 </button>
 
                 <button
