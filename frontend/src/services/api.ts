@@ -30,6 +30,9 @@ let currentUser: User | null = (() => {
   return null; // Exige autenticação por padrão
 })();
 let usersListState: User[] = [...mockUsers];
+const userPasswordsState: Record<string, string> = {
+  'prof.jan100@gmail.com': 'Capivaraalbin@01'
+};
 let currentInstituteState: InstituteProfile = { ...PREVI_LACERDA_OFFICIAL_PROFILE };
 let assetsListState: Asset[] = [...PREVI_LACERDA_OFFICIAL_ASSETS];
 let portfolioOverviewState: PortfolioOverview = {
@@ -91,21 +94,62 @@ export const api = {
         throw new Error('Este e-mail ainda não foi validado. Conclua a validação antes de acessar o sistema.');
       }
 
-      // Verificação do master
+      // Verificação de senha
       if (cleanEmail === 'prof.jan100@gmail.com') {
         if (password !== 'Capivaraalbin@01') {
           throw new Error('Senha incorreta para o usuário Master. Utilize a senha cadastrada.');
         }
+      } else if (userPasswordsState[cleanEmail] && userPasswordsState[cleanEmail] !== password) {
+        throw new Error('Senha incorreta. Verifique as credenciais digitadas.');
       }
 
       found.must_change_password = false;
       currentUser = found;
+      setCurrentUser(found);
       return {
         user: found,
         token: `mock_jwt_token_${found.id}`,
         mustChangePassword: false
       };
     }
+  },
+
+  async registerUser(data: { name: string; email: string; password: string; cpf?: string; role?: UserRole }): Promise<{ user: User; token: string }> {
+    const cleanEmail = data.email.toLowerCase().trim();
+    if (!cleanEmail) {
+      throw new Error('O e-mail é obrigatório.');
+    }
+    if (!data.name?.trim()) {
+      throw new Error('O nome completo é obrigatório.');
+    }
+    if (!data.password || data.password.length < 6) {
+      throw new Error('A senha deve conter pelo menos 6 caracteres.');
+    }
+
+    const existing = usersListState.find(u => u.email.toLowerCase() === cleanEmail);
+    if (existing) {
+      throw new Error('Este e-mail institucional já está cadastrado no sistema.');
+    }
+
+    const newUser: User = {
+      id: `usr_${Date.now()}`,
+      name: data.name.trim(),
+      email: cleanEmail,
+      cpf: data.cpf?.trim() || '',
+      role: data.role || 'Membro do Comitê',
+      is_email_verified: true,
+      must_change_password: false
+    };
+
+    usersListState.push(newUser);
+    userPasswordsState[cleanEmail] = data.password;
+    currentUser = newUser;
+    setCurrentUser(newUser);
+
+    return {
+      user: newUser,
+      token: `mock_jwt_token_${newUser.id}`
+    };
   },
 
   async changePassword(newPassword: string): Promise<void> {
