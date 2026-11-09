@@ -262,3 +262,76 @@ export interface CvmLog {
   error_message?: string;
   executed_at: string;
 }
+
+// ============================================================================
+// TIPOS OFICIAIS DO MÓDULO PRÓ-GESTÃO FLOW (Manual SPREV v4.2)
+// ============================================================================
+
+export type ProGestaoDimensionId = 'controle_interno' | 'governanca' | 'educacao';
+export type ProGestaoTargetLevel = 'I' | 'II' | 'III' | 'IV';
+export type ProGestaoActionStatus = 'CONCLUIDA' | 'EM_ELABORACAO' | 'PENDENTE' | 'DISPENSADA';
+
+export interface ProGestao5W2H {
+  oque: string;
+  porque: string;
+  quem: string;
+  onde: string;
+  quando: string;
+  como: string;
+  quanto: string;
+}
+
+export interface ProGestaoEvidence {
+  id: string;
+  titulo: string;
+  tipo: string;
+  link?: string;
+  arquivoNome?: string;
+  dataEmissao: string;
+  validade?: string;
+  status: 'VALIDADA' | 'EM_ANALISE' | 'PENDENTE' | 'VENCIDA';
+  observacoes?: string;
+}
+
+export interface ProGestaoAuditGuide {
+  oQueAuditorVerifica: string[];
+  evidenciasAceitas: string[];
+  errosComuns: string[];
+  dicaOuro: string;
+}
+
+export interface ProGestaoAction {
+  id: number;
+  numero: number;
+  titulo: string;
+  dimensao: ProGestaoDimensionId;
+  dimensaoNome: string;
+  obrigatorioNiveis: ProGestaoTargetLevel[];
+  status: ProGestaoActionStatus;
+  percentual: number;
+  responsavel: string;
+  prazo: string;
+  plano5W2H: ProGestao5W2H;
+  evidencias: ProGestaoEvidence[];
+  criteriosAuditoria: ProGestaoAuditGuide;
+  subAreas?: string[];
+  justificativaDispensa?: string;
+}
+
+export interface ProGestaoRppsConfig {
+  id: string;
+  nome: string;
+  ente: string;
+  cnpj: string;
+  nivelAlvo: ProGestaoTargetLevel;
+  nivelAtual: string;
+  notaISP: string;
+  dataMetaCertificacao: string;
+}
+
+export interface ProGestaoState {
+  config: ProGestaoRppsConfig;
+  acoes: ProGestaoAction[];
+  diagnosticoRespostas: Record<number, 'TOTAL' | 'PARCIAL' | 'NAO' | 'DISPENSADA'>;
+  diagnosticoDispensadas: Record<number, string>;
+}

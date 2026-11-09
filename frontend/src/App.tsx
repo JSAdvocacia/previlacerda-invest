@@ -7,6 +7,7 @@ import { InstituteProfileView } from './components/InstituteProfileView';
 import { AssetComparator } from './components/AssetComparator';
 import { InvestmentSimulator } from './components/InvestmentSimulator';
 import { AuditTrailView } from './components/AuditTrailView';
+import { ProGestaoFlowView } from './components/ProGestaoFlowView';
 import { AssetRegistrationModal } from './components/AssetRegistrationModal';
 import { OnePageReportModal } from './components/OnePageReportModal';
 import { FundDetailsModal } from './components/Investidor10Modal';
@@ -173,6 +174,12 @@ export function App() {
       case 'institute_deliberativo': return 'Instituto • Membros do Conselho Deliberativo';
       case 'institute_fiscal': return 'Instituto • Membros do Conselho Fiscal';
       case 'institute_diretor_executivo': return 'Instituto • Diretor Executivo';
+      case 'progestao_dashboard': return 'Pró-Gestão Flow • Painel & Aderência';
+      case 'progestao_linha_producao': return 'Pró-Gestão Flow • Linha de Produção (24 Ações)';
+      case 'progestao_evidencias': return 'Pró-Gestão Flow • Repositório de Evidências';
+      case 'progestao_diagnostico': return 'Pró-Gestão Flow • Diagnóstico & Autoavaliação';
+      case 'progestao_pre_auditoria': return 'Pró-Gestão Flow • Simulador de Pré-Auditoria';
+      case 'progestao_dossie': return 'Pró-Gestão Flow • Dossiê da Certificação';
       case 'active_portfolio': return 'Gestão de Investimentos > Carteira Ativa';
       case 'comparator': return 'Gestão de Investimentos > Comparador de Fundos';
       case 'simulator': return 'Gestão de Investimentos > Simulador Atuarial';
@@ -258,7 +265,7 @@ export function App() {
               </div>
 
               {/* Badges de Destaque Rápido (Apenas no Módulo de Investimentos) */}
-              {!currentTab.startsWith('institute') && (
+              {!currentTab.startsWith('institute') && !currentTab.startsWith('progestao') && (
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <button
                     onClick={() => setIsCvmModalOpen(true)}
@@ -322,6 +329,13 @@ export function App() {
 
           {currentTab === 'audit' && (
             <AuditTrailView />
+          )}
+
+          {currentTab.startsWith('progestao') && (
+            <ProGestaoFlowView
+              currentSubTab={currentTab}
+              onSelectSubTab={(tab) => setCurrentTab(tab)}
+            />
           )}
         </main>
 

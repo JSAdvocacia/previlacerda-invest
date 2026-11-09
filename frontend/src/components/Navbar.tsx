@@ -4,7 +4,8 @@ import {
   Landmark, 
   LogOut, 
   LogIn, 
-  Menu
+  Menu,
+  Award
 } from 'lucide-react';
 import { UserRole, User } from '../types';
 
@@ -35,6 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const isMaster = currentUser?.role === 'MASTER_ADMIN' || currentUser?.role === 'Administrador' || currentUser?.email === 'prof.jan100@gmail.com';
   const isInstituteModule = currentTab === 'institute' || currentTab.startsWith('institute_');
+  const isProGestaoModule = currentTab.startsWith('progestao');
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
@@ -61,6 +63,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <p className="text-xs font-bold text-slate-800 leading-tight">Instituto</p>
                   </div>
                 </>
+              ) : isProGestaoModule ? (
+                <>
+                  <Award className="w-4 h-4 text-purple-700 shrink-0" />
+                  <div className="text-left">
+                    <p className="text-[9px] uppercase font-bold text-purple-600 leading-none">MÓDULO ATUAL</p>
+                    <p className="text-xs font-bold text-purple-900 leading-tight">Pró-Gestão Flow</p>
+                  </div>
+                </>
               ) : (
                 <>
                   <Landmark className="w-4 h-4 text-emerald-700 shrink-0" />
@@ -75,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Lado Direito: CVM e + Ativo (Apenas em Gestão de Investimentos) e Usuário com Sair */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {!isInstituteModule && (
+            {!isInstituteModule && !isProGestaoModule && (
               <>
                 {/* Status Telemetria CVM (Apenas em Gestão de Investimentos) */}
                 <button
