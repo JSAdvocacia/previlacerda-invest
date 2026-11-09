@@ -34,10 +34,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
     <div className="space-y-6">
       {/* Banner de Boas-Vindas e Base Legal Oficial (Layout Clean e Leve) */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs text-slate-800">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+          <div className="min-w-0">
             <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full mb-2 font-semibold border border-blue-200">
-              <ShieldCheck className="w-3.5 h-3.5" />
+              <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
               <span>Base Legal Atualizada:</span>
               <a
                 href={OFFICIAL_REGULATION_URL}
@@ -51,7 +51,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </a>
             </div>
 
-            <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               Carteira Geral de Investimentos
             </h1>
             <p className="text-slate-500 text-xs mt-1 max-w-2xl">
@@ -59,18 +59,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </p>
           </div>
 
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-right flex flex-col items-end shrink-0 shadow-xs">
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left sm:text-right flex flex-col items-start sm:items-end shrink-0 shadow-xs">
             <span className="text-[11px] text-slate-500 font-semibold">Total Geral da Carteira (DAIR)</span>
             <span className="text-2xl font-black text-slate-900 mt-0.5 tracking-tight">
-              {formatCurrency(overview.totalGeralCarteira || 143573608.60)}
+              {formatCurrency(overview.totalGeralCarteira || 138781858.93)}
             </span>
-            <div className="flex items-center gap-2.5 mt-1 text-xs">
+            <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
               <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-bold flex items-center gap-1">
                 <ArrowUpRight className="w-3.5 h-3.5" /> +{overview.returns.month}% no mês
               </span>
-              <span className="text-slate-400">•</span>
+              <span className="text-slate-400 hidden sm:inline">•</span>
               <span className="text-slate-600 text-[11px] font-semibold">
-                Res. CMN: {formatCurrency(overview.totalAum || 139605063.91)}
+                Res. CMN: {formatCurrency(overview.totalAum || 138781858.93)}
               </span>
             </div>
           </div>
@@ -78,7 +78,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Grid de Cards Fundamentalistas (Estilo Investidor 10) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Card 1: Rentabilidade 12 Meses */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start">
@@ -145,9 +145,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Seção Central: Enquadramento Resolução CMN nº 5.272/2025 & Evolução */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Enquadramento Legal RPPS (Resolução CMN nº 5.272/2025) */}
-        <div className="lg:col-span-1 bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+        <div className="xl:col-span-1 bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
             <div>
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -214,7 +214,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Evolução Histórica da Carteira vs Benchmarks */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="xl:col-span-2 bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2 mb-4">
               <div>
@@ -298,7 +298,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
+          <table className="w-full text-left text-sm text-slate-600 min-w-[760px]">
             <thead className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Ativo / Fundo</th>
@@ -347,11 +347,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </td>
                   <td className="py-3 px-4 text-center">
                     <button
-                      onClick={() => onOpenReport(assets[idx]?.id || assets[0]?.id)}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-900 hover:bg-teal-50 px-2.5 py-1 rounded transition-colors"
+                      type="button"
+                      onClick={() => onOpenReport(item.id || item.cnpj || assets[idx]?.id || 'pl-01')}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100/80 border border-teal-200 px-2.5 py-1 rounded-md transition-colors shadow-2xs"
                       title="Gerar One-Page Report oficial para o Comitê de Investimentos"
                     >
-                      <FileText className="w-3.5 h-3.5" />
+                      <FileText className="w-3.5 h-3.5 text-teal-700" />
                       <span>One-Page Report</span>
                     </button>
                   </td>

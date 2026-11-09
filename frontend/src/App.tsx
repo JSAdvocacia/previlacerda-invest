@@ -95,8 +95,13 @@ export function App() {
   };
 
   const handleOpenReport = async (assetId: string) => {
-    const foundAsset = assets.find(a => a.id === assetId) || assets[0];
-    const metrics = await api.getAssetMetrics(assetId);
+    const foundAsset = 
+      assets.find(a => a.id === assetId || a.cnpj === assetId) || 
+      PREVI_LACERDA_OFFICIAL_ASSETS.find(a => a.id === assetId || a.cnpj === assetId) || 
+      assets[0] || 
+      PREVI_LACERDA_OFFICIAL_ASSETS[0];
+
+    const metrics = await api.getAssetMetrics(assetId) || await api.getAssetMetrics(foundAsset.id);
     setReportAsset(foundAsset);
     setReportMetrics(metrics);
     setIsReportModalOpen(true);
@@ -186,7 +191,7 @@ export function App() {
       />
 
       {/* Conteúdo Principal (Recuado à esquerda para acomodar a Sidebar) */}
-      <div className="flex-1 flex flex-col lg:pl-72 transition-all duration-300">
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-72 transition-all duration-300 overflow-x-hidden">
         {/* Top Navbar com Breadcrumbs e Botão Mobile */}
         <Navbar
           currentTab={currentTab}
@@ -201,8 +206,8 @@ export function App() {
           onToggleRightSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         />
 
-        {/* Banner de Boas-Vindas Padrão do Sistema Municipal */}
-        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-8 py-5">
+        {/* Banner de Boas-Vindas Padrão do Sistema Municipal (Layout Clean e Claro) */}
+        <div className="bg-white border-b border-slate-200 px-4 sm:px-8 py-5">
           <div className="max-w-7xl mx-auto">
             {/* Breadcrumb de Localização */}
             <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium mb-1">
@@ -210,18 +215,18 @@ export function App() {
               <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
               <span>Início</span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-              <span className="text-blue-600 dark:text-blue-400 font-bold">
+              <span className="text-blue-600 font-bold">
                 {getTabLabel(currentTab)}
               </span>
             </div>
 
             {/* Saudação ao Jansen */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   {getGreeting()}, Jansen
                 </h1>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   {getFormattedDate()}. Gestão fiduciária do Regime Próprio de Previdência Social.
                 </p>
               </div>
@@ -232,16 +237,16 @@ export function App() {
                   href={OFFICIAL_REGULATION_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-900 font-bold hover:bg-blue-100 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-xl border border-blue-200 font-bold hover:bg-blue-100 transition-colors shadow-xs"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                   <span>Resolução CMN nº 5.272/2025</span>
                   <ExternalLink className="w-3 h-3 text-blue-400" />
                 </a>
 
                 <button
                   onClick={() => setIsCvmModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-900 font-bold hover:bg-emerald-100 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-200 font-bold hover:bg-emerald-100 transition-colors shadow-xs"
                 >
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   <span>Robô CVM: Ativo (D-1)</span>
@@ -252,7 +257,7 @@ export function App() {
         </div>
 
         {/* Área Principal de Conteúdo */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 min-w-0">
           {currentTab === 'dashboard' && overview && (
             <Dashboard
               overview={overview}

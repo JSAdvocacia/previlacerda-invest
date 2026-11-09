@@ -149,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Module Selector Pill (Visual Hierárquico do Módulo) */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200">
+          <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200">
             <Landmark className="w-4 h-4 text-blue-600" />
             <div className="text-left">
               <p className="text-[9px] uppercase font-bold text-slate-400 leading-none">MÓDULO ATUAL</p>
