@@ -89,7 +89,7 @@ export function App() {
     api.logout();
     setCurrentUserState(null);
     setCurrentUser(null);
-    setIsLoginModalOpen(true);
+    setIsLoginModalOpen(false);
   };
 
   const handlePasswordChanged = () => {
@@ -185,9 +185,12 @@ export function App() {
   if (!currentUserState) {
     return (
       <LoginScreen
-        onLoginSuccess={(user) => {
-          setCurrentUserState(user);
-          setCurrentUser(user);
+        onLoginSuccess={(user, mustChangePassword) => {
+          setIsLoginModalOpen(false);
+          handleLoginSuccess(user);
+          if (mustChangePassword) {
+            setIsChangePasswordModalOpen(true);
+          }
         }}
         defaultEmail="prof.jan100@gmail.com"
       />
@@ -383,15 +386,11 @@ export function App() {
 
       {/* Modals de Autenticação e Gestão Master */}
       <LoginModal
-        isOpen={isLoginModalOpen || currentUserState === null}
-        onClose={() => {
-          if (currentUserState !== null) {
-            setIsLoginModalOpen(false);
-          }
-        }}
+        isOpen={false}
+        onClose={() => setIsLoginModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
         initialEmail={currentUserState?.email || 'prof.jan100@gmail.com'}
-        isDismissible={currentUserState !== null}
+        isDismissible={true}
       />
 
       <ChangePasswordModal
