@@ -165,7 +165,14 @@ export function App() {
 
   const getTabLabel = (tab: string) => {
     switch (tab) {
-      case 'institute': return 'Instituto (Cadastro & Dados Gerais)';
+      case 'institute': return 'Instituto • Dados do Instituto & Município';
+      case 'institute_gestor_rpps': return 'Instituto • Gestor do RPPS';
+      case 'institute_presidente': return 'Instituto • Presidente do Instituto';
+      case 'institute_gestor_recursos': return 'Instituto • Gestor de Recursos';
+      case 'institute_comite': return 'Instituto • Membros do Comitê de Investimentos';
+      case 'institute_deliberativo': return 'Instituto • Membros do Conselho Deliberativo';
+      case 'institute_fiscal': return 'Instituto • Membros do Conselho Fiscal';
+      case 'institute_diretor_executivo': return 'Instituto • Diretor Executivo';
       case 'active_portfolio': return 'Gestão de Investimentos > Carteira Ativa';
       case 'comparator': return 'Gestão de Investimentos > Comparador de Fundos';
       case 'simulator': return 'Gestão de Investimentos > Simulador Atuarial';
@@ -247,16 +254,18 @@ export function App() {
                 </p>
               </div>
 
-              {/* Badges de Destaque Rápido */}
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <button
-                  onClick={() => setIsCvmModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-200 font-bold hover:bg-emerald-100 transition-colors shadow-xs"
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>Robô CVM: Ativo (D-1)</span>
-                </button>
-              </div>
+              {/* Badges de Destaque Rápido (Apenas no Módulo de Investimentos) */}
+              {!currentTab.startsWith('institute') && (
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <button
+                    onClick={() => setIsCvmModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-200 font-bold hover:bg-emerald-100 transition-colors shadow-xs"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Robô CVM: Ativo (D-1)</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -283,7 +292,7 @@ export function App() {
             />
           )}
 
-          {currentTab === 'institute' && (
+          {(currentTab === 'institute' || currentTab.startsWith('institute_')) && (
             <InstituteProfileView
               institute={institute}
               onUpdateInstitute={(updated) => {
@@ -292,6 +301,7 @@ export function App() {
               }}
               onOpenDairUpload={() => setIsDairUploadOpen(true)}
               currentUser={currentUserState}
+              currentSubTab={currentTab}
             />
           )}
 

@@ -34,13 +34,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleRightSidebar
 }) => {
   const isMaster = currentUser?.role === 'MASTER_ADMIN' || currentUser?.role === 'Administrador' || currentUser?.email === 'prof.jan100@gmail.com';
+  const isInstituteModule = currentTab === 'institute' || currentTab.startsWith('institute_');
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
-          {/* Lado Esquerdo: Mobile Trigger e Indicador do Módulo Ativo */}
+          {/* Lado Esquerdo: Mobile Trigger e Indicador do Módulo Ativo Dinâmico */}
           <div className="flex items-center gap-3">
             <button
               onClick={onToggleRightSidebar}
@@ -50,51 +51,53 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Menu className="w-5 h-5 text-slate-800" />
             </button>
 
-            {/* Módulo Atual */}
+            {/* Módulo Atual Dinâmico */}
             <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200">
-              <Landmark className="w-4 h-4 text-blue-700 shrink-0" />
-              <div className="text-left">
-                <p className="text-[9px] uppercase font-bold text-slate-400 leading-none">MÓDULO ATUAL</p>
-                <p className="text-xs font-bold text-slate-800 leading-tight">Gestão de Investimentos</p>
-              </div>
+              {isInstituteModule ? (
+                <>
+                  <Building2 className="w-4 h-4 text-blue-700 shrink-0" />
+                  <div className="text-left">
+                    <p className="text-[9px] uppercase font-bold text-slate-400 leading-none">MÓDULO ATUAL</p>
+                    <p className="text-xs font-bold text-slate-800 leading-tight">Instituto</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Landmark className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <div className="text-left">
+                    <p className="text-[9px] uppercase font-bold text-slate-400 leading-none">MÓDULO ATUAL</p>
+                    <p className="text-xs font-bold text-slate-800 leading-tight">Gestão de Investimentos</p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Lado Direito: CVM, Instituto, + Ativo e Usuário com opção Sair */}
+          {/* Lado Direito: CVM e + Ativo (Apenas em Gestão de Investimentos) e Usuário com Sair */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Status Telemetria CVM */}
-            <button
-              onClick={onOpenCvmModal}
-              className="hidden sm:flex items-center gap-1.5 text-xs bg-slate-50 hover:bg-slate-100 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-700 shadow-2xs transition-colors"
-              title="Ver telemetria do robô diário da CVM"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-[11px]">CVM: <strong className="text-emerald-700">Ativa (D-1)</strong></span>
-            </button>
+            {!isInstituteModule && (
+              <>
+                {/* Status Telemetria CVM (Apenas em Gestão de Investimentos) */}
+                <button
+                  onClick={onOpenCvmModal}
+                  className="hidden sm:flex items-center gap-1.5 text-xs bg-slate-50 hover:bg-slate-100 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-700 shadow-2xs transition-colors"
+                  title="Ver telemetria do robô diário da CVM"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-[11px]">CVM: <strong className="text-emerald-700">Ativa (D-1)</strong></span>
+                </button>
 
-            {/* Cadastro do Instituto */}
-            <button
-              onClick={() => setCurrentTab('institute')}
-              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
-                currentTab === 'institute'
-                  ? 'bg-blue-50 text-blue-700 border-blue-300 font-bold'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
-              title="Visualizar cadastro do Instituto PREVI-LACERDA"
-            >
-              <Building2 className="w-3.5 h-3.5 text-blue-600" />
-              <span className="hidden md:inline">Instituto</span>
-            </button>
-
-            {/* Cadastrar Ativo */}
-            {currentUser && currentUser.role !== 'AUDITORIA_CONSELHO_FISCAL' && (
-              <button
-                onClick={onOpenNewAssetModal}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
-                title="Cadastrar novo produto fiduciário"
-              >
-                <span>+ Ativo</span>
-              </button>
+                {/* Cadastrar Ativo (Apenas em Gestão de Investimentos) */}
+                {currentUser && currentUser.role !== 'AUDITORIA_CONSELHO_FISCAL' && (
+                  <button
+                    onClick={onOpenNewAssetModal}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+                    title="Cadastrar novo produto fiduciário"
+                  >
+                    <span>+ Ativo</span>
+                  </button>
+                )}
+              </>
             )}
 
             {/* USUÁRIO ACOPLADO À OPÇÃO SAIR NA PARTE SUPERIOR DIREITA */}

@@ -49,7 +49,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   onToggle
 }) => {
-  const [isInvestmentsExpanded, setIsInvestmentsExpanded] = useState(true);
+  const isInstituteTab = currentTab === 'institute' || currentTab.startsWith('institute_');
+  const [isInstituteExpanded, setIsInstituteExpanded] = useState(true);
+  const [isInvestmentsExpanded, setIsInvestmentsExpanded] = useState(!isInstituteTab);
 
   const isMaster = 
     currentUser?.role === 'Administrador' || 
@@ -128,22 +130,131 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Navigation Items */}
         <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-1.5 text-xs custom-scrollbar">
-          {/* 1º BOTÃO OBRIGATÓRIO: INSTITUTO */}
+          {/* 1º MÓDULO OBRIGATÓRIO: INSTITUTO */}
           <div>
             <button
-              onClick={() => onSelectTab('institute')}
+              onClick={() => {
+                setIsInstituteExpanded(!isInstituteExpanded);
+                if (!isInstituteTab) onSelectTab('institute');
+              }}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold transition-all text-left ${
-                currentTab === 'institute'
+                isInstituteTab
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-800 hover:bg-slate-100'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Building2 className={`w-4 h-4 ${currentTab === 'institute' ? 'text-white' : 'text-blue-600'}`} />
+                <Building2 className={`w-4 h-4 ${isInstituteTab ? 'text-white' : 'text-blue-600'}`} />
                 <span>Instituto</span>
               </div>
-              <ChevronRight className={`w-3.5 h-3.5 ${currentTab === 'institute' ? 'text-white' : 'text-slate-400'}`} />
+              {isInstituteExpanded ? (
+                <ChevronDown className={`w-4 h-4 ${isInstituteTab ? 'text-white' : 'text-slate-400'}`} />
+              ) : (
+                <ChevronRight className={`w-4 h-4 ${isInstituteTab ? 'text-white' : 'text-slate-400'}`} />
+              )}
             </button>
+
+            {/* Submenus do Instituto e Governança */}
+            {isInstituteExpanded && (
+              <div className="ml-3 pl-2 border-l-2 border-slate-200 space-y-0.5 mt-1 animate-fadeIn">
+                <button
+                  onClick={() => onSelectTab('institute')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                  title="Dados do Instituto e Município"
+                >
+                  <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span className="truncate">Dados do Instituto</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('institute_gestor_rpps')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute_gestor_rpps'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Award className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                  <span className="truncate">Gestor do RPPS</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('institute_presidente')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute_presidente'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Award className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span className="truncate">Presidente do Instituto</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('institute_gestor_recursos')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute_gestor_recursos'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Award className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="truncate">Gestor de Recursos</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('institute_comite')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute_comite'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Users className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <span className="truncate">Membros do Comitê de Investimentos</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('institute_deliberativo')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute_deliberativo'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                  <span className="truncate">Membros do Conselho Deliberativo</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('institute_fiscal')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute_fiscal'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Scale className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span className="truncate">Membros do Conselho Fiscal</span>
+                </button>
+
+                <button
+                  onClick={() => onSelectTab('institute_diretor_executivo')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                    currentTab === 'institute_diretor_executivo'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Award className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                  <span className="truncate">Diretor Executivo</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 2º BOTÃO OBRIGATÓRIO: MÓDULO GESTÃO DE INVESTIMENTOS */}

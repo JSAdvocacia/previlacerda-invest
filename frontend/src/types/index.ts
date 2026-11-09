@@ -94,6 +94,30 @@ export interface CommitteeMember {
   role?: string;
 }
 
+export interface GovernanceMember {
+  id: string;
+  name: string;
+  cpf: string;
+  role: string;
+  startDate: string;
+  termEndDate?: string;
+  category: 
+    | 'GESTOR_RPPS' 
+    | 'PRESIDENTE_INSTITUTO' 
+    | 'GESTOR_RECURSOS' 
+    | 'COMITE_INVESTIMENTOS' 
+    | 'CONSELHO_DELIBERATIVO' 
+    | 'CONSELHO_FISCAL' 
+    | 'DIRETOR_EXECUTIVO';
+  certificationRequired: string;
+  certificationAcquired: string;
+  certificationNumber?: string;
+  certificationValidity: string;
+  certificationStatus: 'VIGENTE' | 'A_VENCER' | 'VENCIDO' | 'PENDENTE';
+  email?: string;
+  phone?: string;
+}
+
 export interface InstituteProfile {
   enteName: string;
   enteCnpj: string;
@@ -115,6 +139,7 @@ export interface InstituteProfile {
   committeeMembers: CommitteeMember[];
   deliberativeCouncil: CommitteeMember[];
   fiscalCouncil: CommitteeMember[];
+  governanceMembers?: GovernanceMember[];
   lastDairImportAt?: string;
 }
 

@@ -68,7 +68,18 @@ let currentUser: User | null = (() => {
 })();
 let usersListState: User[] = loadStoredUsers();
 const userPasswordsState: Record<string, string> = loadStoredPasswords();
-let currentInstituteState: InstituteProfile = { ...PREVI_LACERDA_OFFICIAL_PROFILE };
+const loadStoredInstitute = (): InstituteProfile => {
+  try {
+    const raw = localStorage.getItem('argos_institute_profile');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...PREVI_LACERDA_OFFICIAL_PROFILE, ...parsed };
+    }
+  } catch {}
+  return { ...PREVI_LACERDA_OFFICIAL_PROFILE };
+};
+
+let currentInstituteState: InstituteProfile = loadStoredInstitute();
 let assetsListState: Asset[] = [...PREVI_LACERDA_OFFICIAL_ASSETS];
 let portfolioOverviewState: PortfolioOverview = {
   ...mockPortfolioOverview,
@@ -497,10 +508,16 @@ export const api = {
       });
       if (res.ok) {
         currentInstituteState = await res.json();
+        try {
+          localStorage.setItem('argos_institute_profile', JSON.stringify(currentInstituteState));
+        } catch {}
         return currentInstituteState;
       }
     } catch {}
     currentInstituteState = { ...updated };
+    try {
+      localStorage.setItem('argos_institute_profile', JSON.stringify(currentInstituteState));
+    } catch {}
     return currentInstituteState;
   },
 
