@@ -83,38 +83,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
   return (
     <div className="min-h-screen bg-[#f1f5f9] text-slate-800 flex flex-col justify-between font-sans">
-      {/* Top Bar Institucional Municipal */}
-      <header className="bg-white border-b border-slate-200 py-3 px-4 sm:px-8 shadow-xs">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-3">
-            {/* Bandeira de Pontes e Lacerda */}
-            <div className="w-10 h-7 rounded border border-slate-200 overflow-hidden shadow-2xs shrink-0">
-              <svg viewBox="0 0 40 28" className="w-full h-full">
-                <rect width="40" height="14" fill="#009b3a" />
-                <rect y="14" width="40" height="14" fill="#ffdf00" />
-                <polygon points="0,0 20,14 0,28" fill="#002776" />
-                <polygon points="7,14 5.5,9.5 9.5,12 3.5,12 7.5,9.5" fill="#ffffff" />
-              </svg>
-            </div>
-            <div>
-              <span className="font-black text-slate-900 block leading-tight">Prefeitura de Pontes e Lacerda - MT</span>
-              <span className="text-[11px] text-blue-700 font-bold">PREVI-LACERDA • Regime Próprio de Previdência Social</span>
-            </div>
-          </div>
-
-          <a
-            href={OFFICIAL_REGULATION_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-3 py-1 rounded-lg text-[11px] font-semibold transition-colors"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-            <span>{OFFICIAL_REGULATION_NORM}</span>
-            <ExternalLink className="w-3 h-3 text-blue-400" />
-          </a>
-        </div>
-      </header>
-
       {/* Área Central: Card de Login / Cadastro Fiduciário com Logo ArgosPrevi */}
       <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 my-6">
         {/* Logotipo Oficial ArgosPrevi */}
