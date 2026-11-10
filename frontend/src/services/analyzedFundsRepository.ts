@@ -80,6 +80,30 @@ const INITIAL_STUDIED_RECORDS: AnalyzedFundRecord[] = [
     returns12M: 10.33,
     isStudiedAsset: true,
     report: (MARKET_ASSETS_DATABASE['42.479.593/0001-60'] as FundAnalysisReport) || {}
+  },
+  // 3. FII REC Renda Imobiliária (RECT11) - Oficial Investidor10 & CVM
+  {
+    id: 'studied_32274163000159',
+    cnpj: '32274163000159',
+    formattedCnpj: '32.274.163/0001-59',
+    ticker: 'RECT11',
+    name: 'FUNDO DE INVESTIMENTO IMOBILIARIO - FII REC RENDA IMOBILIARIA - RESPONSABILIDADE LIMITADA',
+    tradingName: 'FII REC Renda Imobiliária (RECT11)',
+    assetClass: 'IMOVEIS_FII',
+    articleCode: 'Art. 10 (FII)',
+    cmnLimit: 'Até 5% da Carteira RPPS (Bolsa B3)',
+    benchmark: 'CDI',
+    overallScore: 86,
+    committeeVerdict: 'EM_OBSERVACAO',
+    committeeVerdictLabel: 'APTO COM MONITORAMENTO RESTRITO (ART. 10 RES. CMN 5.272/2025 - TETO ATÉ 5%)',
+    committeeTechnicalOpinion: 'O Comitê de Investimentos analisou o FII REC Renda Imobiliária (RECT11, CNPJ 32.274.163/0001-59). Dados auditados do Portal Investidor10 confirmam PL de R$ 766,83 Milhões, 44.976 cotistas, P/VP de 0,36 (-64% desconto patrimonial), Dividend Yield de 15,32% a.a. e taxa de administração de 0,17% a.a. Enquadra-se no Art. 10 da Res. CMN nº 5.272/2025. Alocação recomendada com monitoramento restrito da taxa de vacância física (8,36%).',
+    analyzedAt: '10/11/2026, 10:45:00',
+    analysisProtocol: 'PAI-ANALISE-322741-RECT',
+    netEquity: 766830000,
+    adminFeePct: 0.17,
+    returns12M: 5.97,
+    isStudiedAsset: true,
+    report: (MARKET_ASSETS_DATABASE['32.274.163/0001-59'] as FundAnalysisReport) || {}
   }
 ];
 

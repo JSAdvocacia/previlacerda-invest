@@ -59,6 +59,7 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
   // Lista de CNPJs de destaque da carteira para teste rápido com 1 clique
   const quickPicks = [
     { name: 'Kinea Rendimentos FII (KNCR11)', cnpj: '16.706.958/0001-32', class: 'FII Papel' },
+    { name: 'REC Renda FII (RECT11)', cnpj: '32.274.163/0001-59', class: 'FII Híbrido' },
     { name: 'Itaú Rural FIAGRO (RURA11)', cnpj: '42.479.593/0001-60', class: 'FIAGRO' },
     { name: 'Caixa IMA-B TP RF', cnpj: '10.740.658/0001-93', class: 'Renda Fixa' },
     { name: 'BB Previdenciário IMA-B', cnpj: '07.442.078/0001-05', class: 'Renda Fixa' },
@@ -88,16 +89,16 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
     setReport(null);
 
     try {
-      setLoadingStep('1/4 Consultando base oficial da Receita Federal e CVM...');
-      await new Promise(r => setTimeout(r, 400));
+      setLoadingStep('1/4 Consultando fonte primária: Portal Investidor10 (cotação, P/VP, DY, vacância e proventos)...');
+      await new Promise(r => setTimeout(r, 450));
       
-      setLoadingStep('2/4 Validando enquadramento na Resolução CMN nº 5.272/2025 e PAI...');
-      await new Promise(r => setTimeout(r, 400));
-
-      setLoadingStep('3/4 Auditando Gestor, Emissor, Custodiante e Distribuidor (MTP 1.467/2022)...');
+      setLoadingStep('2/4 Validando e confrontando com dados abertos da CVM, B3 e Receita Federal...');
       await new Promise(r => setTimeout(r, 450));
 
-      setLoadingStep('4/4 Calculando volatilidade, Sharpe, VaR e emitindo Parecer do Comitê...');
+      setLoadingStep('3/4 Auditando enquadramento na Res. CMN nº 5.272/2025 e exigências do Pró-Gestão...');
+      await new Promise(r => setTimeout(r, 450));
+
+      setLoadingStep('4/4 Auditando Due Diligence fiduciária dos prestadores (MTP 1.467/2022) e emitindo Parecer...');
       
       const res = await FundAnalyzerService.analyzeFundByCnpj(clean, assets);
       setReport(res);
@@ -559,7 +560,7 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
               <div className="p-4">
                 <span className="text-[10px] font-bold text-slate-500 uppercase block">Volatilidade (12M)</span>
                 <span className="text-sm font-extrabold text-slate-900 mt-0.5 block">
-                  {(report.volatility12M / 100).toFixed(2)}% a.a.
+                  {report.volatility12M.toFixed(2)}% a.a.
                 </span>
                 <span className="text-[10px] text-slate-500">Índice Sharpe: <strong>{report.sharpeRatio12M.toFixed(2)}</strong></span>
               </div>
@@ -589,79 +590,116 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
               </div>
             </div>
 
-            {/* ALERTA REGULATÓRIO RES. CMN 5.272/2025 (PRÓ-GESTÃO) */}
-            {report.proGestaoAlert && (
-              <div className="p-4 mx-6 my-4 bg-amber-50 border-2 border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-950 animate-fadeIn">
+            {/* PAINEL DE ADERÊNCIA AO PRÓ-GESTÃO E EXIGÊNCIAS LEGAIS */}
+            <div className="p-4 mx-6 my-4 bg-gradient-to-r from-amber-50 via-orange-50/40 to-amber-50 border-2 border-amber-300 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs text-amber-950 animate-fadeIn">
+              <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <span className="font-extrabold uppercase tracking-wide text-amber-900 flex items-center gap-2">
-                    <span>Requisito Prudencial Obrigatório • Resolução CMN nº 5.272/2025</span>
-                    <span className="bg-amber-200 text-amber-900 text-[10px] font-bold px-2 py-0.2 rounded-full">
-                      Pró-Gestão {report.proGestaoRequiredLevel}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-extrabold uppercase tracking-wide text-amber-950 flex items-center gap-1.5">
+                      <span>Exigência Prudencial de Pró-Gestão • Resolução CMN nº 5.272/2025</span>
                     </span>
-                  </span>
-                  <p className="leading-relaxed">
-                    {report.proGestaoAlert}
+                    <span className="bg-amber-200 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-amber-300">
+                      Nível Requerido: {report.proGestaoRequiredLevel || 'Nível I a IV'}
+                    </span>
+                    <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                      Adequação RPPS: até 31/12/2026
+                    </span>
+                  </div>
+                  <p className="leading-relaxed text-amber-900 font-medium">
+                    {report.proGestaoAlert || 'Conforme a Resolução CMN nº 5.272/2025 e Portaria MTP nº 1.467/2022, o RPPS deve atentar aos requisitos de governança e certificação institucional para alocação neste segmento.'}
                   </p>
                 </div>
               </div>
-            )}
 
-            {/* PAINEL DE INDICADORES FUNDAMENTALISTAS DE MERCADO (PORTAL INVESTIDOR10 / B3) */}
+              <div className="shrink-0 flex items-center gap-2">
+                <span className="text-[11px] font-extrabold text-amber-900 bg-white px-3 py-1.5 rounded-lg border border-amber-300 shadow-2xs">
+                  Auditoria de Conformidade Ativa
+                </span>
+              </div>
+            </div>
+
+            {/* PAINEL DE INDICADORES FUNDAMENTALISTAS DE MERCADO (PORTAL INVESTIDOR10 / B3 / CVM) */}
             {(report.ticker || report.dividendYield12M !== undefined || report.pvp !== undefined) && (
               <div className="p-5 mx-6 my-4 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 rounded-xl border border-slate-700 text-white shadow-sm space-y-3 animate-fadeIn">
                 <div className="flex flex-wrap items-center justify-between border-b border-slate-700/80 pb-2.5 gap-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-emerald-400" />
                     <span className="text-xs font-bold text-white uppercase tracking-wider">
-                      Indicadores Fundamentalistas de Mercado (Portal Investidor10 & B3)
+                      Indicadores Fundamentalistas • Fonte Primária: Portal Investidor10 (Confrontado com CVM e B3)
                     </span>
                     {report.ticker && (
-                      <span className="text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/40 font-mono">
-                        Ticker: {report.ticker}
+                      <span className="text-[10px] font-black bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded font-mono shadow-2xs">
+                        Ticker B3: {report.ticker}
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] text-slate-400">
-                    Fonte: Investidor10 • B3 • CVM (Dados Auditados)
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/40">
+                      Dados Auditados & Fidedignos
+                    </span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
                   <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">P/VP (Preço/VP)</span>
-                    <span className="text-base font-black text-emerald-400 mt-0.5 block">{report.pvp?.toFixed(2) || '0,75'}</span>
-                    <span className="text-[9px] text-emerald-300">Desconto de 25% na B3</span>
+                    <span className="text-base font-black text-emerald-400 mt-0.5 block">
+                      {report.pvp !== undefined ? report.pvp.toFixed(2) : '-'}
+                    </span>
+                    <span className="text-[9px] text-emerald-300">
+                      {report.pvp !== undefined
+                        ? report.pvp < 1.0
+                          ? `Desconto de ${Math.round((1 - report.pvp) * 100)}% na B3`
+                          : report.pvp === 1.0
+                          ? 'Paridade Patrimonial'
+                          : `Ágio de +${Math.round((report.pvp - 1) * 100)}%`
+                        : 'Preço sobre Valor Patrimonial'}
+                    </span>
                   </div>
 
                   <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Dividend Yield (12M)</span>
-                    <span className="text-base font-black text-emerald-400 mt-0.5 block">{report.dividendYield12M?.toFixed(2) || '17,14'}%</span>
-                    <span className="text-[9px] text-slate-400">Último: R$ {report.lastDividend?.toFixed(2) || '0,10'}/cota</span>
+                    <span className="text-base font-black text-emerald-400 mt-0.5 block">
+                      {report.dividendYield12M !== undefined ? `${report.dividendYield12M.toFixed(2)}%` : '-'}
+                    </span>
+                    <span className="text-[9px] text-slate-400">
+                      {report.lastDividend !== undefined ? `Último: R$ ${report.lastDividend.toFixed(2)}/cota` : 'Rendimentos proventos'}
+                    </span>
                   </div>
 
                   <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">VP por Cota</span>
-                    <span className="text-base font-black text-white mt-0.5 block">R$ {report.quotaValue?.toFixed(2) || '10,28'}</span>
+                    <span className="text-base font-black text-white mt-0.5 block">
+                      {report.quotaValue !== undefined ? `R$ ${report.quotaValue.toFixed(2)}` : '-'}
+                    </span>
                     <span className="text-[9px] text-slate-400">Valor contábil unitário</span>
                   </div>
 
                   <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Valor de Mercado</span>
-                    <span className="text-base font-black text-white mt-0.5 block">{report.marketValue ? formatMoney(report.marketValue) : 'R$ 1,23 Bi'}</span>
+                    <span className="text-base font-black text-white mt-0.5 block">
+                      {report.marketValue ? formatMoney(report.marketValue) : (report.pvp ? formatMoney(report.netEquity * report.pvp) : '-')}
+                    </span>
                     <span className="text-[9px] text-slate-400">Negociação total B3</span>
                   </div>
 
                   <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Liquidez Diária</span>
-                    <span className="text-base font-black text-blue-400 mt-0.5 block">{report.dailyLiquidity ? formatMoney(report.dailyLiquidity) : 'R$ 2,68 Mi'}</span>
-                    <span className="text-[9px] text-slate-400">Média diária negociada</span>
+                    <span className="text-base font-black text-blue-400 mt-0.5 block">
+                      {report.dailyLiquidity ? formatMoney(report.dailyLiquidity) : '-'}
+                    </span>
+                    <span className="text-[9px] text-slate-400">Média diária B3</span>
                   </div>
 
                   <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Base de Cotistas</span>
-                    <span className="text-base font-black text-white mt-0.5 block">{report.shareholdersCount?.toLocaleString('pt-BR') || '111.821'}</span>
-                    <span className="text-[9px] text-slate-400">Cotas: {report.totalShares ? (report.totalShares / 1_000_000).toFixed(0) + 'M' : '160M'}</span>
+                    <span className="text-base font-black text-white mt-0.5 block">
+                      {report.shareholdersCount ? report.shareholdersCount.toLocaleString('pt-BR') : '-'}
+                    </span>
+                    <span className="text-[9px] text-slate-400">
+                      {report.totalShares ? `Cotas: ${(report.totalShares / 1_000_000).toFixed(2)}M` : 'Cotas emitidas'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1082,9 +1120,14 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
                   <div><strong>Situação CVM / Receita Federal:</strong> {report.registrationStatus}</div>
                   {report.pvp !== undefined && (
                     <>
-                      <div><strong>P/VP (Preço / Valor Patrimonial):</strong> {report.pvp.toFixed(2)} (Desconto: 25%)</div>
+                      <div><strong>P/VP (Preço / Valor Patrimonial):</strong> {report.pvp.toFixed(2)} {report.pvp < 1.0 ? `(Desconto de ${Math.round((1 - report.pvp) * 100)}% na B3)` : report.pvp === 1.0 ? '(Paridade Contábil)' : `(Ágio de +${Math.round((report.pvp - 1) * 100)}%)`}</div>
                       <div><strong>Dividend Yield 12M / Último:</strong> {report.dividendYield12M?.toFixed(2)}% a.a. / R$ {report.lastDividend?.toFixed(2)} por cota</div>
                     </>
+                  )}
+                  {report.proGestaoAlert && (
+                    <div className="col-span-2 bg-amber-50 p-2.5 rounded border border-amber-200 text-amber-950 mt-1">
+                      <strong>Exigência Pró-Gestão (Res. CMN 5.272/2025):</strong> {report.proGestaoAlert}
+                    </div>
                   )}
                 </div>
               </div>

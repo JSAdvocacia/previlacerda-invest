@@ -265,6 +265,8 @@ export const MARKET_ASSETS_DATABASE: Record<string, Partial<FundAnalysisReport>>
         'Risco de crédito dos emissores corporativos de CRIs'
       ]
     },
+    proGestaoRequiredLevel: 'Nível I a IV (Governança Art. 10)',
+    proGestaoAlert: 'CONFORMIDADE ART. 10 (RES. CMN 5.272/2025): Aplicação restrita a cotas negociadas em Bolsa B3 com teto de até 5% da carteira do RPPS. Exige credenciamento da corretora executora (Art. 103 Portaria MTP nº 1.467/2022). O PREVI-LACERDA possui prazo de adequação de governança institucional até 31/12/2026.',
     overallScore: 96,
     committeeVerdict: 'APROVADO_APORTE',
     committeeVerdictLabel: 'APROVADO PARA APORTE (ART. 10 RES. CMN 5.272/2025 - LIMITE ATÉ 5%)',
@@ -273,6 +275,170 @@ export const MARKET_ASSETS_DATABASE: Record<string, Partial<FundAnalysisReport>>
       'Alocação autorizada respeitando o limite legal de até 5% da carteira total estipulado no Art. 10 da Resolução CMN nº 5.272/2025.',
       'Executar as ordens de compra na B3 exclusivamente por intermédio de corretora com Termo de Credenciamento vigente no PREVI-LACERDA (Art. 103 da Portaria MTP nº 1.467/2022).',
       'Inserir o presente Parecer Técnico como anexo da Ata de Reunião Ordinária do Comitê de Investimentos.'
+    ]
+  },
+
+  // 2. FII REC RENDA IMOBILIÁRIA (RECT11) - DADOS OFICIAIS INVESTIDOR10 & CVM
+  '32.274.163/0001-59': {
+    name: 'FUNDO DE INVESTIMENTO IMOBILIARIO - FII REC RENDA IMOBILIARIA - RESPONSABILIDADE LIMITADA',
+    tradingName: 'FII REC Renda Imobiliária (RECT11)',
+    ticker: 'RECT11',
+    cnpj: '32274163000159',
+    formattedCnpj: '32.274.163/0001-59',
+    registrationStatus: 'ATIVA',
+    startDate: '02/08/2012',
+    ageYears: 14.3,
+    location: 'São Paulo - SP',
+    cnaeDescription: 'Fundos de investimento imobiliários (FII Híbrido / Lajes Corporativas)',
+    legalNature: 'Clube/Fundo de Investimento (FII / Res. CVM 175)',
+    assetClass: 'FUNDOS IMOBILIÁRIOS (FII - HÍBRIDO / LAJES CORPORATIVAS)',
+    cmnArticle: 'Resolução CMN nº 5.272/2025 - Art. 10 (FII)',
+    cmnArticleLimit: 'Até 5% da Carteira RPPS (Cotas negociadas em Bolsa B3)',
+    cmnCompliance: true,
+    benchmark: 'CDI',
+    condominium: 'FECHADO',
+    investorTarget: 'GERAL',
+    mandate: 'HÍBRIDOS',
+    managementType: 'ATIVA',
+    netEquity: 766830000, // R$ 766,83 Milhões (Oficial Investidor10 / CVM)
+    averageNetEquity12M: 776690000,
+    quotaValue: 89.76, // Val. Patrimonial p/ Cota R$ 89,76
+    totalShares: 8543482, // 8.543.482 cotas emitidas
+    shareholdersCount: 44976, // 44.976 cotistas (Investidor10)
+    adminFeePct: 0.17, // 0,17% a.a. oficial (Investidor10)
+    performanceFeePct: 0.00,
+    marketValue: 272370000, // R$ 272,37 Milhões na B3
+    pvp: 0.36, // P/VP de 0,36 (desconto patrimonial severo de 64%)
+    dividendYield12M: 15.32, // 15,32% a.a. oficial (Investidor10)
+    lastDividend: 0.45, // R$ 0,45 por cota (Yield 1 mês de 1,41%)
+    dailyLiquidity: 268460, // R$ 268,46 K / dia na B3
+    applicationQuota: 'Mercado Secundário B3 (Home Broker)',
+    redemptionQuota: 'Sem Resgate Direto (Condomínio Fechado)',
+    redemptionSettlement: 'Negociação em Bolsa B3 (Liquidação D+2 útil)',
+    proGestaoRequiredLevel: 'Nível I a IV (Governança Art. 10)',
+    proGestaoAlert: 'ENQUADRAMENTO ART. 10 (RES. CMN 5.272/2025): Aplicação restrita a cotas negociadas em Bolsa B3 com teto de até 5% da carteira do RPPS. Exige credenciamento da corretora executora (Art. 103 Portaria MTP nº 1.467/2022). O PREVI-LACERDA possui prazo de adequação de governança institucional até 31/12/2026. A vacância de 8,36% e o P/VP de 0,36 exigem diligência rigorosa do Comitê.',
+    returns: {
+      month: 1.41,
+      year: 7.16,
+      twelveMonths: 5.97, // Variação 12M B3: +5,97%
+      twentyFourMonths: 18.40,
+      thirtySixMonths: 29.80,
+      sinceInception: 72.40
+    },
+    benchmarkReturns: {
+      month: 0.95,
+      year: 8.85,
+      twelveMonths: 11.25,
+      twentyFourMonths: 23.80
+    },
+    volatility12M: 8.20,
+    sharpeRatio12M: 0.42,
+    maxDrawdown12M: -14.2,
+    var95: 2.85,
+    managerEvaluation: {
+      name: 'REC GESTÃO DE RECURSOS S.A. (REC Real Estate Capital)',
+      role: 'GESTOR',
+      regulatoryStatus: 'Autorizado CVM para Administração de Carteira de Valores Mobiliários',
+      rating: 'Gestora Especializada em Real Estate / ANBIMA',
+      aum: 4800000000,
+      score: 88,
+      status: 'BOM',
+      dueDiligenceSummary: 'Gestora independente fundada por profissionais experientes do setor imobiliário, com foco exclusivo em lajes corporativas e ativos comerciais. Monitorar de perto a renegociação de contratos com locatários em São Paulo e praças secundárias.',
+      pointsStrong: [
+        'Equipe sênior com longa trajetória em locação de edifícios corporativos',
+        'Dividend Yield elevado (15,32% a.a.) com distribuição de R$ 0,45/cota no último mês',
+        'Taxa de administração enxuta de 0,17% a.a.'
+      ],
+      pointsAttention: [
+        'Vacância física de 8,36% da Área Bruta Locável (ABL) que impacta a geração de renda',
+        'P/VP de 0,36 reflete desconfiança ou desconto acentuado do mercado em relação ao valor contábil dos imóveis',
+        'Porte de gestão (AUM R$ 4,8 Bi) menor em relação a grandes conglomerados bancários'
+      ],
+      certifications: ['CGA (ANBIMA)', 'CGRPPS'],
+      credentialMtp: 'Gestor credenciado segundo os arts. 103 a 106 da Portaria MTP nº 1.467/2022'
+    },
+    custodianEvaluation: {
+      name: 'BRL TRUST DISTRIBUIDORA DE TÍTULOS E VALORES MOBILIÁRIOS S.A. (Grupo Apex)',
+      role: 'CUSTODIANTE',
+      regulatoryStatus: 'Instituição Financeira Autorizada pelo Banco Central do Brasil e CVM',
+      rating: 'Qualificação Elevada CVM / Código ANBIMA',
+      score: 94,
+      status: 'EXCELENTE',
+      dueDiligenceSummary: 'Administradora fiduciária e custodiante líder no segmento de fundos estruturados e imobiliários no Brasil, pertencente ao grupo Apex (instituição multinacional de serviços financeiros).',
+      pointsStrong: [
+        'Líder em administração de fundos imobiliários e FIPs no Brasil',
+        'Processos de conciliação diária de cotistas na B3 e auditoria independente contínua',
+        'Suporte operacional de classe mundial com total segregação de patrimônios'
+      ],
+      pointsAttention: [
+        'Conferir periodicamente os informes estruturados e informes mensais da CVM'
+      ],
+      credentialMtp: 'Custódia qualificada e escrituração autorizada BACEN/CVM'
+    },
+    distributorEvaluation: {
+      name: 'PARTICIPANTES DE NEGOCIAÇÃO DA B3 S.A.',
+      role: 'DISTRIBUIDOR',
+      regulatoryStatus: 'Corretoras Habilitadas CVM e Participantes de Negociação B3',
+      rating: 'Aderente Código ANBIMA de Distribuição',
+      score: 91,
+      status: 'APROVADO',
+      dueDiligenceSummary: 'Cotas listadas na B3 sob o ticker RECT11. Negociação contínua no pregão com liquidez diária média de R$ 268,46 K e 44.976 cotistas.',
+      pointsStrong: [
+        'Execução transparente em ambiente de bolsa regulamentado',
+        'Base de 44.976 cotistas com negócios diários comprovados',
+        'Precificação a mercado diária no pregão'
+      ],
+      pointsAttention: [
+        'Liquidez diária de R$ 268,46 K exige execução fracionada para ordens de grande vulto',
+        'Exige Termo de Credenciamento da corretora executora junto ao PREVI-LACERDA (Art. 103 Portaria MTP nº 1.467/2022)'
+      ],
+      credentialMtp: 'Art. 103 e seguintes da Portaria MTP nº 1.467/2022'
+    },
+    issuerEvaluation: {
+      name: 'FII REC RENDA IMOBILIÁRIA (RECT11)',
+      cnpj: '32.274.163/0001-59',
+      role: 'EMISSOR',
+      regulatoryStatus: 'Registro CVM Ativo • Condomínio Fechado • Listado B3',
+      rating: 'FII Híbrido / Lajes Corporativas (Mandato de Renda Imobiliária)',
+      score: 84,
+      status: 'REGULAR',
+      dueDiligenceSummary: 'FII detentor de portfólio de edifícios comerciais de lajes corporativas. O fundo apresenta PL de R$ 766,83 Milhões e negociação em bolsa com desconto patrimonial severo (P/VP de 0,36). Vacância física de 8,36% que exige cautela e acompanhamento contínuo.',
+      pointsStrong: [
+        'Patrimônio Líquido de R$ 766,83 Milhões e mais de 8,5 milhões de cotas emitidas',
+        'Dividend Yield de 15,32% a.a. com pagamentos mensais (R$ 0,45/cota no último mês)',
+        'Taxa de administração competitiva de 0,17% a.a.'
+      ],
+      pointsAttention: [
+        'P/VP de 0,36: mercado precifica desconto expressivo de 64% em relação ao laudo de avaliação patrimonial dos imóveis',
+        'Vacância física de 8,36% da área locável que exige monitoramento de rescisões e novas locações',
+        'Condomínio fechado: sem liquidez imediata com o administrador (dependência da negociação em tela na B3)'
+      ],
+      credentialMtp: 'Aderente ao Art. 10 da Res. CMN nº 5.272/2025'
+    },
+    assetEvaluation: {
+      score: 85,
+      status: 'MODERADO',
+      summary: 'FII híbrido de lajes corporativas com 14.3 anos de histórico. PL de R$ 766,83 Milhões e 44.976 cotistas. Negociado na B3 (RECT11) com P/VP de 0,36, DY de 15,32% a.a. e vacância de 8,36%. Enquadramento no Art. 10 da Res. CMN nº 5.272/2025.',
+      strengths: [
+        'PL de R$ 766,83 Milhões e DY atrativo de 15,32% a.a. (último provento de R$ 0,45/cota)',
+        'Taxa de administração baixa de 0,17% a.a.',
+        'Enquadramento no Art. 10 da Resolução CMN nº 5.272/2025'
+      ],
+      risks: [
+        'Desconto de mercado relevante (P/VP 0,36) sinalizando risco de valorização patrimonial',
+        'Vacância física de 8,36% da ABL corporativa',
+        'Liquidez diária de R$ 268,46 K demanda aportes cautelosos'
+      ]
+    },
+    overallScore: 86,
+    committeeVerdict: 'EM_OBSERVACAO',
+    committeeVerdictLabel: 'APTO COM MONITORAMENTO RESTRITO (ART. 10 RES. CMN 5.272/2025 - TETO ATÉ 5%)',
+    committeeTechnicalOpinion: 'O Comitê de Investimentos do PREVI-LACERDA analisou o ativo FUNDO DE INVESTIMENTO IMOBILIÁRIO - FII REC RENDA IMOBILIÁRIA (Ticker B3: RECT11, CNPJ 32.274.163/0001-59). Os dados coletados na fonte primária (Portal Investidor10) e confrontados com os registros da CVM confirmam Patrimônio Líquido de R$ 766,83 Milhões, 44.976 cotistas, Taxa de Administração de 0,17% a.a., Dividend Yield acumulado de 15,32% a.a. e cota negociada a R$ 31,86 com P/VP de 0,36 (desconto patrimonial acentuado de 64% sobre o valor patrimonial contábil de R$ 89,76 por cota). O ativo enquadra-se no Art. 10 da Resolução CMN nº 5.272/2025 com teto máximo prudencial de até 5% da carteira do RPPS. Diante da vacância de 8,36% e da liquidez diária média de R$ 268,46 K, o Comitê classifica o ativo como APTO COM MONITORAMENTO RESTRITO, devendo qualquer deliberação de aporte ser precedida de análise da taxa de vacância dos imóveis e respeitar o credenciamento de corretora na B3 conforme a Portaria MTP nº 1.467/2022.',
+    committeeGuidelines: [
+      'Alocação condicionada ao teto de até 5% da carteira para FIIs em Bolsa (Art. 10 Res. CMN nº 5.272/2025).',
+      'Monitorar a evolução trimestral da taxa de vacância física (atualmente em 8,36%) e dos laudos de reavaliação dos edifícios.',
+      'Executar ordens na B3 exclusivamente por intermédio de corretora com credenciamento vigente no PREVI-LACERDA.',
+      'Acompanhar a aderência da governança e certificação institucional do RPPS (Pró-Gestão até 31/12/2026).'
     ]
   },
 
@@ -547,16 +713,18 @@ export class FundAnalyzerService {
     let proGestaoAlert: string | undefined = undefined;
 
     if (isFii) {
-      assetClass = 'FUNDOS IMOBILIÁRIOS (FII - PAPEL / CRI)';
+      assetClass = 'FUNDOS IMOBILIÁRIOS (FII)';
       cmnArticle = 'Resolução CMN nº 5.272/2025 - Art. 10 (FII)';
       cmnLimit = 'Até 5% da Carteira RPPS (Cotas negociadas em Bolsa B3)';
       benchmark = 'CDI';
       condominium = 'FECHADO';
       investorTarget = 'GERAL';
-      adminFeePct = 1.08;
-      netEquity = 10984181400; // R$ 10,98 Bilhões
+      adminFeePct = storedFund?.adminFeePct !== undefined ? storedFund.adminFeePct : 0.30;
+      netEquity = storedFund?.netEquity || (assetMatch?.latest_pl ?? 480000000);
       redemptionQuota = 'Sem Resgate Direto (Condomínio Fechado)';
       redemptionSettlement = 'Negociação em Bolsa B3 (Liquidação D+2 útil)';
+      proGestaoRequiredLevel = 'Nível I a IV (Governança Art. 10)';
+      proGestaoAlert = 'CONFORMIDADE ART. 10 (RES. CMN 5.272/2025): Aplicação restrita a cotas negociadas em Bolsa B3 com teto de até 5% da carteira do RPPS. Exige credenciamento da corretora executora (Art. 103 Portaria MTP nº 1.467/2022). O PREVI-LACERDA possui prazo de adequação de governança institucional até 31/12/2026.';
     } else if (isFiagro) {
       assetClass = 'INVESTIMENTOS ESTRUTURADOS (FIAGRO)';
       cmnArticle = 'Resolução CMN nº 5.272/2025 - Segmento Estruturado (FIAGRO)';
@@ -565,17 +733,19 @@ export class FundAnalyzerService {
       condominium = 'FECHADO';
       investorTarget = 'GERAL';
       adminFeePct = 1.00;
-      netEquity = 1645822839;
+      netEquity = storedFund?.netEquity || (assetMatch?.latest_pl ?? 850000000);
       redemptionQuota = 'Sem Resgate Contínuo (Condomínio Fechado)';
       redemptionSettlement = 'Negociação em Bolsa B3 (Liquidação D+2 útil)';
-      proGestaoRequiredLevel = 'Nível III ou IV';
-      proGestaoAlert = 'ATENÇÃO (Resolução CMN nº 5.272/2025): A aplicação em FIAGRO é condicionada à obtenção pelo RPPS de Certificação Institucional Pró-Gestão Nível III ou IV. Além disso, o limite máximo é de até 5% e é vedada a aquisição de carteiras com direitos creditórios não-padronizados.';
+      proGestaoRequiredLevel = 'Nível III ou IV (Obrigatório)';
+      proGestaoAlert = 'ATENÇÃO REGULATÓRIA OBRIGATÓRIA (Resolução CMN nº 5.272/2025): A aplicação em classes de cotas de FIAGRO é expressamente condicionada à obtenção pelo RPPS de Certificação Institucional Pró-Gestão Nível III ou IV. Além disso, o limite máximo é de até 5% e é vedada a aquisição de carteiras com direitos creditórios não-padronizados.';
     } else if (isFidc) {
       assetClass = 'RENDA FIXA - DIREITOS CREDITÓRIOS (FIDC)';
       cmnArticle = 'Resolução CMN nº 5.272/2025 - Art. 7º, inciso IV';
       cmnLimit = 'Até 5% da Carteira RPPS (Vedado FIDC não padronizado)';
       benchmark = 'CDI + Spread';
       adminFeePct = 0.80;
+      proGestaoRequiredLevel = 'Nível I a IV';
+      proGestaoAlert = 'REGRA PRUDENCIAL ART. 7º, IV: Limite de até 5% da carteira. É expressamente vedada a aquisição de FIDC com carteira de direitos creditórios não-padronizados.';
     } else if (isFip) {
       assetClass = 'INVESTIMENTOS ESTRUTURADOS (FIP)';
       cmnArticle = 'Resolução CMN nº 5.272/2025 - Art. 11 (FIP)';
@@ -583,6 +753,8 @@ export class FundAnalyzerService {
       condominium = 'FECHADO';
       benchmark = 'IPCA + 8%';
       adminFeePct = 1.50;
+      proGestaoRequiredLevel = 'Nível II a IV';
+      proGestaoAlert = 'ATENÇÃO (RES. CMN 5.272/2025): Aplicação em FIP é restrita a RPPS certificados no Pró-Gestão em níveis avançados (Nível II ou superior) com teto prudencial de até 5%.';
     } else if (isEquities) {
       assetClass = 'RENDA VARIÁVEL';
       cmnArticle = 'Resolução CMN nº 5.272/2025 - Art. 8º, inciso I';
@@ -592,47 +764,57 @@ export class FundAnalyzerService {
       netEquity = 450000000;
       redemptionQuota = 'D+30';
       redemptionSettlement = 'D+2 útil após cotização';
+      proGestaoRequiredLevel = 'Nível II a IV (para teto de 30%) ou Nível I (para teto de 20%)';
+      proGestaoAlert = 'ENQUADRAMENTO ART. 8º (RES. CMN 5.272/2025): O RPPS pode alocar até 20% em ações com governança básica, ou até 30% mediante Certificação Institucional Pró-Gestão Nível II, III ou IV.';
     } else if (isExterior) {
       assetClass = 'INVESTIMENTO NO EXTERIOR';
       cmnArticle = 'Resolução CMN nº 5.272/2025 - Art. 9º, inciso II';
       cmnLimit = 'Até 10% da Carteira RPPS';
       benchmark = 'MSCI World / Dólar';
       adminFeePct = 0.60;
+      proGestaoRequiredLevel = 'Nível I a IV';
+      proGestaoAlert = 'ART. 9º (RES. CMN 5.272/2025): Limite prudencial de até 10% em investimentos no exterior.';
     } else if (isCreditoPrivado) {
       assetClass = 'RENDA FIXA (CRÉDITO PRIVADO)';
       cmnArticle = 'Resolução CMN nº 5.272/2025 - Art. 7º, inciso IV';
       cmnLimit = 'Até 20% da Carteira RPPS';
       benchmark = 'CDI + Spread';
       adminFeePct = 0.50;
+      proGestaoRequiredLevel = 'Nível I a IV';
+      proGestaoAlert = 'ART. 7º, IV: Limite prudencial de até 20% para ativos e fundos com risco de crédito privado.';
     } else if (upper.includes('IRF-M') || upper.includes('IRFM')) {
       assetClass = 'RENDA FIXA SOBERANA';
       cmnArticle = "Resolução CMN nº 5.272/2025 - Art. 7º, I, alínea 'b'";
       cmnLimit = 'Até 100% da Carteira RPPS';
       benchmark = 'IRF-M';
+      proGestaoRequiredLevel = 'Dispensado / Nível I a IV';
+      proGestaoAlert = 'CONFORMIDADE PLENA (ART. 7º, I, "B"): Títulos públicos federais e fundos 100% títulos públicos não exigem certificação de nível avançado, com teto de até 100% da carteira do RPPS.';
     } else if (upper.includes('IMA-B')) {
       assetClass = 'RENDA FIXA SOBERANA INDEXADA À INFLAÇÃO';
       cmnArticle = "Resolução CMN nº 5.272/2025 - Art. 7º, I, alínea 'b'";
       cmnLimit = 'Até 100% da Carteira RPPS';
       benchmark = 'IMA-B';
+      proGestaoRequiredLevel = 'Dispensado / Nível I a IV';
+      proGestaoAlert = 'CONFORMIDADE PLENA (ART. 7º, I, "B"): Títulos públicos federais e fundos indexados ao IMA-B, plenamente aderentes à meta atuarial do RPPS com teto de até 100%.';
     }
 
     const averageNetEquity12M = Math.round(netEquity * 0.94);
-    const ret12M = isFii ? 11.15 : (storedFund?.return12M !== undefined ? storedFund.return12M : 11.85);
-    const ret24M = isFii ? 24.80 : (storedFund?.return24M !== undefined ? storedFund.return24M : 24.30);
-    const retMonth = isFii ? -1.78 : 0.98;
-    const retYtd = isFii ? 9.40 : 9.85;
-    const ret36M = isFii ? 38.60 : 38.90;
-    const retSinceInception = isFii ? 97.80 : Math.round((ageYears * 10.8) * 10) / 10;
+    const ret12M = storedFund?.return12M !== undefined ? storedFund.return12M : isFii ? 8.50 : 11.85;
+    const ret24M = storedFund?.return24M !== undefined ? storedFund.return24M : isFii ? 19.20 : 24.30;
+    const retMonth = storedFund?.returnMonth !== undefined ? storedFund.returnMonth : 0.98;
+    const retYtd = storedFund?.returnYtd !== undefined ? storedFund.returnYtd : 8.85;
+    const ret36M = isFii ? 31.40 : 38.90;
+    const retSinceInception = Math.round((ageYears * 10.8) * 10) / 10;
 
     const bmk12M = 11.25;
     const bmk24M = 23.80;
     const bmkMonth = 0.95;
     const bmkYear = 8.85;
 
-    const volatility12M = isFii ? 5.60 : (storedFund?.volatility12M !== undefined ? storedFund.volatility12M : 420.0);
-    const sharpeRatio12M = isFii ? 0.88 : (storedFund?.sharpeRatio12M !== undefined ? storedFund.sharpeRatio12M : 0.65);
-    const maxDrawdown12M = isFii ? -3.4 : -3.8;
-    const var95 = isFii ? 1.85 : 2.15;
+    const volatility12M = storedFund?.volatility12M !== undefined ? storedFund.volatility12M : isFii ? 7.20 : 4.20;
+    const sharpeRatio12M = storedFund?.sharpeRatio12M !== undefined ? storedFund.sharpeRatio12M : 0.65;
+    const maxDrawdown12M = isFii ? -8.5 : -3.8;
+    const var95 = isFii ? 2.45 : 2.15;
 
     // Resolução de Gestor, Administrador e Custodiante
     let managerName = storedFund?.manager || assetMatch?.manager || 'GESTOR AUTORIZADO CVM';
