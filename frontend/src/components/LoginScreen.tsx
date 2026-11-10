@@ -147,24 +147,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           
           {/* Cabeçalho do Card - Logo ArgosPrevi no lugar de "Login no PREVI-LACERDA" */}
           <div className="bg-slate-50 border-b border-slate-200 p-6 sm:p-8">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-9 h-9 rounded-xl bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-800 shadow-2xs shrink-0">
-                {viewStep === 'register' && <UserCheck className="w-4 h-4" />}
-                {viewStep === 'verify_email' && <Mail className="w-4 h-4" />}
-                {viewStep === 'pending_approval' && <Clock className="w-4 h-4" />}
-                {viewStep === 'login' && <KeyRound className="w-4 h-4" />}
-              </div>
-              <div>
-                <span className="text-[10px] font-bold text-teal-800 uppercase tracking-wider block">
-                  {viewStep === 'register' && 'Credenciamento RPPS'}
-                  {viewStep === 'verify_email' && 'Validação de E-mail'}
-                  {viewStep === 'pending_approval' && 'Homologação Pendente'}
-                  {viewStep === 'login' && 'Acesso Seguro RPPS'}
-                </span>
-                <span className="text-xs font-semibold text-slate-600">ArgosPrevi - Sistema de Gestão Previdenciária</span>
-              </div>
-            </div>
-
             {/* Logotipo Oficial ArgosPrevi em substituição direta a "Login no PREVI-LACERDA" */}
             <div className="flex items-center gap-4 my-2.5 p-2 bg-white rounded-xl border border-slate-100 shadow-2xs">
               <img 

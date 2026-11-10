@@ -171,25 +171,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-8 relative">
         {/* Cabeçalho com Logo ArgosPrevi */}
         <div className="bg-slate-50 border-b border-slate-200 p-6 relative">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded-lg bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-800 shadow-2xs">
-              {viewStep === 'register' && <UserCheck className="w-3.5 h-3.5" />}
-              {viewStep === 'verify_email' && <Mail className="w-3.5 h-3.5" />}
-              {viewStep === 'pending_approval' && <Clock className="w-3.5 h-3.5" />}
-              {viewStep === 'login' && <KeyRound className="w-3.5 h-3.5" />}
-            </div>
-            <div>
-              <span className="text-[10px] font-bold text-teal-800 uppercase tracking-wider block">
-                {viewStep === 'register' && 'Credenciamento RPPS'}
-                {viewStep === 'verify_email' && 'Validação de E-mail'}
-                {viewStep === 'pending_approval' && 'Homologação Pendente'}
-                {viewStep === 'login' && 'Acesso Seguro RPPS'}
-              </span>
-              <span className="text-xs font-semibold text-slate-600">ArgosPrevi - Sistema de Gestão Previdenciária</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3.5 my-2.5 p-2 bg-white rounded-xl border border-slate-100 shadow-2xs">
+          <div className="flex items-center gap-3.5 my-1 p-2 bg-white rounded-xl border border-slate-100 shadow-2xs">
             <img 
               src="/argosprevi-logo.png" 
               alt="ArgosPrevi Logo" 
