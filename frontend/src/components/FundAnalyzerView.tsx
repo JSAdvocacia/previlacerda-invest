@@ -51,6 +51,7 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
 
   // Lista de CNPJs de destaque da carteira para teste rápido com 1 clique
   const quickPicks = [
+    { name: 'Kinea Rendimentos FII (KNCR11)', cnpj: '16.706.958/0001-32', class: 'FII Papel' },
     { name: 'Itaú Rural FIAGRO (RURA11)', cnpj: '42.479.593/0001-60', class: 'FIAGRO' },
     { name: 'Caixa IMA-B TP RF', cnpj: '10.740.658/0001-93', class: 'Renda Fixa' },
     { name: 'BB Previdenciário IMA-B', cnpj: '07.442.078/0001-05', class: 'Renda Fixa' },
