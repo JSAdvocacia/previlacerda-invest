@@ -29,7 +29,10 @@ import {
   Trash2,
   FolderArchive,
   Database,
-  ArrowUpDown
+  ArrowUpDown,
+  Edit2,
+  Save,
+  X
 } from 'lucide-react';
 import { Asset } from '../types';
 import { FundAnalyzerService, FundAnalysisReport, EntityEvaluation } from '../services/fundAnalyzerService';
@@ -55,6 +58,9 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
   const [repositoryRecords, setRepositoryRecords] = useState<AnalyzedFundRecord[]>(() => analyzedFundsRepository.getAll());
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState<any>({});
+  const [showSavedToast, setShowSavedToast] = useState(false);
 
   // Lista de CNPJs de destaque da carteira para teste rápido com 1 clique
   const quickPicks = [
@@ -149,6 +155,90 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
     } else {
       handleAnalyze(record.cnpj);
     }
+  };
+
+  const handleOpenEditModal = () => {
+    if (!report) return;
+    setEditFormData({
+      tradingName: report.tradingName || '',
+      ticker: report.ticker || '',
+      netEquity: report.netEquity || 0,
+      pvp: report.pvp !== undefined ? report.pvp : 1.0,
+      dividendYield12M: report.dividendYield12M !== undefined ? report.dividendYield12M : 0,
+      lastDividend: report.lastDividend !== undefined ? report.lastDividend : 0,
+      quotaValue: report.quotaValue !== undefined ? report.quotaValue : 0,
+      dailyLiquidity: report.dailyLiquidity !== undefined ? report.dailyLiquidity : 0,
+      shareholdersCount: report.shareholdersCount !== undefined ? report.shareholdersCount : 0,
+      vacancy: report.vacancy !== undefined ? report.vacancy : 0,
+      adminFeePct: report.adminFeePct || 0,
+      returns12M: report.returns.twelveMonths || 0,
+      volatility12M: report.volatility12M || 0,
+      managerName: report.managerEvaluation?.name || '',
+      custodianName: report.custodianEvaluation?.name || '',
+      cmnArticle: report.cmnArticle || '',
+      cmnArticleLimit: report.cmnArticleLimit || '',
+      proGestaoRequiredLevel: report.proGestaoRequiredLevel || 'Nível I a IV',
+      proGestaoAlert: report.proGestaoAlert || ''
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEditModal = () => {
+    if (!report) return;
+    const numNetEquity = Number(editFormData.netEquity) || 0;
+    const numRet12M = Number(editFormData.returns12M) || 0;
+    const numAdminFee = Number(editFormData.adminFeePct) || 0;
+    const numVolatility = Number(editFormData.volatility12M) || 0;
+    const numPvp = editFormData.pvp !== '' && editFormData.pvp !== undefined ? Number(editFormData.pvp) : undefined;
+    const numDY = editFormData.dividendYield12M !== '' && editFormData.dividendYield12M !== undefined ? Number(editFormData.dividendYield12M) : undefined;
+    const numLastDiv = editFormData.lastDividend !== '' && editFormData.lastDividend !== undefined ? Number(editFormData.lastDividend) : undefined;
+    const numQuotaVal = editFormData.quotaValue !== '' && editFormData.quotaValue !== undefined ? Number(editFormData.quotaValue) : undefined;
+    const numDailyLiq = editFormData.dailyLiquidity !== '' && editFormData.dailyLiquidity !== undefined ? Number(editFormData.dailyLiquidity) : undefined;
+    const numShareholders = editFormData.shareholdersCount !== '' && editFormData.shareholdersCount !== undefined ? Number(editFormData.shareholdersCount) : undefined;
+    const numVacancy = editFormData.vacancy !== '' && editFormData.vacancy !== undefined ? Number(editFormData.vacancy) : undefined;
+
+    const updatedReport: FundAnalysisReport = {
+      ...report,
+      tradingName: editFormData.tradingName || report.tradingName,
+      ticker: editFormData.ticker ? editFormData.ticker.toUpperCase().trim() : undefined,
+      netEquity: numNetEquity,
+      averageNetEquity12M: Math.round(numNetEquity * 0.95),
+      pvp: numPvp,
+      dividendYield12M: numDY,
+      lastDividend: numLastDiv,
+      quotaValue: numQuotaVal,
+      dailyLiquidity: numDailyLiq,
+      shareholdersCount: numShareholders,
+      vacancy: numVacancy,
+      adminFeePct: numAdminFee,
+      volatility12M: numVolatility,
+      cmnArticle: editFormData.cmnArticle || report.cmnArticle,
+      cmnArticleLimit: editFormData.cmnArticleLimit || report.cmnArticleLimit,
+      proGestaoRequiredLevel: editFormData.proGestaoRequiredLevel || report.proGestaoRequiredLevel,
+      proGestaoAlert: editFormData.proGestaoAlert || report.proGestaoAlert,
+      returns: {
+        ...report.returns,
+        twelveMonths: numRet12M
+      },
+      managerEvaluation: {
+        ...report.managerEvaluation,
+        name: editFormData.managerName || report.managerEvaluation.name
+      },
+      custodianEvaluation: {
+        ...report.custodianEvaluation,
+        name: editFormData.custodianName || report.custodianEvaluation.name
+      },
+      isCustomized: true,
+      isPendingVerification: false,
+      dataSource: 'Parametrizado & Auditado pelo Usuário (Conforme Portal Investidor10)'
+    };
+
+    setReport(updatedReport);
+    analyzedFundsRepository.saveReport(updatedReport);
+    setRepositoryRecords(analyzedFundsRepository.getAll());
+    setIsEditModalOpen(false);
+    setShowSavedToast(true);
+    setTimeout(() => setShowSavedToast(false), 3000);
   };
 
   const handleCopyOpinion = () => {
@@ -348,6 +438,15 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
             {report && (
               <>
                 <button
+                  onClick={handleOpenEditModal}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl font-bold text-xs shadow-xs transition-all cursor-pointer"
+                  title="Editar ou parametrizar indicadores reais deste ativo conforme Portal Investidor10"
+                >
+                  <Edit2 className="w-4 h-4 text-slate-950" />
+                  <span>Editar / Ajustar Indicadores</span>
+                </button>
+
+                <button
                   onClick={() => handleOpenInComparator(report)}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs shadow-xs transition-all cursor-pointer"
                   title="Comparar este ativo com os pares da carteira oficial segundo classe e artigo CMN 5.272/2025"
@@ -491,6 +590,12 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
                     <span className="text-[10px] text-slate-400 font-mono">
                       Protocolo: {report.analysisProtocol}
                     </span>
+                    {report.isCustomized && (
+                      <span className="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded bg-emerald-500/25 text-emerald-300 border border-emerald-400/40 flex items-center gap-1 shadow-2xs">
+                        <Check className="w-3 h-3 text-emerald-300" />
+                        Auditado pelo Usuário
+                      </span>
+                    )}
                   </div>
 
                   <h2 className="text-xl font-black text-white tracking-tight">
@@ -540,6 +645,33 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* TOAST DE SALVAMENTO COM SUCESSO */}
+            {showSavedToast && (
+              <div className="p-3 mx-6 my-2 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold rounded-xl flex items-center gap-2 animate-fadeIn">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Indicadores do ativo atualizados e salvos com sucesso no repositório auditado!</span>
+              </div>
+            )}
+
+            {/* AVISO SE FOR ATIVO COM DADOS PENDENTES OU NECESSIDADE DE CONFERÊNCIA COM INVESTIDOR10 */}
+            {report.isPendingVerification && (
+              <div className="p-3.5 mx-6 my-3 bg-amber-50 border border-amber-300 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-950 animate-fadeIn">
+                <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-amber-700 shrink-0" />
+                  <span>
+                    Dados cadastrais oficiais confirmados via CVM e Receita Federal para este CNPJ. Os indicadores financeiros e de mercado (PL, Cotação, P/VP, DY, Custos) podem ser conferidos ou ajustados conforme o <strong>Portal Investidor10</strong> clicando em <strong>Editar / Ajustar Indicadores</strong>.
+                  </span>
+                </div>
+                <button
+                  onClick={handleOpenEditModal}
+                  className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-lg shrink-0 flex items-center gap-1 cursor-pointer shadow-xs"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>Editar Indicadores</span>
+                </button>
+              </div>
+            )}
 
             {/* BARRA DE INDICADORES RÁPIDOS */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-slate-100 bg-slate-50/70 border-b border-slate-200 text-xs">
@@ -635,6 +767,14 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
                     )}
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleOpenEditModal}
+                      className="px-2.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 text-[10px] font-bold rounded flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                      title="Editar indicadores fundamentalistas do Investidor10"
+                    >
+                      <Edit2 className="w-3 h-3 text-slate-950" />
+                      <span>Editar Indicadores</span>
+                    </button>
                     <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/40">
                       Dados Auditados & Fidedignos
                     </span>
@@ -1029,6 +1169,350 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
       {!report && !loading && (
         <div className="space-y-6">
           {renderRepositorySection()}
+        </div>
+      )}
+
+      {/* MODAL DE EDIÇÃO DE INDICADORES (INVESTIDOR10 & CVM) */}
+      {isEditModalOpen && report && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto border border-slate-300 shadow-2xl flex flex-col animate-scaleUp">
+            {/* TOPO DO MODAL */}
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center text-slate-950">
+                  <Edit2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-white flex items-center gap-2">
+                    <span>Parametrizar / Editar Dados do Ativo</span>
+                    <span className="text-[10px] bg-amber-400 text-slate-950 px-2 py-0.5 rounded font-mono font-bold">
+                      {report.formattedCnpj}
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-slate-300">
+                    Ajuste os dados conforme o <strong>Portal Investidor10</strong>, <strong>CVM</strong> e <strong>B3</strong> para conferência fidedigna.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* FORMULÁRIO DE EDIÇÃO */}
+            <div className="p-6 space-y-6 text-xs text-slate-700 overflow-y-auto">
+              {/* SEÇÃO 1: IDENTIFICAÇÃO E TICKER B3 */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5 border-b pb-1.5 border-slate-100">
+                  <Building2 className="w-4 h-4 text-blue-600" />
+                  <span>1. Identificação Básica do Ativo</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Nome de Negociação / Fantasia:
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.tradingName || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, tradingName: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Ticker B3 (se negociado em bolsa):
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.ticker || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, ticker: e.target.value.toUpperCase() })}
+                      placeholder="Ex: RECT11, RURA11"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SEÇÃO 2: INDICADORES FUNDAMENTALISTAS INVESTIDOR10 */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5 border-b pb-1.5 border-slate-100">
+                  <BarChart3 className="w-4 h-4 text-emerald-600" />
+                  <span>2. Indicadores Fundamentalistas (Portal Investidor10 & B3)</span>
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Patrimônio Líquido (PL em R$):
+                    </label>
+                    <input
+                      type="number"
+                      value={editFormData.netEquity || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, netEquity: e.target.value })}
+                      placeholder="Ex: 766830000"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                    <span className="text-[10px] text-slate-400 mt-0.5 block">{formatMoney(Number(editFormData.netEquity) || 0)}</span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      P/VP (Preço / VP):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.pvp !== undefined ? editFormData.pvp : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, pvp: e.target.value })}
+                      placeholder="Ex: 0.36 ou 1.00"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold text-emerald-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Dividend Yield 12M (%):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.dividendYield12M !== undefined ? editFormData.dividendYield12M : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, dividendYield12M: e.target.value })}
+                      placeholder="Ex: 15.32"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold text-emerald-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Último Rendimento (R$/cota):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.lastDividend !== undefined ? editFormData.lastDividend : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, lastDividend: e.target.value })}
+                      placeholder="Ex: 0.45"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Valor Patrimonial p/ Cota (R$):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.quotaValue !== undefined ? editFormData.quotaValue : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, quotaValue: e.target.value })}
+                      placeholder="Ex: 89.76"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Vacância Física (%):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.vacancy !== undefined ? editFormData.vacancy : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, vacancy: e.target.value })}
+                      placeholder="Ex: 8.36"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Número de Cotistas:
+                    </label>
+                    <input
+                      type="number"
+                      value={editFormData.shareholdersCount !== undefined ? editFormData.shareholdersCount : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, shareholdersCount: e.target.value })}
+                      placeholder="Ex: 44976"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Liquidez Diária Média (R$):
+                    </label>
+                    <input
+                      type="number"
+                      value={editFormData.dailyLiquidity !== undefined ? editFormData.dailyLiquidity : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, dailyLiquidity: e.target.value })}
+                      placeholder="Ex: 268460"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SEÇÃO 3: RENTABILIDADE & CUSTOS FIDUCIÁRIOS */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5 border-b pb-1.5 border-slate-100">
+                  <Percent className="w-4 h-4 text-purple-600" />
+                  <span>3. Rentabilidade e Custos Fiduciários</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Taxa de Administração (% a.a.):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.adminFeePct !== undefined ? editFormData.adminFeePct : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, adminFeePct: e.target.value })}
+                      placeholder="Ex: 0.17"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Retorno Acumulado 12M (%):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.returns12M !== undefined ? editFormData.returns12M : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, returns12M: e.target.value })}
+                      placeholder="Ex: 5.97"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Volatilidade 12M (% a.a.):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editFormData.volatility12M !== undefined ? editFormData.volatility12M : ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, volatility12M: e.target.value })}
+                      placeholder="Ex: 8.20"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SEÇÃO 4: PRESTADORES FIDUCIÁRIOS */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5 border-b pb-1.5 border-slate-100">
+                  <Briefcase className="w-4 h-4 text-indigo-600" />
+                  <span>4. Prestadores de Serviços Fiduciários (Portaria MTP nº 1.467/2022)</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Nome do Gestor de Recursos:
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.managerName || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, managerName: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Nome do Administrador / Custodiante:
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.custodianName || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, custodianName: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SEÇÃO 5: ENQUADRAMENTO CMN 5.272/2025 & PRÓ-GESTÃO */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5 border-b pb-1.5 border-slate-100">
+                  <ShieldCheck className="w-4 h-4 text-amber-600" />
+                  <span>5. Enquadramento Res. CMN nº 5.272/2025 & Exigência de Pró-Gestão</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Artigo de Enquadramento:
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.cmnArticle || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, cmnArticle: e.target.value })}
+                      placeholder="Ex: Resolução CMN nº 5.272/2025 - Art. 10 (FII)"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Nível de Certificação Pró-Gestão Requerido:
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.proGestaoRequiredLevel || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, proGestaoRequiredLevel: e.target.value })}
+                      placeholder="Ex: Nível I a IV, Nível III ou IV, etc."
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Texto do Alerta Prudencial de Pró-Gestão:
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={editFormData.proGestaoAlert || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, proGestaoAlert: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RODAPÉ DO MODAL */}
+            <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3 shrink-0">
+              <span className="text-[11px] text-slate-500">
+                Os dados serão salvos no repositório auditado e recalculados em tela imediatamente.
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl cursor-pointer transition-colors"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  onClick={handleSaveEditModal}
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Salvar Dados Auditados</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

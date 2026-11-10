@@ -196,6 +196,7 @@ export const analyzedFundsRepository = {
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
+      localStorage.setItem(`argos_fund_custom_${clean}`, JSON.stringify(report));
     } catch (e) {
       console.warn('Erro ao salvar no repositório de fundos estudados', e);
     }
