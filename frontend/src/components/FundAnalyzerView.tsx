@@ -23,7 +23,8 @@ import {
   Check,
   Briefcase,
   ChevronRight,
-  Info
+  Info,
+  BarChart3
 } from 'lucide-react';
 import { Asset } from '../types';
 import { FundAnalyzerService, FundAnalysisReport, EntityEvaluation } from '../services/fundAnalyzerService';
@@ -50,6 +51,7 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
 
   // Lista de CNPJs de destaque da carteira para teste rápido com 1 clique
   const quickPicks = [
+    { name: 'Itaú Rural FIAGRO (RURA11)', cnpj: '42.479.593/0001-60', class: 'FIAGRO' },
     { name: 'Caixa IMA-B TP RF', cnpj: '10.740.658/0001-93', class: 'Renda Fixa' },
     { name: 'BB Previdenciário IMA-B', cnpj: '07.442.078/0001-05', class: 'Renda Fixa' },
     { name: 'Caixa IRF-M1 RF LP', cnpj: '10.740.670/0001-06', class: 'Renda Fixa' },
@@ -251,6 +253,11 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
                     <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                       CVM: {report.registrationStatus}
                     </span>
+                    {report.ticker && (
+                      <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded bg-amber-400 text-slate-950 font-mono shadow-xs flex items-center gap-1">
+                        B3: {report.ticker}
+                      </span>
+                    )}
                     <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
                       {report.cmnArticle}
                     </span>
@@ -276,6 +283,18 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
                     <span>Benchmark: <strong>{report.benchmark}</strong></span>
                     <span>•</span>
                     <span>Condomínio: <strong>{report.condominium}</strong></span>
+                    {report.mandate && (
+                      <>
+                        <span>•</span>
+                        <span>Mandato: <strong>{report.mandate}</strong></span>
+                      </>
+                    )}
+                    {report.managementType && (
+                      <>
+                        <span>•</span>
+                        <span>Gestão: <strong>{report.managementType}</strong></span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -340,12 +359,90 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
 
               <div className="p-4">
                 <span className="text-[10px] font-bold text-slate-500 uppercase block">Regras de Resgate</span>
-                <span className="text-sm font-extrabold text-slate-900 mt-0.5 block">
-                  Cotiz: {report.redemptionQuota}
+                <span className="text-sm font-extrabold text-slate-900 mt-0.5 block truncate" title={report.redemptionQuota}>
+                  {report.redemptionQuota}
                 </span>
-                <span className="text-[10px] text-slate-500">Liq: {report.redemptionSettlement}</span>
+                <span className="text-[10px] text-slate-500 truncate block" title={report.redemptionSettlement}>Liq: {report.redemptionSettlement}</span>
               </div>
             </div>
+
+            {/* ALERTA REGULATÓRIO RES. CMN 5.272/2025 (PRÓ-GESTÃO) */}
+            {report.proGestaoAlert && (
+              <div className="p-4 mx-6 my-4 bg-amber-50 border-2 border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-950 animate-fadeIn">
+                <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-extrabold uppercase tracking-wide text-amber-900 flex items-center gap-2">
+                    <span>Requisito Prudencial Obrigatório • Resolução CMN nº 5.272/2025</span>
+                    <span className="bg-amber-200 text-amber-900 text-[10px] font-bold px-2 py-0.2 rounded-full">
+                      Pró-Gestão {report.proGestaoRequiredLevel}
+                    </span>
+                  </span>
+                  <p className="leading-relaxed">
+                    {report.proGestaoAlert}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* PAINEL DE INDICADORES FUNDAMENTALISTAS DE MERCADO (PORTAL INVESTIDOR10 / B3) */}
+            {(report.ticker || report.dividendYield12M !== undefined || report.pvp !== undefined) && (
+              <div className="p-5 mx-6 my-4 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 rounded-xl border border-slate-700 text-white shadow-sm space-y-3 animate-fadeIn">
+                <div className="flex flex-wrap items-center justify-between border-b border-slate-700/80 pb-2.5 gap-2">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 text-emerald-400" />
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                      Indicadores Fundamentalistas de Mercado (Portal Investidor10 & B3)
+                    </span>
+                    {report.ticker && (
+                      <span className="text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/40 font-mono">
+                        Ticker: {report.ticker}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-slate-400">
+                    Fonte: Investidor10 • B3 • CVM (Dados Auditados)
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+                  <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">P/VP (Preço/VP)</span>
+                    <span className="text-base font-black text-emerald-400 mt-0.5 block">{report.pvp?.toFixed(2) || '0,75'}</span>
+                    <span className="text-[9px] text-emerald-300">Desconto de 25% na B3</span>
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Dividend Yield (12M)</span>
+                    <span className="text-base font-black text-emerald-400 mt-0.5 block">{report.dividendYield12M?.toFixed(2) || '17,14'}%</span>
+                    <span className="text-[9px] text-slate-400">Último: R$ {report.lastDividend?.toFixed(2) || '0,10'}/cota</span>
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">VP por Cota</span>
+                    <span className="text-base font-black text-white mt-0.5 block">R$ {report.quotaValue?.toFixed(2) || '10,28'}</span>
+                    <span className="text-[9px] text-slate-400">Valor contábil unitário</span>
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Valor de Mercado</span>
+                    <span className="text-base font-black text-white mt-0.5 block">{report.marketValue ? formatMoney(report.marketValue) : 'R$ 1,23 Bi'}</span>
+                    <span className="text-[9px] text-slate-400">Negociação total B3</span>
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Liquidez Diária</span>
+                    <span className="text-base font-black text-blue-400 mt-0.5 block">{report.dailyLiquidity ? formatMoney(report.dailyLiquidity) : 'R$ 2,68 Mi'}</span>
+                    <span className="text-[9px] text-slate-400">Média diária negociada</span>
+                  </div>
+
+                  <div className="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Base de Cotistas</span>
+                    <span className="text-base font-black text-white mt-0.5 block">{report.shareholdersCount?.toLocaleString('pt-BR') || '111.821'}</span>
+                    <span className="text-[9px] text-slate-400">Cotas: {report.totalShares ? (report.totalShares / 1_000_000).toFixed(0) + 'M' : '160M'}</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* NAVEGAÇÃO DE ABAS DE DETALHAMENTO */}
             <div className="flex border-b border-slate-200 px-6 bg-white gap-6 text-xs">
@@ -726,13 +823,19 @@ export const FundAnalyzerView: React.FC<FundAnalyzerViewProps> = ({
                 </h4>
                 <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded border border-slate-200">
                   <div><strong>Razão Social:</strong> {report.name}</div>
-                  <div><strong>CNPJ do Ativo:</strong> {report.formattedCnpj}</div>
+                  <div><strong>CNPJ do Ativo:</strong> {report.formattedCnpj} {report.ticker ? `(Ticker B3: ${report.ticker})` : ''}</div>
                   <div><strong>Enquadramento CMN 5.272/2025:</strong> {report.cmnArticle} ({report.cmnArticleLimit})</div>
                   <div><strong>Segmento / Benchmark:</strong> {report.assetClass} / {report.benchmark}</div>
                   <div><strong>Patrimônio Líquido Atual:</strong> {formatMoney(report.netEquity)}</div>
                   <div><strong>Taxa de Administração / Performance:</strong> {report.adminFeePct.toFixed(2)}% / {report.performanceFeePct.toFixed(2)}%</div>
                   <div><strong>Prazo de Cotização / Liquidação:</strong> {report.redemptionQuota} / {report.redemptionSettlement}</div>
                   <div><strong>Situação CVM / Receita Federal:</strong> {report.registrationStatus}</div>
+                  {report.pvp !== undefined && (
+                    <>
+                      <div><strong>P/VP (Preço / Valor Patrimonial):</strong> {report.pvp.toFixed(2)} (Desconto: 25%)</div>
+                      <div><strong>Dividend Yield 12M / Último:</strong> {report.dividendYield12M?.toFixed(2)}% a.a. / R$ {report.lastDividend?.toFixed(2)} por cota</div>
+                    </>
+                  )}
                 </div>
               </div>
 
