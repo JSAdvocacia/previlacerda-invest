@@ -236,86 +236,80 @@ export const InvestmentPolicyView: React.FC<InvestmentPolicyViewProps> = ({
       </div>
 
       {/* =========================================================================
-          DESTAQUE VISÍVEL DA META ATUARIAL OBTIDA DA LEITURA DA POLÍTICA
-          (Requisito Expressamente Solicitado pelo Usuário)
+          DESTAQUE VISÍVEL DA META ATUARIAL (LAYOUT INSTITUCIONAL LIMPO E COMPACTO)
          ========================================================================= */}
-      <div className="bg-linear-to-br from-emerald-900 via-teal-900 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden border border-emerald-800/40">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-8 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-          {/* Lado Esquerdo: Meta Atuarial em Números Grandes */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="bg-emerald-500/20 text-emerald-300 text-xs font-black uppercase px-2.5 py-1 rounded-md border border-emerald-400/30 tracking-wider">
-                Parâmetro Obrigatório de Rentabilidade (Art. 85 Portaria MTP 1.467/2022)
+      <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 transition-all">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          {/* Lado Esquerdo: Meta Atuarial com Alto Contraste */}
+          <div className="space-y-1.5 flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase px-2 py-0.5 rounded">
+                Parâmetro Obrigatório de Rentabilidade (Art. 85 Portaria MTP nº 1.467/2022)
               </span>
-              <span className="text-emerald-400 text-xs font-semibold">
-                • Estudo Atuarial Vigente
+              <span className="text-slate-500 text-xs font-medium">
+                • Exercício {policy.exerciseYear}
               </span>
             </div>
 
-            <div className="flex items-baseline gap-3">
-              <span className="text-xs uppercase font-extrabold text-emerald-300/80 tracking-widest block">
-                META ATUARIAL DO EXERCÍCIO ({policy.exerciseYear}):
+            <div className="flex flex-wrap items-baseline gap-3 pt-0.5">
+              <span className="text-xs uppercase font-extrabold text-slate-500 tracking-wider">
+                Meta Atuarial:
               </span>
-            </div>
-
-            <div className="flex flex-wrap items-baseline gap-4">
-              <div className="text-4xl sm:text-5xl font-black text-white tracking-tight drop-shadow-md">
-                {policy.actuarialTarget.indexName} + {policy.actuarialTarget.realInterestRatePct.toFixed(2).replace('.', ',')}% <span className="text-2xl sm:text-3xl font-bold text-emerald-400">a.a.</span>
+              <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight flex items-baseline gap-1">
+                <span>{policy.actuarialTarget.indexName} + {policy.actuarialTarget.realInterestRatePct.toFixed(2).replace('.', ',')}%</span>
+                <span className="text-lg font-bold text-emerald-700">a.a.</span>
               </div>
-              <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-xs">
-                <span className="text-slate-300 block text-[10px] uppercase font-bold">Projeção Anual Composta:</span>
-                <span className="text-emerald-300 font-black text-lg">~{targetPct.toFixed(2).replace('.', ',')}% a.a.</span>
+              <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold px-2.5 py-1 rounded-lg">
+                Projeção Anual: ~{targetPct.toFixed(2).replace('.', ',')}% a.a.
               </div>
             </div>
 
-            <p className="text-xs text-slate-300 max-w-2xl font-mono pt-1">
-              Fórmula de Cálculo Oficial: <strong className="text-white">{policy.actuarialTarget.calculationFormula}</strong> (considerando projeção de {policy.actuarialTarget.indexName} de {policy.actuarialTarget.projectedIndexPct.toFixed(2).replace('.', ',')}% a.a.).
+            <p className="text-xs text-slate-600 font-medium">
+              Fórmula Oficial: <span className="font-mono text-slate-800 font-semibold">{policy.actuarialTarget.calculationFormula}</span> (projeção {policy.actuarialTarget.indexName}: {policy.actuarialTarget.projectedIndexPct.toFixed(2).replace('.', ',')}% a.a.)
             </p>
           </div>
 
-          {/* Lado Direito: Termômetro de Rentabilidade da Carteira vs Meta Atuarial */}
-          <div className="bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-emerald-500/30 flex flex-col justify-between min-w-[280px]">
-            <div className="flex items-center justify-between gap-4 mb-3">
+          {/* Lado Direito: Desempenho e Aderência da Carteira */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 sm:min-w-[310px] shrink-0">
+            <div className="flex items-center justify-between gap-3 mb-2">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Retorno da Carteira (2026)</p>
-                <p className="text-2xl font-black text-emerald-400">+{currentPortfolioReturnYTD.toFixed(2).replace('.', ',')}%</p>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Retorno Acumulado</span>
+                <span className="text-xl font-black text-emerald-700">+{currentPortfolioReturnYTD.toFixed(2).replace('.', ',')}%</span>
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Aderência da Meta</p>
-                <p className="text-xl font-black text-white">{targetAchievementRatio}%</p>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Aderência à Meta</span>
+                <span className="text-lg font-black text-slate-900">{targetAchievementRatio}%</span>
               </div>
             </div>
 
-            <div className="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden mb-2 border border-slate-700">
+            <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden mb-2">
               <div 
-                className="bg-linear-to-r from-emerald-500 to-teal-400 h-2.5 rounded-full transition-all duration-1000"
+                className="bg-emerald-600 h-2 rounded-full transition-all duration-700"
                 style={{ width: `${Math.min(100, (currentPortfolioReturnYTD / targetPct) * 100)}%` }}
               ></div>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] pt-1">
-              <span className={`font-bold flex items-center gap-1 ${isTargetAchieved ? 'text-emerald-400' : 'text-amber-400'}`}>
-                <CheckCircle2 className="w-3.5 h-3.5" />
+            <div className="flex items-center justify-between text-[11px] pt-0.5">
+              <span className={`font-bold flex items-center gap-1 ${isTargetAchieved ? 'text-emerald-700' : 'text-amber-700'}`}>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 {isTargetAchieved ? 'Meta Superada (+3,10% spread)' : 'Em Acompanhamento'}
               </span>
-              <span className="text-slate-400 text-[10px]">
-                Base Patrimonial: R$ 138,78M
+              <span className="text-slate-500 text-[10px]">
+                Base: R$ 138,78M
               </span>
             </div>
           </div>
         </div>
 
-        {/* Rodapé do Card da Meta: Origem do Estudo */}
-        <div className="mt-4 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-2">
-          <div className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-emerald-400 shrink-0" />
+        {/* Rodapé do Card: Origem do Estudo */}
+        <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-2">
+          <div className="flex items-center gap-1.5 text-slate-600">
+            <Info className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span>{policy.actuarialTarget.referenceLegalStudy}</span>
           </div>
           {policy.lastParsedAt && (
             <span className="text-[10px] text-slate-400 font-mono">
-              Última leitura inteligente: {new Date(policy.lastParsedAt).toLocaleString('pt-BR')} ({policy.sourceDocumentName || 'Texto colado'})
+              Leitura: {new Date(policy.lastParsedAt).toLocaleString('pt-BR')} ({policy.sourceDocumentName || 'Texto colado'})
             </span>
           )}
         </div>
