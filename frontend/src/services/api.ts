@@ -8,6 +8,7 @@ import {
   buildAssetMetrics
 } from './mockData';
 import { PREVI_LACERDA_OFFICIAL_PROFILE, PREVI_LACERDA_OFFICIAL_ASSETS } from './dairParserService';
+import { analyzedFundsRepository } from './analyzedFundsRepository';
 import { Asset, AssetMetrics, PortfolioOverview, AuditLog, CvmLog, User, UserRole, InstituteProfile, DairExtractedData } from '../types';
 
 // Configuração Supabase REST Direta e Segura
@@ -558,6 +559,10 @@ export const api = {
         if (data.metrics) return data.metrics;
       }
     } catch {}
+
+    // 0. Busca no Repositório de Fundos Estudados (não salvos na carteira oficial)
+    const studiedMetric = analyzedFundsRepository.getComparableMetrics(id);
+    if (studiedMetric) return studiedMetric;
 
     // 1. Busca direta por ID nos dados pré-calculados auditados
     if (mockMetrics[id]) return mockMetrics[id];

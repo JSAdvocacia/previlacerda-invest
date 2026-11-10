@@ -44,6 +44,7 @@ export function App() {
   const [overview, setOverview] = useState<PortfolioOverview | null>(null);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [comparatorSelectedIds, setComparatorSelectedIds] = useState<string[]>([]);
+  const [studiedAssetForComparator, setStudiedAssetForComparator] = useState<Asset | null>(null);
 
   // Modals state
   const [isNewAssetModalOpen, setIsNewAssetModalOpen] = useState(false);
@@ -113,10 +114,11 @@ export function App() {
     setIsReportModalOpen(true);
   };
 
-  const handleNavigateToComparator = (ids?: string[]) => {
+  const handleNavigateToComparator = (ids?: string[], studiedAsset?: Asset | null) => {
     if (ids && ids.length >= 2) {
       setComparatorSelectedIds(ids);
     }
+    setStudiedAssetForComparator(studiedAsset || null);
     setCurrentTab('comparator');
   };
 
@@ -338,6 +340,7 @@ export function App() {
             <AssetComparator
               allAssets={assets}
               initialSelectedIds={comparatorSelectedIds}
+              studiedAsset={studiedAssetForComparator}
               onOpenReport={handleOpenReport}
             />
           )}

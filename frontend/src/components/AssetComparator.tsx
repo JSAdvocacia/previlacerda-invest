@@ -8,20 +8,27 @@ import {
   AlertTriangle,
   Award,
   Layers,
-  FileText
+  FileText,
+  Sparkles,
+  ShieldCheck,
+  CheckCircle2,
+  Database
 } from 'lucide-react';
 import { Asset, AssetMetrics } from '../types';
 import { api } from '../services/api';
+import { analyzedFundsRepository } from '../services/analyzedFundsRepository';
 
 interface AssetComparatorProps {
   allAssets: Asset[];
   initialSelectedIds?: string[];
+  studiedAsset?: Asset | null;
   onOpenReport: (assetId: string) => void;
 }
 
 export const AssetComparator: React.FC<AssetComparatorProps> = ({
   allAssets,
   initialSelectedIds,
+  studiedAsset,
   onOpenReport
 }) => {
   const [selectedIds, setSelectedIds] = useState<string[]>(
@@ -32,6 +39,13 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
 
   const [comparedMetrics, setComparedMetrics] = useState<AssetMetrics[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Sincroniza quando os IDs selecionados iniciais mudarem (ex: vindo do Analisador de Fundos)
+  useEffect(() => {
+    if (initialSelectedIds && initialSelectedIds.length >= 2) {
+      setSelectedIds(initialSelectedIds);
+    }
+  }, [initialSelectedIds]);
 
   useEffect(() => {
     if (selectedIds.length >= 2) {
@@ -71,9 +85,56 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
     return `R$ ${(val / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} M`;
   };
 
+  const studiedRepoList = analyzedFundsRepository.getAll();
+  const studiedAssetsInComparison = comparedMetrics.filter(m => 
+    m.assetId.startsWith('studied_') || (studiedAsset && m.assetId === studiedAsset.id)
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Header do Comparador estilo Investidor10 */}
+    <div className="space-y-6 animate-fadeIn pb-12">
+      {/* BANNER INFORMATIVO SE HOUVER ATIVO EM ESTUDO SENDO COMPARADO COM A CARTEIRA */}
+      {studiedAssetsInComparison.length > 0 && (
+        <div className="bg-gradient-to-r from-purple-50 via-indigo-50/60 to-purple-50 border-2 border-purple-300 rounded-2xl p-5 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 animate-fadeIn">
+          <div className="flex items-start gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-purple-200 text-purple-900 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                  <Database className="w-3 h-3 text-purple-700" />
+                  Ativo em Estudo vs. Carteira Oficial
+                </span>
+                <span className="text-[10px] font-bold text-slate-500 bg-white/80 border border-slate-200 px-2 py-0.5 rounded-full">
+                  Resolução CMN nº 5.272/2025 • Portaria MTP nº 1.467/2022
+                </span>
+              </div>
+              <h3 className="text-sm font-extrabold text-slate-900">
+                Comparação Técnica por Classe e Artigo Regulamentar
+              </h3>
+              <p className="text-xs text-slate-700 leading-relaxed max-w-3xl">
+                Você está comparando o ativo candidato{' '}
+                <strong className="text-purple-950 font-black">
+                  {studiedAssetsInComparison.map(s => s.tradingName).join(', ')}
+                </strong>{' '}
+                com os ativos oficiais da carteira do PREVI-LACERDA de mesma classe e/ou artigo da Resolução CMN nº 5.272/2025.
+                <span className="block mt-1 font-semibold text-purple-900">
+                  * Regra de Isolamento: Este ativo <u>NÃO foi salvo na carteira oficial</u>. Ele pertence exclusivamente ao <strong>Repositório de Fundos Estudados</strong> para análises e pareceres do Comitê de Investimentos.
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-2">
+            <span className="text-[11px] font-extrabold text-purple-900 bg-white px-3 py-1.5 rounded-xl border border-purple-200 shadow-2xs flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-purple-600" />
+              Repositório Isolado
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Header do Comparador */}
       <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
           <div>
@@ -85,11 +146,11 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
               Comparador de Fundos e Ativos Financeiros
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              Compare rentabilidade histórica, volatilidade, índice Sharpe e taxas lado a lado.
+              Compare rentabilidade histórica, volatilidade, índice Sharpe e custos fiduciários lado a lado.
             </p>
           </div>
 
-          {/* Adicionar Fundo Selector */}
+          {/* Adicionar Fundo Selector com Optgroups (Oficiais vs Estudados) */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500 font-semibold">Adicionar fundo:</span>
             <select
@@ -100,16 +161,31 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
                 }
               }}
               disabled={selectedIds.length >= 4}
-              className="bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
+              className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
             >
               <option value="">+ Selecionar outro fundo...</option>
-              {allAssets
-                .filter(a => !selectedIds.includes(a.id))
-                .map(a => (
-                  <option key={a.id} value={a.id}>
-                    {a.trading_name} ({a.asset_class.replace('_', ' ')})
-                  </option>
-                ))}
+              
+              <optgroup label="── CARTEIRA OFICIAL PREVI-LACERDA ──">
+                {allAssets
+                  .filter(a => !selectedIds.includes(a.id))
+                  .map(a => (
+                    <option key={a.id} value={a.id}>
+                      {a.trading_name} ({a.asset_class.replace('_', ' ')})
+                    </option>
+                  ))}
+              </optgroup>
+
+              {studiedRepoList.length > 0 && (
+                <optgroup label="── FUNDOS EM ESTUDO (REPOSITÓRIO) ──">
+                  {studiedRepoList
+                    .filter(s => !selectedIds.includes(s.id))
+                    .map(s => (
+                      <option key={s.id} value={s.id}>
+                        [EM ESTUDO] {s.tradingName} ({s.articleCode})
+                      </option>
+                    ))}
+                </optgroup>
+              )}
             </select>
           </div>
         </div>
@@ -117,43 +193,69 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
         {/* Chips de Ativos Selecionados */}
         <div className="flex flex-wrap items-center gap-2 pt-4">
           <span className="text-xs text-slate-400 font-bold uppercase mr-1">Comparando ({selectedIds.length}/4):</span>
-          {comparedMetrics.map((m, idx) => (
-            <div
-              key={m.assetId}
-              className="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs px-3 py-1.5 rounded-full font-bold border border-slate-200 transition-colors"
-            >
-              <span className={`w-2.5 h-2.5 rounded-full ${
-                idx === 0 ? 'bg-teal-600' : idx === 1 ? 'bg-sky-600' : idx === 2 ? 'bg-amber-600' : 'bg-purple-600'
-              }`}></span>
-              <span>{m.tradingName}</span>
-              {selectedIds.length > 2 && (
-                <button
-                  onClick={() => removeAssetFromCompare(m.assetId)}
-                  className="text-slate-400 hover:text-slate-700 ml-1"
-                  title="Remover da comparação"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          ))}
+          {comparedMetrics.map((m, idx) => {
+            const isStudied = m.assetId.startsWith('studied_') || (studiedAsset && m.assetId === studiedAsset.id);
+            return (
+              <div
+                key={m.assetId}
+                className={`inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full font-bold border transition-colors ${
+                  isStudied 
+                    ? 'bg-purple-50 text-purple-900 border-purple-300 shadow-2xs' 
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
+                }`}
+              >
+                <span className={`w-2.5 h-2.5 rounded-full ${
+                  isStudied ? 'bg-purple-600' :
+                  idx === 0 ? 'bg-teal-600' : idx === 1 ? 'bg-sky-600' : idx === 2 ? 'bg-amber-600' : 'bg-indigo-600'
+                }`}></span>
+                <span>{m.tradingName}</span>
+                {isStudied && (
+                  <span className="text-[9px] bg-purple-200 text-purple-900 px-1.5 py-0.2 rounded font-extrabold uppercase">
+                    Em Estudo
+                  </span>
+                )}
+                {selectedIds.length > 2 && (
+                  <button
+                    onClick={() => removeAssetFromCompare(m.assetId)}
+                    className="text-slate-400 hover:text-slate-700 ml-1"
+                    title="Remover da comparação"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Cards Comparativos Principais (Lado a Lado) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {comparedMetrics.map((m, idx) => {
-          const colorBorder = idx === 0 ? 'border-teal-500' : idx === 1 ? 'border-sky-500' : idx === 2 ? 'border-amber-500' : 'border-purple-500';
-          const badgeBg = idx === 0 ? 'bg-teal-50 text-teal-700' : idx === 1 ? 'bg-sky-50 text-sky-700' : idx === 2 ? 'bg-amber-50 text-amber-700' : 'bg-purple-50 text-purple-700';
+          const isStudied = m.assetId.startsWith('studied_') || (studiedAsset && m.assetId === studiedAsset.id);
+          const colorBorder = isStudied 
+            ? 'border-purple-600' 
+            : idx === 0 ? 'border-teal-500' : idx === 1 ? 'border-sky-500' : idx === 2 ? 'border-amber-500' : 'border-indigo-500';
+          const badgeBg = isStudied
+            ? 'bg-purple-100 text-purple-900 border border-purple-300'
+            : idx === 0 ? 'bg-teal-50 text-teal-700' : idx === 1 ? 'bg-sky-50 text-sky-700' : idx === 2 ? 'bg-amber-50 text-amber-700' : 'bg-indigo-50 text-indigo-700';
 
           return (
-            <div key={m.assetId} className={`bg-white rounded-xl p-5 border-t-4 ${colorBorder} border-x border-b border-slate-200 shadow-sm relative flex flex-col justify-between`}>
+            <div 
+              key={m.assetId} 
+              className={`bg-white rounded-xl p-5 border-t-4 ${colorBorder} border-x border-b border-slate-200 shadow-sm relative flex flex-col justify-between ${
+                isStudied ? 'ring-2 ring-purple-400/30 bg-purple-50/10' : ''
+              }`}
+            >
               <div>
                 <div className="flex justify-between items-start gap-2">
-                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${badgeBg}`}>
-                    Ativo {idx + 1}
+                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded flex items-center gap-1 ${badgeBg}`}>
+                    {isStudied && <Sparkles className="w-3 h-3 text-purple-600" />}
+                    {isStudied ? `Ativo ${idx + 1} (Em Estudo)` : `Ativo ${idx + 1} (Oficial)`}
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                    isStudied ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-600'
+                  }`}>
                     {m.assetClass.replace('_', ' ')}
                   </span>
                 </div>
@@ -163,8 +265,18 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
                 </h2>
                 <div className="text-[11px] text-slate-400 font-medium">CNPJ: {m.cnpj}</div>
 
-                {/* Destaque Investidor 10: Retorno 12M */}
-                <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-end">
+                {isStudied ? (
+                  <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-800 border border-purple-200 rounded text-[10px] font-extrabold">
+                    <span>{m.cmnRegulation?.articleCode || 'Res. CMN 5.272/2025'}</span>
+                  </div>
+                ) : (
+                  <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded text-[10px] font-semibold">
+                    <span>DAIR PREVI-LACERDA</span>
+                  </div>
+                )}
+
+                {/* Destaque: Retorno 12M */}
+                <div className="mt-3 pt-3 border-t border-slate-100 flex justify-between items-end">
                   <div>
                     <div className="text-[10px] uppercase font-bold text-slate-400">Rentabilidade 12M</div>
                     <div className="text-2xl font-black text-slate-900 mt-0.5">
@@ -195,10 +307,14 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
               <div className="mt-4 pt-2">
                 <button
                   onClick={() => onOpenReport(m.assetId)}
-                  className="w-full text-center text-xs font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 py-1.5 rounded-lg border border-slate-200 flex items-center justify-center gap-1.5 transition-colors"
+                  className={`w-full text-center text-xs font-bold py-1.5 rounded-lg border flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+                    isStudied 
+                      ? 'bg-purple-50 hover:bg-purple-100 text-purple-900 border-purple-200'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                  }`}
                 >
-                  <FileText className="w-3.5 h-3.5 text-teal-600" />
-                  <span>Gerar One-Page Report</span>
+                  <FileText className={`w-3.5 h-3.5 ${isStudied ? 'text-purple-600' : 'text-teal-600'}`} />
+                  <span>{isStudied ? 'Ver Parecer do Comitê' : 'Gerar One-Page Report'}</span>
                 </button>
               </div>
             </div>
@@ -413,8 +529,27 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
               {/* SEÇÃO CUSTOS & ESTRUTURA */}
               <tr className="bg-slate-50/50">
                 <td colSpan={comparedMetrics.length + 1} className="py-2 px-5 text-xs font-black text-teal-800 uppercase tracking-wider">
-                  Taxas, Liquidez & Porte
+                  Taxas, Liquidez, Regulação & Status
                 </td>
+              </tr>
+              <tr>
+                <td className="py-3 px-5 text-slate-600 font-semibold">Origem e Status Fiduciário</td>
+                {comparedMetrics.map(m => {
+                  const isStudied = m.assetId.startsWith('studied_') || (studiedAsset && m.assetId === studiedAsset.id);
+                  return (
+                    <td key={m.assetId} className="py-3 px-4 text-center">
+                      {isStudied ? (
+                        <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-purple-100 text-purple-900 border border-purple-300 inline-block shadow-2xs">
+                          EM ESTUDO (REPOSITÓRIO)
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 inline-block">
+                          CARTEIRA OFICIAL
+                        </span>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
               <tr>
                 <td className="py-3 px-5 text-slate-600">Taxa de Administração</td>
@@ -449,14 +584,21 @@ export const AssetComparator: React.FC<AssetComparatorProps> = ({
                 ))}
               </tr>
               <tr>
-                <td className="py-3 px-5 text-slate-600">Enquadramento CMN 4.963</td>
-                {comparedMetrics.map(m => (
-                  <td key={m.assetId} className="py-3 px-4 text-center">
-                    <span className="text-xs font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
-                      {m.cmnRegulation ? m.cmnRegulation.articleCode : 'Artigo 7º'}
-                    </span>
-                  </td>
-                ))}
+                <td className="py-3 px-5 text-slate-600">Enquadramento Res. CMN nº 5.272/2025</td>
+                {comparedMetrics.map(m => {
+                  const isStudied = m.assetId.startsWith('studied_') || (studiedAsset && m.assetId === studiedAsset.id);
+                  return (
+                    <td key={m.assetId} className="py-3 px-4 text-center">
+                      <span className={`text-xs font-bold px-2.5 py-1 rounded border inline-block ${
+                        isStudied 
+                          ? 'text-purple-900 bg-purple-50 border-purple-200'
+                          : 'text-teal-800 bg-teal-50 border-teal-200'
+                      }`}>
+                        {m.cmnRegulation ? m.cmnRegulation.articleCode : 'Art. 7º'}
+                      </span>
+                    </td>
+                  );
+                })}
               </tr>
             </tbody>
           </table>

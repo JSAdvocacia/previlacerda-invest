@@ -40,6 +40,13 @@ export const InstituteProfileView: React.FC<InstituteProfileViewProps> = ({
   const [formData, setFormData] = useState<InstituteProfile>(institute);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
+  const [hasSavedOnce, setHasSavedOnce] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('argos_institute_saved_once') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   // Formulário de Cadastro / Edição de Membro
   const [showMemberModal, setShowMemberModal] = useState(false);
@@ -62,6 +69,10 @@ export const InstituteProfileView: React.FC<InstituteProfileViewProps> = ({
   const handleSaveMainInstitute = (e: React.FormEvent) => {
     e.preventDefault();
     onUpdateInstitute(formData);
+    setHasSavedOnce(true);
+    try {
+      localStorage.setItem('argos_institute_saved_once', 'true');
+    } catch {}
     setFeedbackText('Dados do Instituto PREVI-LACERDA e Município atualizados com sucesso!');
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3500);
@@ -683,10 +694,23 @@ export const InstituteProfileView: React.FC<InstituteProfileViewProps> = ({
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition-all flex items-center gap-2"
+                  className={`text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition-all flex items-center gap-2 cursor-pointer ${
+                    hasSavedOnce 
+                      ? 'bg-blue-700 hover:bg-blue-800 ring-2 ring-blue-400/30' 
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
                 >
-                  <Save className="w-4 h-4" />
-                  <span>Salvar Dados do Instituto & Município</span>
+                  {hasSavedOnce ? (
+                    <>
+                      <Edit2 className="w-4 h-4" />
+                      <span>Alterar/Atualizar Dados</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Salvar Dados do Instituto & Município</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>
