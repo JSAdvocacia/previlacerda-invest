@@ -11,7 +11,8 @@ import {
   ChevronRight,
   TrendingUp,
   Landmark,
-  FileText
+  FileText,
+  SearchCode
 } from 'lucide-react';
 import { User } from '../types';
 import { OFFICIAL_REGULATION_URL, OFFICIAL_REGULATION_NORM } from '../services/mockData';
@@ -125,6 +126,23 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             </div>
             <span className="text-[10px] bg-blue-900/60 text-blue-300 border border-blue-700/60 px-1.5 py-0.5 rounded font-mono">
               Todos Ativos
+            </span>
+          </button>
+
+          <button
+            onClick={() => onSelectTab('analyzer')}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all ${
+              currentTab === 'analyzer'
+                ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-600/30'
+                : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <SearchCode className="w-4 h-4 text-indigo-400" />
+              <span className="font-semibold text-white">Analisador de Fundos</span>
+            </div>
+            <span className="text-[10px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded font-mono">
+              CVM
             </span>
           </button>
 

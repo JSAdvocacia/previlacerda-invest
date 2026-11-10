@@ -18,6 +18,7 @@ import { LoginScreen } from './components/LoginScreen';
 import { ChangePasswordModal } from './components/ChangePasswordModal';
 import { UserManagementModal } from './components/UserManagementModal';
 import { DairUploadModal } from './components/DairUploadModal';
+import { FundAnalyzerView } from './components/FundAnalyzerView';
 import { User, Asset, AssetMetrics, PortfolioOverview, InstituteProfile, DairExtractedData } from './types';
 import { api, getCurrentUser, setCurrentUser } from './services/api';
 import { PREVI_LACERDA_OFFICIAL_PROFILE, PREVI_LACERDA_OFFICIAL_ASSETS } from './services/dairParserService';
@@ -182,6 +183,7 @@ export function App() {
       case 'progestao_pre_auditoria': return 'Pró-Gestão Flow • Simulador de Pré-Auditoria';
       case 'progestao_dossie': return 'Pró-Gestão Flow • Dossiê da Certificação';
       case 'active_portfolio': return 'Gestão de Investimentos > Carteira Ativa';
+      case 'analyzer': return 'Gestão de Investimentos > Analisador de Fundos';
       case 'investment_policy': return 'Gestão de Investimentos > Política Anual de Investimentos (PAI)';
       case 'comparator': return 'Gestão de Investimentos > Comparador de Fundos';
       case 'simulator': return 'Gestão de Investimentos > Simulador Atuarial';
@@ -301,6 +303,14 @@ export function App() {
               onNavigateToComparator={handleNavigateToComparator}
               onOpenDairUpload={() => setIsDairUploadOpen(true)}
               onSelectAsset={(asset) => setSelectedAssetDetails(asset)}
+            />
+          )}
+
+          {currentTab === 'analyzer' && (
+            <FundAnalyzerView
+              assets={assets}
+              onOpenReport={handleOpenReport}
+              onNavigateToComparator={handleNavigateToComparator}
             />
           )}
 

@@ -20,7 +20,8 @@ import {
   Landmark,
   Scale,
   PanelLeftClose,
-  FileText
+  FileText,
+  SearchCode
 } from 'lucide-react';
 import { User } from '../types';
 import { OFFICIAL_REGULATION_URL } from '../services/mockData';
@@ -323,6 +324,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
                   <span className="text-[9px] bg-blue-100 text-blue-800 px-1 py-0.2 rounded font-bold">
                     Ativos
+                  </span>
+                </button>
+
+                {/* NOVO: ANALISADOR DE FUNDOS (ENTRE CARTEIRA ATIVA E COMPARADOR) */}
+                <button
+                  onClick={() => onSelectTab('analyzer')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all ${
+                    currentTab === 'analyzer'
+                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <SearchCode className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Analisador de Fundos</span>
+                  </div>
+                  <span className="text-[9px] bg-indigo-100 text-indigo-800 px-1 py-0.2 rounded font-bold">
+                    CVM
                   </span>
                 </button>
 
