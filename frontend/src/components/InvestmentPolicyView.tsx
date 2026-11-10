@@ -53,13 +53,88 @@ export const InvestmentPolicyView: React.FC<InvestmentPolicyViewProps> = ({
   const [isParsing, setIsParsing] = useState(false);
   const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(null);
 
-  // Estado do formulário de edição
+  // Estado do formulário de edição do modal
   const [editForm, setEditForm] = useState<InvestmentPolicy>(policy);
   const [activeEditTab, setActiveEditTab] = useState<'meta' | 'alocacao' | 'prazos' | 'riscos'>('meta');
+
+  // Estado para edição direta nos cards individuais
+  const [editingCard, setEditingCard] = useState<'meta' | 'ci' | 'condel' | 'cadprev' | 'controle' | null>(null);
+  const [cardForm, setCardForm] = useState<Partial<InvestmentPolicy>>({});
 
   useEffect(() => {
     setEditForm(policy);
   }, [policy]);
+
+  // Utilitários de Data para garantir compatibilidade com inputs e prazos
+  const toIsoDate = (val?: string): string => {
+    if (!val) return '';
+    const trimmed = val.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+    const parts = trimmed.split('/');
+    if (parts.length === 3) {
+      if (parts[0].length === 4) return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+      return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+    return trimmed;
+  };
+
+  const formatBrDate = (val?: string): string => {
+    if (!val) return 'Não informada';
+    const trimmed = val.trim();
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) return trimmed;
+    const iso = toIsoDate(trimmed);
+    const parts = iso.split('-');
+    if (parts.length === 3 && parts[0].length === 4) {
+      return `${parts[2].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[0]}`;
+    }
+    return val;
+  };
+
+  const handleStartCardEdit = (cardId: 'meta' | 'ci' | 'condel' | 'cadprev' | 'controle') => {
+    setEditingCard(cardId);
+    setCardForm({
+      ...policy,
+      actuarialTarget: { ...policy.actuarialTarget }
+    });
+  };
+
+  const handleSaveCard = () => {
+    if (!editingCard) return;
+
+    let updated: InvestmentPolicy = {
+      ...policy,
+      ...cardForm,
+      actuarialTarget: cardForm.actuarialTarget 
+        ? { ...policy.actuarialTarget, ...cardForm.actuarialTarget }
+        : policy.actuarialTarget
+    };
+
+    if (editingCard === 'meta' && updated.actuarialTarget) {
+      const realRate = updated.actuarialTarget.realInterestRatePct;
+      const projInflation = updated.actuarialTarget.projectedIndexPct;
+      const computedTarget = parseFloat((((1 + projInflation / 100) * (1 + realRate / 100) - 1) * 100).toFixed(2));
+      updated.actuarialTarget = {
+        ...updated.actuarialTarget,
+        annualTargetPct: computedTarget,
+        calculationFormula: `(1 + ${updated.actuarialTarget.indexName}) × (1 + ${realRate.toFixed(2).replace('.', ',')}% a.a.) - 1`
+      };
+    }
+
+    const saved = investmentPolicyService.savePolicy(
+      updated,
+      currentUser ? `${currentUser.name} (${currentUser.role})` : 'Usuário do Sistema'
+    );
+    setPolicy(saved);
+    setEditingCard(null);
+    showSuccessNotification('Informações do card atualizadas com sucesso!');
+
+    api.addAuditLog({
+      action: 'UPDATE_POLICY_CARD',
+      resource: 'INVESTMENT_POLICY',
+      record_id: saved.id,
+      new_data: { card: editingCard, updatedFields: cardForm }
+    });
+  };
 
   const handleProcessSmartReader = () => {
     if (!smartReaderText.trim()) return;
@@ -156,8 +231,9 @@ export const InvestmentPolicyView: React.FC<InvestmentPolicyViewProps> = ({
   const targetAchievementRatio = parseFloat(((currentPortfolioReturnYTD / targetPct) * 100).toFixed(1));
 
   // Validação de prazos legais
-  const approvalYear = policy.deliberativeApprovalDate ? new Date(policy.deliberativeApprovalDate).getFullYear() : null;
-  const isApprovedBeforeDeadline = policy.deliberativeApprovalDate <= policy.deliberativeApprovalDeadline;
+  const approvalIso = toIsoDate(policy.deliberativeApprovalDate);
+  const deadlineIso = toIsoDate(policy.deliberativeApprovalDeadline || `${policy.exerciseYear - 1}-12-31`);
+  const isApprovedBeforeDeadline = approvalIso ? approvalIso <= deadlineIso : true;
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12">
@@ -239,195 +315,538 @@ export const InvestmentPolicyView: React.FC<InvestmentPolicyViewProps> = ({
           DESTAQUE VISÍVEL DA META ATUARIAL (LAYOUT INSTITUCIONAL LIMPO E COMPACTO)
          ========================================================================= */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 transition-all">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          {/* Lado Esquerdo: Meta Atuarial com Alto Contraste */}
-          <div className="space-y-1.5 flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase px-2 py-0.5 rounded">
-                Parâmetro Obrigatório de Rentabilidade (Art. 85 Portaria MTP nº 1.467/2022)
-              </span>
-              <span className="text-slate-500 text-xs font-medium">
-                • Exercício {policy.exerciseYear}
-              </span>
+        {editingCard === 'meta' ? (
+          /* Formulário de Edição Direta da Meta Atuarial */
+          <div className="space-y-4 animate-fadeIn">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center">
+                  <Edit3 className="w-3.5 h-3.5" />
+                </span>
+                <h3 className="font-extrabold text-sm text-slate-900">Editar Meta Atuarial do Exercício</h3>
+              </div>
+              <span className="text-[10px] text-slate-400">Edição direta no card</span>
             </div>
 
-            <div className="flex flex-wrap items-baseline gap-3 pt-0.5">
-              <span className="text-xs uppercase font-extrabold text-slate-500 tracking-wider">
-                Meta Atuarial:
-              </span>
-              <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight flex items-baseline gap-1">
-                <span>{policy.actuarialTarget.indexName} + {policy.actuarialTarget.realInterestRatePct.toFixed(2).replace('.', ',')}%</span>
-                <span className="text-lg font-bold text-emerald-700">a.a.</span>
-              </div>
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold px-2.5 py-1 rounded-lg">
-                Projeção Anual: ~{targetPct.toFixed(2).replace('.', ',')}% a.a.
-              </div>
-            </div>
-
-            <p className="text-xs text-slate-600 font-medium">
-              Fórmula Oficial: <span className="font-mono text-slate-800 font-semibold">{policy.actuarialTarget.calculationFormula}</span> (projeção {policy.actuarialTarget.indexName}: {policy.actuarialTarget.projectedIndexPct.toFixed(2).replace('.', ',')}% a.a.)
-            </p>
-          </div>
-
-          {/* Lado Direito: Desempenho e Aderência da Carteira */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 sm:min-w-[310px] shrink-0">
-            <div className="flex items-center justify-between gap-3 mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Retorno Acumulado</span>
-                <span className="text-xl font-black text-emerald-700">+{currentPortfolioReturnYTD.toFixed(2).replace('.', ',')}%</span>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Índice Base Oficial</label>
+                <select
+                  value={cardForm.actuarialTarget?.indexName || 'IPCA'}
+                  onChange={(e) => setCardForm({
+                    ...cardForm,
+                    actuarialTarget: {
+                      ...cardForm.actuarialTarget!,
+                      indexName: e.target.value as any
+                    }
+                  })}
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold"
+                >
+                  <option value="IPCA">IPCA</option>
+                  <option value="INPC">INPC</option>
+                  <option value="IGP-M">IGP-M</option>
+                  <option value="SELIC">SELIC</option>
+                </select>
               </div>
-              <div className="text-right">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Aderência à Meta</span>
-                <span className="text-lg font-black text-slate-900">{targetAchievementRatio}%</span>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Taxa Real de Juros (% a.a.)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={cardForm.actuarialTarget?.realInterestRatePct ?? 5.14}
+                  onChange={(e) => setCardForm({
+                    ...cardForm,
+                    actuarialTarget: {
+                      ...cardForm.actuarialTarget!,
+                      realInterestRatePct: parseFloat(e.target.value) || 0
+                    }
+                  })}
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-emerald-800"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Inflação Projetada (% a.a.)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={cardForm.actuarialTarget?.projectedIndexPct ?? 4.00}
+                  onChange={(e) => setCardForm({
+                    ...cardForm,
+                    actuarialTarget: {
+                      ...cardForm.actuarialTarget!,
+                      projectedIndexPct: parseFloat(e.target.value) || 0
+                    }
+                  })}
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold"
+                />
               </div>
             </div>
 
-            <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden mb-2">
-              <div 
-                className="bg-emerald-600 h-2 rounded-full transition-all duration-700"
-                style={{ width: `${Math.min(100, (currentPortfolioReturnYTD / targetPct) * 100)}%` }}
-              ></div>
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Estudo Atuarial de Referência</label>
+              <input
+                type="text"
+                value={cardForm.actuarialTarget?.referenceLegalStudy || ''}
+                onChange={(e) => setCardForm({
+                  ...cardForm,
+                  actuarialTarget: {
+                    ...cardForm.actuarialTarget!,
+                    referenceLegalStudy: e.target.value
+                  }
+                })}
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs"
+                placeholder="Ex: Estudo de Aderência Atuarial do PREVI-LACERDA (Exercício 2026)"
+              />
             </div>
 
-            <div className="flex items-center justify-between text-[11px] pt-0.5">
-              <span className={`font-bold flex items-center gap-1 ${isTargetAchieved ? 'text-emerald-700' : 'text-amber-700'}`}>
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                {isTargetAchieved ? 'Meta Superada (+3,10% spread)' : 'Em Acompanhamento'}
-              </span>
-              <span className="text-slate-500 text-[10px]">
-                Base: R$ 138,78M
-              </span>
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setEditingCard(null)}
+                className="px-3 py-1.5 text-slate-600 hover:text-slate-800 text-xs font-semibold"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveCard}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-1.5 rounded-lg shadow-xs flex items-center gap-1.5"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Salvar Meta</span>
+              </button>
             </div>
           </div>
-        </div>
+        ) : (
+          /* Visualização Normal do Card da Meta Atuarial */
+          <div>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+              {/* Lado Esquerdo: Meta Atuarial com Alto Contraste */}
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase px-2 py-0.5 rounded">
+                      Parâmetro Obrigatório de Rentabilidade (Art. 85 Portaria MTP nº 1.467/2022)
+                    </span>
+                    <span className="text-slate-500 text-xs font-medium">
+                      • Exercício {policy.exerciseYear}
+                    </span>
+                  </div>
 
-        {/* Rodapé do Card: Origem do Estudo */}
-        <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-2">
-          <div className="flex items-center gap-1.5 text-slate-600">
-            <Info className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-            <span>{policy.actuarialTarget.referenceLegalStudy}</span>
+                  {/* Botão de Edição Rápida da Meta */}
+                  <button
+                    onClick={() => handleStartCardEdit('meta')}
+                    className="text-[11px] font-bold text-slate-500 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+                    title="Editar informações da Meta Atuarial"
+                  >
+                    <Edit3 className="w-3 h-3 text-slate-400 group-hover:text-blue-600" />
+                    <span>Editar</span>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-baseline gap-3 pt-0.5">
+                  <span className="text-xs uppercase font-extrabold text-slate-500 tracking-wider">
+                    Meta Atuarial:
+                  </span>
+                  <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight flex items-baseline gap-1">
+                    <span>{policy.actuarialTarget.indexName} + {policy.actuarialTarget.realInterestRatePct.toFixed(2).replace('.', ',')}%</span>
+                    <span className="text-lg font-bold text-emerald-700">a.a.</span>
+                  </div>
+                  <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold px-2.5 py-1 rounded-lg">
+                    Projeção Anual: ~{targetPct.toFixed(2).replace('.', ',')}% a.a.
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-600 font-medium">
+                  Fórmula Oficial: <span className="font-mono text-slate-800 font-semibold">{policy.actuarialTarget.calculationFormula}</span> (projeção {policy.actuarialTarget.indexName}: {policy.actuarialTarget.projectedIndexPct.toFixed(2).replace('.', ',')}% a.a.)
+                </p>
+              </div>
+
+              {/* Lado Direito: Desempenho e Aderência da Carteira */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 sm:min-w-[310px] shrink-0">
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Retorno Acumulado</span>
+                    <span className="text-xl font-black text-emerald-700">+{currentPortfolioReturnYTD.toFixed(2).replace('.', ',')}%</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Aderência à Meta</span>
+                    <span className="text-lg font-black text-slate-900">{targetAchievementRatio}%</span>
+                  </div>
+                </div>
+
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden mb-2">
+                  <div 
+                    className="bg-emerald-600 h-2 rounded-full transition-all duration-700"
+                    style={{ width: `${Math.min(100, (currentPortfolioReturnYTD / targetPct) * 100)}%` }}
+                  ></div>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] pt-0.5">
+                  <span className={`font-bold flex items-center gap-1 ${isTargetAchieved ? 'text-emerald-700' : 'text-amber-700'}`}>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    {isTargetAchieved ? 'Meta Superada (+3,10% spread)' : 'Em Acompanhamento'}
+                  </span>
+                  <span className="text-slate-500 text-[10px]">
+                    Base: R$ 138,78M
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Rodapé do Card: Origem do Estudo */}
+            <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-2">
+              <div className="flex items-center gap-1.5 text-slate-600">
+                <Info className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                <span>{policy.actuarialTarget.referenceLegalStudy}</span>
+              </div>
+              {policy.lastParsedAt && (
+                <span className="text-[10px] text-slate-400 font-mono">
+                  Leitura: {new Date(policy.lastParsedAt).toLocaleString('pt-BR')} ({policy.sourceDocumentName || 'Texto colado'})
+                </span>
+              )}
+            </div>
           </div>
-          {policy.lastParsedAt && (
-            <span className="text-[10px] text-slate-400 font-mono">
-              Leitura: {new Date(policy.lastParsedAt).toLocaleString('pt-BR')} ({policy.sourceDocumentName || 'Texto colado'})
-            </span>
-          )}
-        </div>
+        )}
       </div>
 
       {/* =========================================================================
-          PAINEL DE DATAS, CRITÉRIOS DE APROVAÇÃO E PREMISSAS LEGAIS
+          PAINEL DE DATAS, CRITÉRIOS DE APROVAÇÃO E PREMISSAS LEGAIS (EDITÁVEIS)
           (Portaria MTP nº 1.467/2022, Art. 85 & Resolução CMN nº 5.272/2025)
          ========================================================================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* 1. Comitê de Investimentos */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-blue-300 transition-all">
-          <div className="flex items-center justify-between mb-2">
-            <span className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200">
-              1
-            </span>
-            <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">
-              Instância Técnica
-            </span>
-          </div>
-          <h2 className="font-bold text-slate-900 text-sm">Proposta do Comitê (CI)</h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Elaboração e parecer técnico favorável fundamentado no cenário macroeconômico e ALM.
-          </p>
-          <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-slate-500">Documento:</span>
-              <strong className="text-slate-800">{policy.committeeAtaNumber || 'Ata nº 11/2025'}</strong>
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-blue-300 transition-all flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <span className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200">
+                  1
+                </span>
+                <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">
+                  Instância Técnica
+                </span>
+              </div>
+              {editingCard !== 'ci' && (
+                <button
+                  onClick={() => handleStartCardEdit('ci')}
+                  className="text-[10px] font-bold text-slate-500 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+                  title="Editar Documento e Data da Proposta do Comitê"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  <span>Editar</span>
+                </button>
+              )}
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Data da Proposta:</span>
-              <strong className="text-blue-700">
-                {policy.committeeProposalDate ? new Date(policy.committeeProposalDate + 'T00:00:00').toLocaleDateString('pt-BR') : '18/11/2025'}
-              </strong>
-            </div>
+            <h2 className="font-bold text-slate-900 text-sm">Proposta do Comitê (CI)</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Elaboração e parecer técnico favorável fundamentado no cenário macroeconômico e ALM.
+            </p>
           </div>
+
+          {editingCard === 'ci' ? (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-2 text-xs animate-fadeIn">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Documento / Ata:</label>
+                <input
+                  type="text"
+                  value={cardForm.committeeAtaNumber || ''}
+                  onChange={(e) => setCardForm({ ...cardForm, committeeAtaNumber: e.target.value })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                  placeholder="Ex: Ata CI nº 11/2025"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Data da Proposta:</label>
+                <input
+                  type="date"
+                  value={toIsoDate(cardForm.committeeProposalDate)}
+                  onChange={(e) => setCardForm({ ...cardForm, committeeProposalDate: e.target.value })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                />
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  onClick={handleSaveCard}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1 px-2 rounded text-[11px] flex items-center justify-center gap-1 shadow-xs"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>Salvar</span>
+                </button>
+                <button
+                  onClick={() => setEditingCard(null)}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-1 px-2 rounded text-[11px]"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Documento:</span>
+                <strong className="text-slate-800">{policy.committeeAtaNumber || 'Ata nº 11/2025'}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Data da Proposta:</span>
+                <strong className="text-blue-700">
+                  {formatBrDate(policy.committeeProposalDate)}
+                </strong>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 2. Aprovação do Conselho Deliberativo */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-emerald-300 transition-all">
-          <div className="flex items-center justify-between mb-2">
-            <span className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center border border-emerald-200">
-              2
-            </span>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${isApprovedBeforeDeadline ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>
-              {isApprovedBeforeDeadline ? 'Prazo 31/12 Cumprido' : 'Prazo Excedido'}
-            </span>
-          </div>
-          <h2 className="font-bold text-slate-900 text-sm">Conselho Deliberativo</h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Aprovação soberana obrigatória <strong>antes de 31 de dezembro</strong> (Portaria MTP 1.467/2022, Art. 85).
-          </p>
-          <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-slate-500">Ato Normativo:</span>
-              <strong className="text-slate-800">{policy.deliberativeAtaNumber}</strong>
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-emerald-300 transition-all flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <span className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center border border-emerald-200">
+                  2
+                </span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${isApprovedBeforeDeadline ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>
+                  {isApprovedBeforeDeadline ? 'Prazo 31/12 Cumprido' : 'Prazo Excedido'}
+                </span>
+              </div>
+              {editingCard !== 'condel' && (
+                <button
+                  onClick={() => handleStartCardEdit('condel')}
+                  className="text-[10px] font-bold text-slate-500 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+                  title="Editar Ato e Data de Aprovação do Conselho"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  <span>Editar</span>
+                </button>
+              )}
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Data de Aprovação:</span>
-              <strong className="text-emerald-700">
-                {policy.deliberativeApprovalDate ? new Date(policy.deliberativeApprovalDate + 'T00:00:00').toLocaleDateString('pt-BR') : '15/12/2025'}
-              </strong>
-            </div>
+            <h2 className="font-bold text-slate-900 text-sm">Conselho Deliberativo</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Aprovação soberana obrigatória <strong>antes de 31 de dezembro</strong> (Portaria MTP 1.467/2022, Art. 85).
+            </p>
           </div>
+
+          {editingCard === 'condel' ? (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-2 text-xs animate-fadeIn">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Ato Normativo:</label>
+                <input
+                  type="text"
+                  value={cardForm.deliberativeAtaNumber || ''}
+                  onChange={(e) => setCardForm({ ...cardForm, deliberativeAtaNumber: e.target.value })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                  placeholder="Ex: Resolução CONDEL nº 06/2025"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Data de Aprovação:</label>
+                <input
+                  type="date"
+                  value={toIsoDate(cardForm.deliberativeApprovalDate)}
+                  onChange={(e) => setCardForm({ ...cardForm, deliberativeApprovalDate: e.target.value })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                />
+                <span className="text-[9px] text-slate-400 mt-0.5 block">
+                  Prazo limite da Portaria MTP 1.467/2022: até 31/12/{policy.exerciseYear - 1}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  onClick={handleSaveCard}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1 px-2 rounded text-[11px] flex items-center justify-center gap-1 shadow-xs"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>Salvar</span>
+                </button>
+                <button
+                  onClick={() => setEditingCard(null)}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-1 px-2 rounded text-[11px]"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Ato Normativo:</span>
+                <strong className="text-slate-800">{policy.deliberativeAtaNumber}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Data de Aprovação:</span>
+                <strong className={isApprovedBeforeDeadline ? 'text-emerald-700' : 'text-red-700'}>
+                  {formatBrDate(policy.deliberativeApprovalDate)}
+                </strong>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 3. Envio à SPREV / CADPREV */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-purple-300 transition-all">
-          <div className="flex items-center justify-between mb-2">
-            <span className="w-7 h-7 rounded-lg bg-purple-50 text-purple-700 font-bold text-xs flex items-center justify-center border border-purple-200">
-              3
-            </span>
-            <span className="text-[10px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded">
-              Prazo: 30 dias
-            </span>
-          </div>
-          <h2 className="font-bold text-slate-900 text-sm">Transmissão CADPREV</h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Encaminhamento à Secretaria de Previdência no prazo improrrogável de até 30 dias.
-          </p>
-          <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-slate-500">Protocolo:</span>
-              <strong className="text-slate-800 truncate max-w-[130px]">{policy.cadprevProtocol || 'PAI-2026-5106752'}</strong>
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-purple-300 transition-all flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <span className="w-7 h-7 rounded-lg bg-purple-50 text-purple-700 font-bold text-xs flex items-center justify-center border border-purple-200">
+                  3
+                </span>
+                <span className="text-[10px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded">
+                  Prazo: 30 dias
+                </span>
+              </div>
+              {editingCard !== 'cadprev' && (
+                <button
+                  onClick={() => handleStartCardEdit('cadprev')}
+                  className="text-[10px] font-bold text-slate-500 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+                  title="Editar Protocolo e Data de Envio ao CADPREV"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  <span>Editar</span>
+                </button>
+              )}
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Data Envio:</span>
-              <strong className="text-purple-700">
-                {policy.cadprevSubmissionDate ? new Date(policy.cadprevSubmissionDate + 'T00:00:00').toLocaleDateString('pt-BR') : '12/01/2026'}
-              </strong>
-            </div>
+            <h2 className="font-bold text-slate-900 text-sm">Transmissão CADPREV</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Encaminhamento à Secretaria de Previdência no prazo improrrogável de até 30 dias.
+            </p>
           </div>
+
+          {editingCard === 'cadprev' ? (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-2 text-xs animate-fadeIn">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Protocolo SPREV/CADPREV:</label>
+                <input
+                  type="text"
+                  value={cardForm.cadprevProtocol || ''}
+                  onChange={(e) => setCardForm({ ...cardForm, cadprevProtocol: e.target.value })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                  placeholder="Ex: PAI-2026-5106752-SPREV"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Data de Envio:</label>
+                <input
+                  type="date"
+                  value={toIsoDate(cardForm.cadprevSubmissionDate)}
+                  onChange={(e) => setCardForm({ ...cardForm, cadprevSubmissionDate: e.target.value })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                />
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  onClick={handleSaveCard}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1 px-2 rounded text-[11px] flex items-center justify-center gap-1 shadow-xs"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>Salvar</span>
+                </button>
+                <button
+                  onClick={() => setEditingCard(null)}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-1 px-2 rounded text-[11px]"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Protocolo:</span>
+                <strong className="text-slate-800 truncate max-w-[130px]">{policy.cadprevProtocol || 'PAI-2026-5106752'}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Data Envio:</span>
+                <strong className="text-purple-700">
+                  {formatBrDate(policy.cadprevSubmissionDate)}
+                </strong>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 4. Governança e Revisões */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-amber-300 transition-all">
-          <div className="flex items-center justify-between mb-2">
-            <span className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 font-bold text-xs flex items-center justify-center border border-amber-200">
-              4
-            </span>
-            <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">
-              Monitoramento
-            </span>
-          </div>
-          <h2 className="font-bold text-slate-900 text-sm">Controle & Revisões</h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Informes mensais ao CI e trimestrais ao Conselho Fiscal. Revisão admitida mediante nova ata CONDEL.
-          </p>
-          <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-slate-500">Modelo:</span>
-              <strong className="text-slate-800">{policy.managementModel === 'PROPRIA' ? 'Gestão Própria' : 'Terceirizada'}</strong>
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs hover:border-amber-300 transition-all flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <span className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 font-bold text-xs flex items-center justify-center border border-amber-200">
+                  4
+                </span>
+                <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">
+                  Monitoramento
+                </span>
+              </div>
+              {editingCard !== 'controle' && (
+                <button
+                  onClick={() => handleStartCardEdit('controle')}
+                  className="text-[10px] font-bold text-slate-500 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+                  title="Editar Modelo de Gestão e Limite de VaR"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  <span>Editar</span>
+                </button>
+              )}
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Limite VaR 95%:</span>
-              <strong className="text-amber-700">Até {policy.varLimitPct.toFixed(2).replace('.', ',')}% (21d)</strong>
-            </div>
+            <h2 className="font-bold text-slate-900 text-sm">Controle & Revisões</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Informes mensais ao CI e trimestrais ao Conselho Fiscal. Revisão admitida mediante nova ata CONDEL.
+            </p>
           </div>
+
+          {editingCard === 'controle' ? (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-2 text-xs animate-fadeIn">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Modelo de Gestão:</label>
+                <select
+                  value={cardForm.managementModel || 'PROPRIA'}
+                  onChange={(e) => setCardForm({ ...cardForm, managementModel: e.target.value as any })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                >
+                  <option value="PROPRIA">Gestão Própria</option>
+                  <option value="TERCEIRIZADA">Gestão Terceirizada</option>
+                  <option value="MISTA">Gestão Mista</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Limite VaR 95% (21d) (%):</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={cardForm.varLimitPct ?? 2.5}
+                  onChange={(e) => setCardForm({ ...cardForm, varLimitPct: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold"
+                />
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  onClick={handleSaveCard}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1 px-2 rounded text-[11px] flex items-center justify-center gap-1 shadow-xs"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>Salvar</span>
+                </button>
+                <button
+                  onClick={() => setEditingCard(null)}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-1 px-2 rounded text-[11px]"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Modelo:</span>
+                <strong className="text-slate-800">{policy.managementModel === 'PROPRIA' ? 'Gestão Própria' : (policy.managementModel === 'MISTA' ? 'Gestão Mista' : 'Terceirizada')}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Limite VaR 95%:</span>
+                <strong className="text-amber-700">Até {policy.varLimitPct ? policy.varLimitPct.toFixed(2).replace('.', ',') : '2,50'}% (21d)</strong>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
